@@ -5,7 +5,6 @@ $ git clone https://github.com/axdyer/WellLog.git
 $ cd WellLog
 ```
 
-### Pip
 You can use conda to create a fresh virtual environment on either Windows or macOS.
 
 ```
