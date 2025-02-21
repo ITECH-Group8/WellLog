@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - My Health Project{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link active" href="#">Overall</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Running</a>
+    </li>
+  </ul>
+  <div class="actions">
+    <button class="btn btn-primary">Add Data</button>
+    <button class="btn btn-secondary">Set Goals</button>
+  </div>
+</div>
+
+<div class="dashboard-body row">
+  <div class="col-md-4">
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title">Steps Record</h5>
+        <p class="card-text display-4">2099 Steps</p>
+        <button class="btn btn-outline-primary">Click to View Data</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title">Sleep Record</h5>
+        <p class="card-text display-4">8h 55min</p>
+        <button class="btn btn-outline-primary">Click to View Data</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title">Diet</h5>
+        <p class="card-text display-4">1040 Kcal</p>
+        <button class="btn btn-outline-primary">Click to View Data</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
