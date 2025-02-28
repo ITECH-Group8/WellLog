@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AI Advice - WellLog{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+  <!-- 侧边栏 -->
+  <div class="sidebar p-3">
+   
+    <ul class="nav flex-column">
+      <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'community' %}">Community</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'ai_advice' %}">AI Advice</a></li>
+      
+    </ul>
+  </div>
+
+  <!-- 主要内容 -->
+  <div class="main-content flex-grow-1 px-5">
+    <!-- 标题 & 按钮 -->
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
+      <h2 class="fw-bold">AI-Powered Health Advice</h2>
+      <button class="btn btn-primary px-4 py-2" onclick="requestAdvice()">Request Advice</button>
+    </div>
+
+    <!-- AI 建议分类 -->
+    <div class="d-flex justify-content-center mt-3 mb-4 border-bottom pb-2">
+      <button class="btn btn-link tab-btn active mx-3" onclick="changeCategory('all', this)">All</button>
+      <button class="btn btn-link tab-btn mx-3" onclick="changeCategory('exercise', this)">Exercise</button>
+      <button class="btn btn-link tab-btn mx-3" onclick="changeCategory('nutrition', this)">Nutrition</button>
+      <button class="btn btn-link tab-btn mx-3" onclick="changeCategory('sleep', this)">Sleep</button>
+      <button class="btn btn-link tab-btn mx-3" onclick="changeCategory('stress', this)">Stress</button>
+    </div>
+
+    <!-- AI 建议列表 -->
+    <div id="adviceList" class="row justify-content-center">
+      <div class="col-md-20">  <!-- 🔹 这里调整宽度 -->
+        <div class="advice-card shadow-sm p-4 mb-4 rounded bg-white" data-category="exercise">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-heart-pulse me-3 text-danger" style="font-size: 40px;"></i>
+            <p class="mb-0 fw-semibold">"Try 30 minutes of moderate exercise daily to boost heart health!"</p>
+          </div>
+        </div>
+
+        <div class="advice-card shadow-sm p-4 mb-4 rounded bg-white" data-category="nutrition">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-egg-fried me-3 text-warning" style="font-size: 40px;"></i>
+            <p class="mb-0 fw-semibold">"Include high-protein foods in your diet for muscle recovery."</p>
+          </div>
+        </div>
+
+        <div class="advice-card shadow-sm p-4 mb-4 rounded bg-white" data-category="sleep">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-moon-stars me-3 text-primary" style="font-size: 40px;"></i>
+            <p class="mb-0 fw-semibold">"Aim for 7-9 hours of quality sleep each night for optimal health."</p>
+          </div>
+        </div>
+
+        <div class="advice-card shadow-sm p-4 mb-4 rounded bg-white" data-category="stress">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-cloud-sun me-3 text-info" style="font-size: 40px;"></i>
+            <p class="mb-0 fw-semibold">"Practice deep breathing to reduce stress and improve focus."</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 交互功能 JS -->
+<script>
+  function changeCategory(category, element) {
+    document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+    element.classList.add("active");
+
+    let adviceCards = document.querySelectorAll(".advice-card");
+    adviceCards.forEach(card => {
+      if (category === "all" || card.getAttribute("data-category") === category) {
+        card.style.display = "block";
+      } else {
+        card.style.display = "none";
+      }
+    });
+  }
+
+  function requestAdvice() {
+    alert("AI is generating new advice...");
+  }
+</script>
+
+<!-- 自定义 CSS -->
+<style>
+  .tab-btn {
+    font-size: 18px;
+    font-weight: bold;
+    color: #555;
+    border: none;
+    background: none;
+    padding: 10px 20px;
+    transition: 0.3s;
+  }
+
+  .tab-btn.active {
+    color: #007bff;
+    border-bottom: 3px solid #007bff;
+  }
+
+  .advice-card {
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+  }
+
+  .advice-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+</style>
+{% endblock %}

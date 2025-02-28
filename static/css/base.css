@@ -1,0 +1,177 @@
+/* Sticky footer styles
+-------------------------------------------------- */
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+main {
+  flex: 1;
+}
+
+/* 统一登录 & 注册页面背景 */
+/* 让整个页面都有背景 */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* 让 Django Form 渲染的输入框更美观 */
+.form-control {
+  border-radius: 5px;
+  padding: 10px;
+}
+
+/* 美化按钮 */
+.btn-success {
+  background-color: #28a745;
+  border: none;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+
+.container {
+  max-width: 960px;
+}
+
+.pricing-header {
+  max-width: 700px;
+}
+
+
+.footer {
+  background-color: #f8f9fa;
+  width: 100%;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 0.9rem;
+}
+
+.footer a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.footer .container {
+  max-width: 800px; /* 让内容不会过宽 */
+  margin: auto;
+}
+
+.footer p {
+  margin-bottom: 5px; /* 让行距更紧凑 */
+}
+
+
+
+/* 让输入框更美观 */
+input[type="text"], input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 5px;
+  display: block;
+}
+
+/* 让辅助文本更清晰 */
+.form-text {
+  font-size: 0.9em;
+  color: #6c757d;
+}
+/* 侧边栏样式 */
+.sidebar {
+  width: 250px; /* 固定宽度 */
+  background: #f8f9fa; /* 浅灰背景 */
+  height: calc(100vh - 60px); /* 让侧边栏的高度不覆盖 navbar */
+  padding: 20px;
+  position: fixed; /* 让侧边栏固定在左侧 */
+  left: 0;
+  top: 60px; /* 让出 navbar 的高度 */
+  z-index: 10; /* 保持合适的层级 */
+  
+  display: flex;
+  flex-direction: column;
+}
+.navbar {
+  z-index: 1000; /* 确保导航栏层级比侧边栏高 */
+  background: white; /* 确保 navbar 颜色不受影响 */
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  height: 60px; /* navbar 高度 */
+  border-bottom: 1px solid #ddd;
+  padding: 10px 20px;
+}
+
+.menu-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.nav-link {
+  color: #007bff;
+  font-size: 1rem;
+  padding: 10px;
+}
+
+.nav-link:hover {
+  color: #0056b3;
+  background-color: rgba(0, 123, 255, 0.1);
+  border-radius: 5px;
+}
+
+.main-content {
+  margin-left: 250px; /* 让出侧边栏的宽度 */
+  margin-top: 70px; /* 让出 navbar 的高度 */
+  padding: 20px;
+  flex-grow: 1;
+}
+
+/* 卡片样式 */
+.card {
+  border-radius: 12px;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 按钮样式 */
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+}
+
+.btn-outline-secondary {
+  border-color: #6c757d;
+  color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #6c757d;
+  color: white;
+}
+.dashboard-header {
+  margin-top: 10px; /* 原来可能有较大的 margin，这里缩小 */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - WellLog{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="d-flex">
+    <!-- 侧边栏 -->
+    <div class="sidebar p-3">
+      
+      <ul class="nav flex-column">
+        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'community' %}">Community</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'ai_advice' %}">AI Advice</a></li>
+        
+      </ul>
+    </div>
+
+    <!-- 主页主要内容 -->
+    <div class="main-content flex-grow-1 d-flex flex-column justify-content-center align-items-center text-center">
+      <h1 class="fw-bold">Welcome to WellLog</h1>
+      <p class="lead text-muted">Your Personal Health Tracker</p>
+
+      <div class="mt-4">
+        <a href="{% url 'dashboard' %}" class="btn btn-primary px-4 py-2">Go to Dashboard</a>
+        <a href="{% url 'community' %}" class="btn btn-outline-secondary px-4 py-2 ms-3">Join Community</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CSS -->
+<style>
+  .main-content {
+    height: 80vh; /* 让内容垂直居中 */
+  }
+
+  .sidebar {
+    width: 250px;
+    background: #f8f9fa;
+    min-height: 100vh;
+  }
+
+  .sidebar .nav-link {
+    font-size: 18px;
+    padding: 10px;
+    color: #333;
+    transition: 0.3s;
+  }
+
+  .sidebar .nav-link:hover {
+    color: #007bff;
+  }
+</style>
+
+{% endblock %}

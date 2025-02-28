@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Community - WellLog{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+  <!-- 侧边栏 -->
+  <div class="sidebar p-3 me-4"> 
+    <ul class="nav flex-column">
+      <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
+      <li class="nav-item"><a class="nav-link active" href="{% url 'community' %}">Community</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'ai_advice' %}">AI Advice</a></li>
+    </ul>
+  </div>
+
+  <!-- 主要内容 -->
+  <div class="main-content flex-grow-1 px-4">
+    <!-- 顶部 Tab 选项 -->
+    <div class="d-flex justify-content-center mt-3 border-bottom pb-2">
+      <button class="btn btn-link tab-btn active mx-2" onclick="changeTab('recommend', this)">Recommend</button>
+      <button class="btn btn-link tab-btn mx-2" onclick="changeTab('favour', this)">Favour</button>
+    </div>
+
+    <!-- 推荐（Recommend）动态 -->
+    <div id="recommendPosts" class="mt-4">
+      {% for post in posts %}
+      <div class="post-card shadow-sm p-4 mb-4 rounded bg-white mx-auto" style="max-width: 600px;">
+        <div class="d-flex align-items-center">
+          <!-- 用户头像 -->
+          <div class="user-icon bg-light rounded-circle d-flex align-items-center justify-content-center me-3" 
+               style="width: 50px; height: 50px;">
+            <i class="bi bi-person-circle" style="font-size: 30px; color: gray;"></i>
+          </div>
+          <!-- 文字内容 -->
+          <div class="content flex-grow-1">
+            <p class="mb-2 fw-semibold">{{ post.content }} {{ post.attachment }}</p>
+            <div class="text-muted small">
+              <span><i class="bi bi-chat-dots me-1"></i>{{ post.comments }}</span> 
+              <span class="ms-3"><i class="bi bi-hand-thumbs-up me-1"></i>{{ post.likes }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-muted text-center">No posts available.</p>
+      {% endfor %}
+    </div>
+
+    <!-- 收藏（Favour）部分 -->
+    <div id="favourPosts" style="display: none;" class="text-center mt-4">
+      <p class="text-muted">No favourites yet.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 切换帖子类别的 JS -->
+<script>
+  function changeTab(tab, element) {
+    document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+    element.classList.add("active");
+
+    if (tab === "recommend") {
+      document.getElementById("recommendPosts").style.display = "block";
+      document.getElementById("favourPosts").style.display = "none";
+    } else {
+      document.getElementById("recommendPosts").style.display = "none";
+      document.getElementById("favourPosts").style.display = "block";
+    }
+  }
+</script>
+
+<!-- 自定义 CSS 样式 -->
+<style>
+  .tab-btn {
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    background: none;
+    padding: 10px 20px;
+    transition: 0.3s;
+  }
+  
+  .tab-btn.active {
+    color: #007bff;
+    border-bottom: 3px solid #007bff;
+  }
+
+  .post-card {
+    border-radius: 12px;
+    transition: all 0.3s ease;
+  }
+
+  .post-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  }
+</style>
+{% endblock %}

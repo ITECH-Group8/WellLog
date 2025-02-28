@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Register - WellLog{% endblock %}
+
+{% block content %}
+<div class="auth-background"></div>  <!-- 背景层 -->
+<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+  <div class="card shadow-lg p-4 rounded" style="width: 400px; background: rgba(255, 255, 255, 0.9);">
+    <h3 class="text-center mb-4">Register</h3>
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="{{ form.username.id_for_label }}">Username</label>
+        {{ form.username }}
+      </div>
+
+      <div class="form-group mt-3">
+        <label for="{{ form.password1.id_for_label }}">Password</label>
+        {{ form.password1 }}
+        <small class="form-text text-muted">
+          Your password must contain at least 8 characters and cannot be too simple.
+        </small>
+      </div>
+
+      <div class="form-group mt-3">
+        <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+        {{ form.password2 }}
+        <small class="form-text text-muted">Enter the same password as before for verification.</small>
+      </div>
+
+      <button type="submit" class="btn btn-success w-100 mt-3">Register</button>
+
+      <p class="text-center mt-3">
+        Already have an account? <a href="{% url 'login' %}">Login</a>
+      </p>
+    </form>
+  </div>
+</div>
+{% endblock %}

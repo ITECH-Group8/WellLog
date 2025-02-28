@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - WellLog{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+  <!-- 侧边栏 -->
+  <div class="sidebar p-3">
+   
+    <ul class="nav flex-column">
+      <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'community' %}">Community</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'ai_advice' %}">AI Advice</a></li>
+      
+    </ul>
+  </div>
+
+  <!-- 主要内容区域 -->
+  <div class="main-content flex-grow-1 px-4">
+    <div class="d-flex justify-content-between align-items-center mt-0">
+      <ul class="nav nav-pills" id="navTabs">
+        <li class="nav-item"><a class="nav-link active" href="#" onclick="changeTab('overall', this)">Overall</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="changeTab('running', this)">Running</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="changeTab('training', this)">Training</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="changeTab('sleep', this)">Sleep</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="changeTab('diet', this)">Diet</a></li>
+      </ul>
+      <div>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDataModal">Add Data</button>
+        <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#setGoalsModal">Set Goals</button>
+      </div>
+    </div>
+
+    <!-- 数据展示区域 -->
+    <div id="dataCards" class="row mt-20">
+      <div >
+        <div class="card text-center shadow">
+          <div class="card-body">
+            <h5 class="card-title">🚶 Steps Record</h5>
+            <p class="card-text display-4">2099 Steps</p>
+            <button class="btn btn-outline-primary">Click to View Data</button>
+          </div>
+        </div>
+      </div>
+      <div >
+        <div class="card text-center shadow">
+          <div class="card-body">
+            <h5 class="card-title">😴 Sleep Record</h5>
+            <p class="card-text display-4">8h 55min</p>
+            <button class="btn btn-outline-primary">Click to View Data</button>
+          </div>
+        </div>
+      </div>
+      <div >
+        <div class="card text-center shadow">
+          <div class="card-body">
+            <h5 class="card-title">🥗 Diet</h5>
+            <p class="card-text display-4">1040 Kcal</p>
+            <button class="btn btn-outline-primary">Click to View Data</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 图表区域 -->
+    <div id="chartContainer" class="mt-4" style="display: none; height: 400px;">
+      <canvas id="dataChart"></canvas>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 🔹 Modal for Add Data -->
+<div class="modal fade" id="addDataModal" tabindex="-1" aria-labelledby="addDataModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addDataModalLabel">Add Data</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="dataType" class="form-label">Select Data Type</label>
+            <select class="form-control" id="dataType">
+              <option>Steps</option>
+              <option>Running</option>
+              <option>Training</option>
+              <option>Sleep</option>
+              <option>Diet</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="dataValue" class="form-label">Enter Value</label>
+            <input type="number" class="form-control" id="dataValue" placeholder="Enter Data">
+          </div>
+          <div class="mb-3">
+            <label for="dataDate" class="form-label">Select Date</label>
+            <input type="date" class="form-control" id="dataDate">
+          </div>
+          <button type="submit" class="btn btn-primary">Save Data</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 🔹 Modal for Set Goals -->
+<div class="modal fade" id="setGoalsModal" tabindex="-1" aria-labelledby="setGoalsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="setGoalsModalLabel">Set Goals</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="goalType" class="form-label">Goal Type</label>
+            <select class="form-control" id="goalType">
+              <option>Steps</option>
+              <option>Running</option>
+              <option>Training</option>
+              <option>Sleep</option>
+              <option>Diet</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="goalValue" class="form-label">Set Target</label>
+            <input type="number" class="form-control" id="goalValue" placeholder="Enter Target Value">
+          </div>
+          <button type="submit" class="btn btn-success">Save Goal</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  let chartInstance = null;
+
+  function changeTab(tab, element) {
+    document.querySelectorAll("#navTabs .nav-link").forEach(link => link.classList.remove("active"));
+    element.classList.add("active");
+
+    if (tab === "overall") {
+      document.getElementById("dataCards").style.display = "flex";
+      document.getElementById("chartContainer").style.display = "none";
+    } else {
+      document.getElementById("dataCards").style.display = "none";
+      document.getElementById("chartContainer").style.display = "block";
+      updateChart(tab);
+    }
+  }
+
+  function updateChart(tab) {
+    const ctx = document.getElementById('dataChart').getContext('2d');
+
+    const dataSets = {
+      "running": [5, 10, 15, 20, 25],
+      "training": [8, 12, 18, 22, 28],
+      "sleep": [6, 7, 8, 7, 6],
+      "diet": [2000, 1800, 1900, 2100, 2200]
+    };
+
+    if (chartInstance) {
+      chartInstance.destroy();
+    }
+
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+        datasets: [{
+          label: `${tab.charAt(0).toUpperCase() + tab.slice(1)} Data`,
+          data: dataSets[tab] || [],
+          borderColor: 'blue',
+          borderWidth: 2,
+          fill: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+  }
+</script>
+
+{% endblock %}
