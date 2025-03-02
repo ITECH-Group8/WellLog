@@ -1,0 +1,364 @@
+{% extends 'base_with_sidebar.html' %}
+
+{% block title %}{{ post.title|default:"Post Detail" }}{% endblock %}
+
+{% block css %}
+{{ block.super }}
+<style>
+  .post-header {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  
+  .post-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  
+  .post-meta {
+    display: flex;
+    align-items: center;
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+  
+  .post-author {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+  }
+  
+  .author-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+    background-color: #f0f0f0;
+  }
+  
+  .post-date {
+    margin-right: 15px;
+  }
+  
+  .post-content {
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    line-height: 1.7;
+  }
+  
+  .post-image {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .post-actions {
+    display: flex;
+    margin-bottom: 20px;
+    gap: 10px;
+  }
+  
+  .action-btn {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px;
+    border-radius: 50px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  
+  .action-btn i {
+    margin-right: 8px;
+    font-size: 1.1rem;
+  }
+  
+  .like-btn.active {
+    background-color: #ffebee;
+    color: #e53935;
+  }
+  
+  .comments-section {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  
+  .comments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .comment-item {
+    display: flex;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f5f5f5;
+  }
+  
+  .comment-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 15px;
+    object-fit: cover;
+    background-color: #f0f0f0;
+  }
+  
+  .comment-content {
+    flex-grow: 1;
+  }
+  
+  .comment-author {
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  
+  .comment-date {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-bottom: 8px;
+  }
+  
+  .comment-text {
+    line-height: 1.5;
+  }
+  
+  .comment-form {
+    margin-top: 30px;
+  }
+  
+  .comment-form textarea {
+    border-radius: 10px;
+    resize: none;
+    height: 100px;
+  }
+  
+  .empty-comments {
+    text-align: center;
+    padding: 40px 0;
+    color: #6c757d;
+  }
+  
+  .edit-delete-actions {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
+  
+  .post-back {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 20px;
+    color: #6c757d;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  
+  .post-back:hover {
+    color: #0d6efd;
+  }
+  
+  .post-back i {
+    margin-right: 6px;
+  }
+  
+  .error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Error message -->
+{% if error %}
+<div class="error-message">
+  <i class="bi bi-exclamation-triangle-fill me-2"></i>
+  {{ error }}
+</div>
+{% endif %}
+
+{% if messages %}
+<div class="messages">
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }}">
+    {{ message }}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Back Button -->
+<a href="{% url 'post_list' %}" class="post-back">
+  <i class="bi bi-arrow-left"></i> Back to Community
+</a>
+
+{% if post %}
+<!-- Post Detail -->
+<div class="post-header">
+  <h1 class="post-title">{{ post.title }}</h1>
+  <div class="post-meta">
+    <div class="post-author">
+      {% if post.author.profile and post.author.profile.avatar_url %}
+        <img src="{{ post.author.profile.avatar_url }}" class="author-avatar" alt="{{ post.author.username }}">
+      {% else %}
+        <div class="author-avatar d-flex align-items-center justify-content-center bg-secondary text-white">
+          {{ post.author.username|first|upper }}
+        </div>
+      {% endif %}
+      <span>{{ post.author.username }}</span>
+    </div>
+    <div class="post-date">
+      <i class="bi bi-calendar3"></i>
+      {{ post.created_at|date:"F j, Y" }}
+    </div>
+  </div>
+  
+  {% if post.author == request.user %}
+  <div class="edit-delete-actions">
+    <a href="{% url 'post_edit' post.id %}" class="btn btn-sm btn-outline-primary">
+      <i class="bi bi-pencil"></i> Edit
+    </a>
+    <a href="{% url 'post_delete' post.id %}" class="btn btn-sm btn-outline-danger">
+      <i class="bi bi-trash"></i> Delete
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+{% if post.image_url %}
+<div class="image-loading-container" style="width:100%; height:300px; display:flex; align-items:center; justify-content:center; background-color:#f8f9fa; margin-bottom:20px; border-radius:10px;">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+<img id="post-main-image" src="{{ post.image_url }}" class="post-image" alt="{{ post.title }}" style="display:none;">
+{% endif %}
+
+<div class="post-content">
+  {{ post.content|linebreaks }}
+</div>
+
+<div class="post-actions">
+  <form action="{% url 'like_toggle' post.id %}" method="post" class="like-action me-2">
+    {% csrf_token %}
+    <button type="submit" class="action-btn like-btn btn {% if user_has_liked %}btn-danger{% else %}btn-outline-danger{% endif %}">
+      <i class="bi {% if user_has_liked %}bi-heart-fill{% else %}bi-heart{% endif %}"></i> 
+      {% if user_has_liked %}Liked{% else %}Like{% endif %} 
+      {% if post.like_count > 0 %}({{ post.like_count }}){% endif %}
+    </button>
+  </form>
+  <button class="action-btn btn btn-outline-primary" onclick="document.getElementById('comment-form').focus()">
+    <i class="bi bi-chat"></i> Comment {% if post.comment_count > 0 %}({{ post.comment_count }}){% endif %}
+  </button>
+  <button class="action-btn btn btn-outline-secondary ms-auto">
+    <i class="bi bi-share"></i> Share
+  </button>
+</div>
+
+<!-- Comments Section -->
+<div class="comments-section">
+  <div class="comments-header">
+    <h3>Comments ({{ comments|length }})</h3>
+  </div>
+  
+  {% if comments %}
+    {% for comment in comments %}
+    <div class="comment-item">
+      {% if comment.author.profile and comment.author.profile.avatar_url %}
+        <img src="{{ comment.author.profile.avatar_url }}" class="comment-avatar" alt="{{ comment.author.username }}">
+      {% else %}
+        <div class="comment-avatar d-flex align-items-center justify-content-center bg-secondary text-white">
+          {{ comment.author.username|first|upper }}
+        </div>
+      {% endif %}
+      <div class="comment-content">
+        <div class="comment-author">{{ comment.author.username }}</div>
+        <div class="comment-date">{{ comment.created_at|date:"F j, Y" }} at {{ comment.created_at|time:"H:i" }}</div>
+        <div class="comment-text">{{ comment.content }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-comments">
+      <i class="bi bi-chat-left-text" style="font-size: 3rem; color: #dee2e6;"></i>
+      <h5 class="mt-3">No comments yet</h5>
+      <p>Be the first to share your thoughts!</p>
+    </div>
+  {% endif %}
+  
+  <!-- Comment Form -->
+  <div class="comment-form">
+    <h4>Leave a Comment</h4>
+    {% if user.is_authenticated %}
+      <form action="{% url 'comment_create' post.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <textarea id="comment-form" name="content" class="form-control" placeholder="Write your comment here..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-send"></i> Post Comment
+        </button>
+      </form>
+    {% else %}
+      <div class="alert alert-info">
+        <a href="{% url 'account_login' %}">Log in</a> to comment on this post.
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% else %}
+<div class="alert alert-warning">
+  The post you are looking for does not exist or has been removed.
+</div>
+{% endif %}
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+<script>
+  // Mobile sidebar toggle
+  document.querySelector('.menu-toggle').addEventListener('click', function() {
+    document.body.classList.toggle('sidebar-expanded');
+  });
+  
+  // Image loading handler
+  document.addEventListener('DOMContentLoaded', function() {
+    const postImage = document.getElementById('post-main-image');
+    if (postImage) {
+      postImage.onload = function() {
+        // Show image and hide loading indicator when image is loaded
+        postImage.style.display = 'block';
+        const loadingContainer = document.querySelector('.image-loading-container');
+        if (loadingContainer) {
+          loadingContainer.style.display = 'none';
+        }
+      };
+      
+      // If image is already cached, onload event may not trigger
+      if (postImage.complete) {
+        postImage.onload();
+      }
+    }
+  });
+</script>
+{% endblock %} 
