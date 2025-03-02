@@ -1,0 +1,79 @@
+{% extends 'base_with_sidebar.html' %}
+
+{% block title %}个人资料{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body text-center">
+          <img src="{{ user.profile.avatar_url }}" class="rounded-circle img-fluid mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+          <h4>{{ user.username }}</h4>
+          <p class="text-muted">{{ user.email }}</p>
+          <a href="{% url 'profile_update' %}" class="btn btn-primary">编辑个人资料</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h5>个人资料信息</h5>
+        </div>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-sm-3">
+              <h6 class="mb-0">用户名</h6>
+            </div>
+            <div class="col-sm-9 text-secondary">
+              {{ user.username }}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-3">
+              <h6 class="mb-0">邮箱</h6>
+            </div>
+            <div class="col-sm-9 text-secondary">
+              {{ user.email }}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-3">
+              <h6 class="mb-0">个人简介</h6>
+            </div>
+            <div class="col-sm-9 text-secondary">
+              {{ user.profile.bio|default:"暂无简介" }}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-3">
+              <h6 class="mb-0">注册时间</h6>
+            </div>
+            <div class="col-sm-9 text-secondary">
+              {{ user.date_joined|date:"Y-m-d H:i" }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-3">
+              <h6 class="mb-0">最后登录</h6>
+            </div>
+            <div class="col-sm-9 text-secondary">
+              {{ user.last_login|date:"Y-m-d H:i" }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

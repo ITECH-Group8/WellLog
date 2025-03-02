@@ -1,0 +1,255 @@
+{% extends 'health/dashboard.html' %}
+
+{% block content %}
+<!-- Mobile Menu Toggle Button -->
+<button class="menu-toggle d-md-none d-block btn">
+  <i class="bi bi-list"></i>
+</button>
+
+<!-- Left Sidebar -->
+<div class="sidebar">
+  <div class="sidebar-logo text-center">
+    <img src="https://via.placeholder.com/80" class="rounded-circle mb-2" alt="Logo" width="60" height="60">
+    <h5>WellLog</h5>
+  </div>
+  <ul class="nav flex-column px-3">
+    <li class="nav-item">
+      <a href="{% url 'dashboard' %}" class="nav-link {% if active_tab == 'overall' %}active{% else %}{% endif %} d-flex align-items-center">
+        <i class="bi bi-speedometer2"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{% url 'community_list' %}" class="nav-link d-flex align-items-center">
+        <i class="bi bi-people"></i>
+        <span>Community</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="#" class="nav-link d-flex align-items-center">
+        <i class="bi bi-robot"></i>
+        <span>AI Advice</span>
+      </a>
+    </li>
+    <li class="nav-item mt-5">
+      <a href="{% url 'account_logout' %}" class="nav-link d-flex align-items-center">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="#" class="nav-link d-flex align-items-center">
+        <i class="bi bi-gear"></i>
+        <span>Settings</span>
+      </a>
+    </li>
+  </ul>
+</div>
+
+<!-- Main Content Area -->
+<div class="main-content">
+  <!-- Navigation Tabs -->
+  <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'overall' %}active{% endif %}" href="{% url 'dashboard' %}">Overview</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'running' %}active{% endif %}" href="{% url 'running_history' %}">Running</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'step' %}active{% endif %}" href="{% url 'steps_history' %}">Steps</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'training' %}active{% endif %}" href="{% url 'training_history' %}">Training</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'sleep' %}active{% endif %}" href="{% url 'sleep_history' %}">Sleep</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'diet' %}active{% endif %}" href="{% url 'diet_history' %}">Diet</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'mood' %}active{% endif %}" href="{% url 'mood_history' %}">Mood</a>
+      </li>
+    </ul>
+    <div>
+      <a href="{% url 'training_add' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Add Training Record
+      </a>
+    </div>
+  </div>
+  
+  <!-- Training Records Filter -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Training Records Filter</h5>
+      <div>
+        <button id="clear-filters" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-x-circle me-1"></i> Clear Filters
+        </button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label for="exercise-filter" class="form-label">Filter by Exercise Type</label>
+          <select id="exercise-filter" class="form-select">
+            <option value="">All Exercise Types</option>
+            <option value="strength">Strength Training</option>
+            <option value="cardio">Cardio Training</option>
+            <option value="flexibility">Flexibility Training</option>
+            <option value="balance">Balance Training</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="date-range" class="form-label">Date Range</label>
+          <select id="date-range" class="form-select">
+            <option value="7">Last 7 Days</option>
+            <option value="30" selected>Last 30 Days</option>
+            <option value="90">Last 90 Days</option>
+            <option value="all">All Time</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="sort-by" class="form-label">Sort By</label>
+          <select id="sort-by" class="form-select">
+            <option value="date-desc" selected>Date (Newest First)</option>
+            <option value="date-asc">Date (Oldest First)</option>
+            <option value="duration-desc">Duration (High to Low)</option>
+            <option value="duration-asc">Duration (Low to High)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Training Records Table -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-light">
+      <h5>Training Records</h5>
+    </div>
+    <div class="card-body">
+      {% if records %}
+        <div class="table-responsive">
+          <table class="table table-striped table-hover" id="training-table">
+            <thead class="table-light">
+              <tr>
+                <th>Date</th>
+                <th>Exercise Type</th>
+                <th>Description</th>
+                <th>Sets</th>
+                <th>Reps</th>
+                <th>Duration (min)</th>
+                <th data-bs-toggle="tooltip" title="Intensity Level (1-5)">Intensity</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for record in records %}
+                <tr data-exercise-type="{{ record.exercise_type }}">
+                  <td>{{ record.date }}</td>
+                  <td>{{ record.get_exercise_type_display }}</td>
+                  <td>{{ record.description|default:"-" }}</td>
+                  <td>{{ record.sets|default:"-" }}</td>
+                  <td>{{ record.reps|default:"-" }}</td>
+                  <td>{{ record.duration_minutes }}</td>
+                  <td>
+                    <div class="intensity-indicator">
+                      {% for i in "12345" %}
+                        {% if forloop.counter <= record.intensity %}
+                          <i class="bi bi-star-fill text-warning"></i>
+                        {% else %}
+                          <i class="bi bi-star text-muted"></i>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </td>
+                  <td>
+                    <a href="{% url 'training_edit' record.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                    <a href="{% url 'training_delete' record.id %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="text-center py-5">
+          <div class="mb-4">
+            <i class="bi bi-clipboard-data" style="font-size: 3rem; color: #ddd;"></i>
+          </div>
+          <p class="text-muted">No training records found</p>
+          <div>
+            <a href="{% url 'training_add' %}" class="btn btn-primary">
+              <i class="bi bi-plus-lg me-1"></i> Add Your First Training Record
+            </a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+<script>
+  // Initialize when document is fully loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Get filter and table elements
+    const exerciseFilter = document.getElementById('exercise-filter');
+    const dateRange = document.getElementById('date-range');
+    const sortBy = document.getElementById('sort-by');
+    const clearFilters = document.getElementById('clear-filters');
+    const table = document.getElementById('training-table');
+    
+    // Apply filters function
+    function applyFilters() {
+      if (!table) return;
+      
+      const rows = table.querySelectorAll('tbody tr');
+      const exerciseType = exerciseFilter.value;
+      
+      rows.forEach(row => {
+        // Exercise type filtering
+        if (exerciseType && row.dataset.exerciseType !== exerciseType) {
+          row.style.display = 'none';
+        } else {
+          row.style.display = '';
+        }
+      });
+      
+      // Date and sorting logic will be implemented later
+      // This requires date data processing via Django view or JavaScript
+    }
+    
+    // Add event listeners
+    if (exerciseFilter) exerciseFilter.addEventListener('change', applyFilters);
+    if (dateRange) dateRange.addEventListener('change', applyFilters);
+    if (sortBy) sortBy.addEventListener('change', applyFilters);
+    
+    // Clear filters
+    if (clearFilters) {
+      clearFilters.addEventListener('click', function() {
+        if (exerciseFilter) exerciseFilter.value = '';
+        if (dateRange) dateRange.value = '30';
+        if (sortBy) sortBy.value = 'date-desc';
+        
+        // Reset table display
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+          row.style.display = '';
+        });
+      });
+    }
+  });
+</script>
+{% endblock %} 

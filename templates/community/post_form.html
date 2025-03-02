@@ -1,0 +1,148 @@
+{% extends 'base_with_sidebar.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if form.instance.id %}编辑帖子{% else %}创建帖子{% endif %}{% endblock %}
+
+{% block css %}
+{{ block.super }}
+<style>
+  .post-form-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .form-header {
+    margin-bottom: 30px;
+  }
+  
+  .image-preview {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    display: none;
+  }
+  
+  .current-image {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .custom-file-upload {
+    display: inline-block;
+    padding: 10px 15px;
+    cursor: pointer;
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+  
+  .custom-file-upload:hover {
+    background-color: #e9ecef;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  
+  .error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- 错误消息 -->
+{% if error %}
+<div class="error-message">
+  <i class="bi bi-exclamation-triangle-fill me-2"></i>
+  {{ error }}
+</div>
+{% endif %}
+
+{% if messages %}
+<div class="messages">
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }}">
+    {{ message }}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="post-form-container">
+  <div class="form-header">
+    <a href="{% url 'post_list' %}" class="text-decoration-none text-secondary">
+      <i class="bi bi-arrow-left"></i> 返回社区
+    </a>
+    <h2 class="mt-3">{% if form.instance.id %}编辑帖子{% else %}创建新帖子{% endif %}</h2>
+    <p class="text-muted">分享你的健身旅程和经验</p>
+  </div>
+  
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+      {{ form.title|as_crispy_field }}
+    </div>
+    
+    <div class="mb-3">
+      {{ form.content|as_crispy_field }}
+    </div>
+    
+    <div class="mb-3">
+      <label for="id_image_upload" class="form-label">图片 (可选)</label>
+      {% if form.instance.id and form.instance.image_url %}
+        <img class="current-image" src="{{ form.instance.image_url }}" alt="当前图片">
+        <p class="text-muted mb-2">当前图片</p>
+      {% endif %}
+      <img id="image-preview" class="image-preview" alt="预览图片">
+      <div class="input-group">
+        <input type="file" class="form-control" id="id_image_upload" name="image_upload" accept="image/*">
+      </div>
+      <div class="form-text">添加一张图片来增强你的帖子</div>
+    </div>
+    
+    <div class="form-actions">
+      <a href="{% url 'post_list' %}" class="btn btn-outline-secondary">取消</a>
+      <button type="submit" class="btn btn-primary">
+        {% if form.instance.id %}保存更改{% else %}发布帖子{% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+<script>
+  // 图片预览功能
+  document.getElementById('id_image_upload').addEventListener('change', function(e) {
+    const preview = document.getElementById('image-preview');
+    const file = e.target.files[0];
+    
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+      }
+      reader.readAsDataURL(file);
+    } else {
+      preview.style.display = 'none';
+    }
+  });
+</script>
+{% endblock %} 
