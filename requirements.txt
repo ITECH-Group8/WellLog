@@ -9,14 +9,17 @@ Django==5.1.2
 django-allauth==65.0.2
 django-crispy-forms==2.3
 django-debug-toolbar==4.4.6
+django-storages==1.14.2
 gunicorn==23.0.0
 idna==3.4
 oauthlib==3.2.2
 packaging==23.1
+Pillow==10.3.0
 psycopg==3.2.3
 psycopg-binary==3.2.3
 pycparser==2.21
 PyJWT==2.6.0
+python-dotenv==1.0.1
 python3-openid==3.2.0
 requests==2.28.2
 requests-oauthlib==1.3.1
@@ -24,3 +27,14 @@ sqlparse==0.4.3
 typing_extensions==4.9.0
 urllib3==1.26.14
 whitenoise==6.7.0
+# 云服务依赖
+# 阿里云OSS
+aliyun-python-sdk-core==2.13.36
+aliyun-python-sdk-kms==2.16.0
+oss2==2.17.0
+
+# 腾讯云COS
+# cos-python-sdk-v5==1.9.26
+
+# AWS S3
+# boto3==1.28.62

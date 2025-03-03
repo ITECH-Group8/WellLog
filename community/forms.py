@@ -1,57 +1,97 @@
 from django import forms
 from .models import Post, Comment
-import imghdr
+from django.core.files.base import ContentFile
 from PIL import Image
-from io import BytesIO
+import io
+import uuid
+import os
+from .storage import AliyunOSSStorage
+
+# 创建OSS存储实例
+oss_storage = AliyunOSSStorage()
 
 class PostForm(forms.ModelForm):
-    # Add a temporary ImageField for form processing
-    image_upload = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'form-control'}), label='Image')
-    
     class Meta:
         model = Post
-        fields = ['title', 'content']
+        fields = ['title', 'content', 'image']
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Title'}),
-            'content': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Share your fitness journey and experiences...', 'rows': 5}),
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '请输入标题'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'placeholder': '请输入内容', 'rows': 5}),
+        }
+        labels = {
+            'title': '标题',
+            'content': '内容',
+            'image': '图片',
         }
     
     def save(self, commit=True):
         instance = super().save(commit=False)
         
-        # Process image upload
-        image_upload = self.cleaned_data.get('image_upload')
-        if image_upload:
-            # Compress image
-            img = Image.open(image_upload)
+        image = self.cleaned_data.get('image')
+        
+        if image:
+            # 打开图片进行处理
+            img = Image.open(image)
             
-            # Calculate appropriate scale ratio, keeping large images no wider than 1200px
-            max_width = 1200
-            if img.width > max_width:
-                ratio = max_width / img.width
-                new_size = (max_width, int(img.height * ratio))
-                img = img.resize(new_size, Image.LANCZOS)
-            
-            # Convert image to RGB mode (avoid RGBA mode issues)
+            # 将RGBA转换为RGB以避免保存问题
             if img.mode == 'RGBA':
                 img = img.convert('RGB')
-                
-            # Save compressed image in JPEG format (80% quality)
-            output = BytesIO()
-            img.save(output, format='JPEG', quality=80, optimize=True)
-            output.seek(0)
             
-            # Read compressed image binary data
-            instance.image = output.getvalue()
-            instance.image_type = 'image/jpeg'
+            # 调整大图尺寸
+            max_width = 1200
+            if img.width > max_width:
+                width_percent = max_width / float(img.width)
+                height = int(float(img.height) * width_percent)
+                img = img.resize((max_width, height), Image.LANCZOS)
             
-            # Create thumbnail - resize to 300px width for list display
-            thumbnail_size = (300, int(300 * img.height / img.width))
-            thumbnail = img.resize(thumbnail_size, Image.LANCZOS)
-            thumbnail_output = BytesIO()
-            thumbnail.save(thumbnail_output, format='JPEG', quality=70, optimize=True)
-            thumbnail_output.seek(0)
-            instance.thumbnail = thumbnail_output.getvalue()
+            # 生成唯一的文件名
+            image_id = uuid.uuid4().hex
+            original_name = os.path.splitext(image.name)[0]
+            file_extension = '.jpg'
+            
+            # 保存大图到IO缓冲区
+            large_io = io.BytesIO()
+            img.save(large_io, format='JPEG', quality=80)
+            large_io.seek(0)
+            
+            # 尝试上传到阿里云OSS
+            image_path = f"community/images/{image_id}_{original_name}{file_extension}"
+            oss_url = oss_storage.upload_image(large_io, image_path)
+            
+            if oss_url:
+                # 如果上传到OSS成功，保存URL并清空本地字段
+                instance.image_url_field = oss_url
+                instance.image = None  # 清空本地字段
+                print(f"图片已上传到OSS: {oss_url}")
+            else:
+                # 回退到本地存储
+                instance.image.save(f"{original_name}{file_extension}", ContentFile(large_io.getvalue()), save=False)
+                instance.image_url_field = None  # 清空OSS字段
+            
+            # 创建缩略图
+            thumb_width = 300
+            width_percent = thumb_width / float(img.width)
+            height = int(float(img.height) * width_percent)
+            thumb_img = img.resize((thumb_width, height), Image.LANCZOS)
+            
+            # 保存缩略图到IO缓冲区
+            thumb_io = io.BytesIO()
+            thumb_img.save(thumb_io, format='JPEG', quality=70)
+            thumb_io.seek(0)
+            
+            # 尝试上传缩略图到阿里云OSS
+            thumb_path = f"community/thumbnails/thumb_{image_id}_{original_name}{file_extension}"
+            thumb_oss_url = oss_storage.upload_image(thumb_io, thumb_path)
+            
+            if thumb_oss_url:
+                # 如果上传到OSS成功，保存URL并清空本地字段
+                instance.thumbnail_url_field = thumb_oss_url
+                instance.thumbnail = None  # 清空本地字段
+                print(f"缩略图已上传到OSS: {thumb_oss_url}")
+            else:
+                # 回退到本地存储
+                instance.thumbnail.save(f"thumb_{original_name}{file_extension}", ContentFile(thumb_io.getvalue()), save=False)
+                instance.thumbnail_url_field = None  # 清空OSS字段
         
         if commit:
             instance.save()
@@ -63,7 +103,7 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['content']
         widgets = {
-            'content': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Write your comment here...', 'rows': 3}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'placeholder': '写下你的评论...', 'rows': 3}),
         }
         labels = {
             'content': '',
