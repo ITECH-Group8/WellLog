@@ -3,7 +3,7 @@ from .models import Post, Comment, Like
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'created_at', 'total_likes', 'total_comments')
+    list_display = ('title', 'author', 'created_at', 'like_count')
     list_filter = ('created_at',)
     search_fields = ('title', 'content', 'author__username')
     date_hierarchy = 'created_at'

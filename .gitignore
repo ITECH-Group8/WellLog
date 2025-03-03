@@ -13,6 +13,6 @@ media
 
 # Virtual environment
 .venv
-.env
+# .env
 
 .vscode

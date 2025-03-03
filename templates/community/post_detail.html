@@ -212,6 +212,9 @@
   <i class="bi bi-arrow-left"></i> Back to Community
 </a>
 
+<!-- CSRF Token for AJAX requests -->
+{% csrf_token %}
+
 {% if post %}
 <!-- Post Detail -->
 <div class="post-header">
@@ -246,12 +249,41 @@
 </div>
 
 {% if post.image_url %}
-<div class="image-loading-container" style="width:100%; height:300px; display:flex; align-items:center; justify-content:center; background-color:#f8f9fa; margin-bottom:20px; border-radius:10px;">
-  <div class="spinner-border text-primary" role="status">
-    <span class="visually-hidden">Loading...</span>
+<div class="image-container mb-4">
+  <div id="loading-spinner" style="height: 300px; display: flex; justify-content: center; align-items: center;">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
   </div>
+  <img id="post-main-image" src="{{ post.image_url }}" class="post-image" alt="{{ post.title }}" style="display:none;" onload="handleImageLoaded(this)" onerror="handleImageError(this)">
+  
+  <script>
+    function handleImageLoaded(img) {
+      console.log('Image loaded successfully');
+      document.getElementById('loading-spinner').style.display = 'none';
+      img.style.display = 'block';
+    }
+    
+    function handleImageError(img) {
+      console.error('Image loading failed');
+      document.getElementById('loading-spinner').innerHTML = '<div class="text-danger"><i class="bi bi-exclamation-triangle" style="font-size: 3rem;"></i><p>Image loading failed</p></div>';
+      img.style.display = 'none';
+    }
+    
+    // Check if image is already loaded (from cache)
+    document.addEventListener('DOMContentLoaded', function() {
+      var img = document.getElementById('post-main-image');
+      if (img && img.complete) {
+        console.log('Image loaded from cache');
+        if (img.naturalWidth === 0) {
+          handleImageError(img);
+        } else {
+          handleImageLoaded(img);
+        }
+      }
+    });
+  </script>
 </div>
-<img id="post-main-image" src="{{ post.image_url }}" class="post-image" alt="{{ post.title }}" style="display:none;">
 {% endif %}
 
 <div class="post-content">
@@ -259,20 +291,83 @@
 </div>
 
 <div class="post-actions">
-  <form action="{% url 'like_toggle' post.id %}" method="post" class="like-action me-2">
-    {% csrf_token %}
-    <button type="submit" class="action-btn like-btn btn {% if user_has_liked %}btn-danger{% else %}btn-outline-danger{% endif %}">
-      <i class="bi {% if user_has_liked %}bi-heart-fill{% else %}bi-heart{% endif %}"></i> 
-      {% if user_has_liked %}Liked{% else %}Like{% endif %} 
-      {% if post.like_count > 0 %}({{ post.like_count }}){% endif %}
-    </button>
-  </form>
+  <button type="button" class="action-btn like-btn btn {% if user_liked %}btn-danger{% else %}btn-outline-danger{% endif %}" data-post-id="{{ post.id }}">
+    <i class="bi {% if user_liked %}bi-heart-fill{% else %}bi-heart{% endif %}"></i> 
+    <span class="like-text">{% if user_liked %}Liked{% else %}Like{% endif %}</span>
+    <span id="likeCount" class="like-count">{% if post.like_count > 0 %}({{ post.like_count }}){% endif %}</span>
+  </button>
+  
   <button class="action-btn btn btn-outline-primary" onclick="document.getElementById('comment-form').focus()">
     <i class="bi bi-chat"></i> Comment {% if post.comment_count > 0 %}({{ post.comment_count }}){% endif %}
   </button>
   <button class="action-btn btn btn-outline-secondary ms-auto">
     <i class="bi bi-share"></i> Share
   </button>
+  
+  <script>
+    // Like button event binding
+    document.addEventListener('DOMContentLoaded', function() {
+      var likeBtn = document.querySelector('.like-btn');
+      if (!likeBtn) return;
+      
+      likeBtn.addEventListener('click', function() {
+        var postId = this.getAttribute('data-post-id');
+        var csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+        
+        console.log('Like button clicked, Post ID:', postId);
+        
+        // Send like request
+        fetch('/community/posts/' + postId + '/like/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+          },
+          credentials: 'same-origin'
+        })
+        .then(response => {
+          console.log('Like request response status:', response.status);
+          if (!response.ok) {
+            throw new Error('Like request failed, status code: ' + response.status);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Like request response data:', data);
+          
+          // Update UI
+          var icon = likeBtn.querySelector('i');
+          var likeText = likeBtn.querySelector('.like-text');
+          var likeCount = document.getElementById('likeCount');
+          
+          if (data.liked) {
+            likeBtn.classList.remove('btn-outline-danger');
+            likeBtn.classList.add('btn-danger');
+            icon.classList.remove('bi-heart');
+            icon.classList.add('bi-heart-fill');
+            likeText.textContent = 'Liked';
+          } else {
+            likeBtn.classList.add('btn-outline-danger');
+            likeBtn.classList.remove('btn-danger');
+            icon.classList.add('bi-heart');
+            icon.classList.remove('bi-heart-fill');
+            likeText.textContent = 'Like';
+          }
+          
+          // Always update like count display regardless of whether it's 0
+          if (data.like_count > 0) {
+            likeCount.textContent = '(' + data.like_count + ')';
+          } else {
+            likeCount.textContent = '';
+          }
+        })
+        .catch(error => {
+          console.error('Like request failed:', error);
+          alert('Like failed, please try again');
+        });
+      });
+    });
+  </script>
 </div>
 
 <!-- Comments Section -->
@@ -280,23 +375,23 @@
   <div class="comments-header">
     <h3>Comments ({{ comments|length }})</h3>
   </div>
-  
+
   {% if comments %}
     {% for comment in comments %}
-    <div class="comment-item">
-      {% if comment.author.profile and comment.author.profile.avatar_url %}
-        <img src="{{ comment.author.profile.avatar_url }}" class="comment-avatar" alt="{{ comment.author.username }}">
-      {% else %}
-        <div class="comment-avatar d-flex align-items-center justify-content-center bg-secondary text-white">
-          {{ comment.author.username|first|upper }}
+      <div class="comment-item">
+        {% if comment.author.profile and comment.author.profile.avatar_url %}
+          <img src="{{ comment.author.profile.avatar_url }}" class="comment-avatar" alt="{{ comment.author.username }}">
+        {% else %}
+          <div class="comment-avatar d-flex align-items-center justify-content-center bg-secondary text-white">
+            {{ comment.author.username|first|upper }}
+          </div>
+        {% endif %}
+        <div class="comment-content">
+          <div class="comment-author">{{ comment.author.username }}</div>
+          <div class="comment-date">{{ comment.created_at|date:"F j, Y" }} at {{ comment.created_at|time:"H:i" }}</div>
+          <div class="comment-text">{{ comment.content }}</div>
         </div>
-      {% endif %}
-      <div class="comment-content">
-        <div class="comment-author">{{ comment.author.username }}</div>
-        <div class="comment-date">{{ comment.created_at|date:"F j, Y" }} at {{ comment.created_at|time:"H:i" }}</div>
-        <div class="comment-text">{{ comment.content }}</div>
       </div>
-    </div>
     {% endfor %}
   {% else %}
     <div class="empty-comments">
@@ -305,7 +400,7 @@
       <p>Be the first to share your thoughts!</p>
     </div>
   {% endif %}
-  
+
   <!-- Comment Form -->
   <div class="comment-form">
     <h4>Leave a Comment</h4>
@@ -341,22 +436,35 @@
     document.body.classList.toggle('sidebar-expanded');
   });
   
-  // Image loading handler
-  document.addEventListener('DOMContentLoaded', function() {
-    const postImage = document.getElementById('post-main-image');
-    if (postImage) {
+  document.addEventListener("DOMContentLoaded", function() {
+    var postImage = document.getElementById('post-main-image');
+    var loadingSpinner = document.getElementById('loading-spinner');
+    
+    if (postImage && loadingSpinner) {
+      // Ensure loading indicator is hidden after image loads
       postImage.onload = function() {
-        // Show image and hide loading indicator when image is loaded
+        console.log('Image loaded successfully');
+        loadingSpinner.style.display = 'none';
         postImage.style.display = 'block';
-        const loadingContainer = document.querySelector('.image-loading-container');
-        if (loadingContainer) {
-          loadingContainer.style.display = 'none';
-        }
       };
       
-      // If image is already cached, onload event may not trigger
+      // Image error handling function
+      postImage.onerror = function() {
+        console.error('Image loading failed');
+        loadingSpinner.innerHTML = '<div class="text-danger"><i class="bi bi-exclamation-triangle" style="font-size: 3rem;"></i><p>Image loading failed</p></div>';
+        postImage.style.display = 'none';
+      };
+      
+      // If image is already loaded (from cache), manually trigger onload event
       if (postImage.complete) {
-        postImage.onload();
+        console.log('Image loaded from cache');
+        if (postImage.naturalWidth === 0) {
+          // Image failed to load
+          postImage.onerror();
+        } else {
+          // Image loaded successfully
+          postImage.onload();
+        }
       }
     }
   });
