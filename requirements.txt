@@ -27,6 +27,7 @@ sqlparse==0.4.3
 typing_extensions==4.9.0
 urllib3==1.26.14
 whitenoise==6.7.0
+django-widget-tweaks==1.4.12
 # 云服务依赖
 # 阿里云OSS
 aliyun-python-sdk-core==2.13.36

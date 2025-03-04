@@ -1,65 +1,12 @@
-{% extends 'base.html' %}
+{% extends 'base_with_sidebar.html' %}
+{% load static %}
 
 {% block title %}Health Dashboard{% endblock %}
 
 {% block css %}
 {{ block.super }}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <style>
-  /* Sidebar Styles */
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    z-index: 1000;
-    padding-top: 60px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    background-color: #f8f9fa;
-    transition: all 0.3s;
-    width: 260px;
-  }
-  
-  /* Main Content Styles */
-  .main-content {
-    margin-left: 260px;
-    padding: 20px;
-    transition: all 0.3s;
-  }
-  
-  /* Navigation Link Styles */
-  .sidebar .nav-link {
-    padding: 12px 20px;
-    border-radius: 5px;
-    margin-bottom: 8px;
-    color: #495057;
-    font-weight: 500;
-    transition: all 0.2s;
-  }
-  
-  .sidebar .nav-link:hover {
-    background-color: #e9ecef;
-    color: #0d6efd;
-  }
-  
-  .sidebar .nav-link.active {
-    background-color: #0d6efd !important;
-    color: white !important;
-  }
-  
-  /* Icon Styles */
-  .sidebar .nav-link i {
-    margin-right: 10px;
-    font-size: 1.2rem;
-  }
-  
-  /* Logo Area Styles */
-  .sidebar-logo {
-    padding: 15px 0;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #dee2e6;
-  }
-  
   /* Health Data Card Styles */
   .health-card {
     transition: all 0.3s;
@@ -85,364 +32,340 @@
     margin: 10px 0;
   }
   
-  /* Responsive Adjustments */
-  @media (max-width: 992px) {
-    .sidebar {
-      width: 80px;
-      padding-top: 70px;
-    }
-    
-    .sidebar .nav-link span {
-      display: none;
-    }
-    
-    .main-content {
-      margin-left: 80px;
-    }
-    
-    .sidebar-logo {
-      text-align: center;
-      padding: 10px 0;
-    }
-    
-    .sidebar-logo img {
-      width: 40px;
-      height: 40px;
-    }
-    
-    .sidebar-logo h5 {
-      display: none;
-    }
-    
-    .sidebar .nav-link {
-      text-align: center;
-      padding: 12px;
-    }
-    
-    .sidebar .nav-link i {
-      margin-right: 0;
-      font-size: 1.4rem;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .sidebar {
-      width: 0;
-      padding: 0;
-      overflow: hidden;
-    }
-    
-    .main-content {
-      margin-left: 0;
-    }
-    
-    body.sidebar-expanded .sidebar {
-      width: 260px;
-    }
-    
-    body.sidebar-expanded .main-content {
-      margin-left: 260px;
-    }
-    
-    .menu-toggle {
-      display: block;
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      z-index: 1050;
-      padding: 10px;
-      background-color: #0d6efd;
-      color: white;
-      border-radius: 5px;
-    }
-  }
-  
   /* Tab Styles */
   .nav-tabs .nav-link {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.8rem;
     border-radius: 5px 5px 0 0;
-    padding: 10px 15px;
     font-weight: 500;
+  }
+  
+  .nav-tabs .nav-link i {
+    font-size: 0.9rem;
   }
   
   .nav-tabs .nav-link.active {
     background-color: #f8f9fa;
     border-bottom-color: #f8f9fa;
   }
+  
+  .dashboard-header {
+    margin-bottom: 1rem !important;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Mobile Menu Toggle Button -->
-<button class="menu-toggle d-md-none d-block btn">
-  <i class="bi bi-list"></i>
-</button>
-
-<!-- Left Sidebar -->
-<div class="sidebar">
-  <div class="sidebar-logo text-center">
-    <img src="https://via.placeholder.com/80" class="rounded-circle mb-2" alt="Logo" width="60" height="60">
-    <h5>WellLog</h5>
-  </div>
-  <ul class="nav flex-column px-3">
-    <li class="nav-item">
-      <a href="{% url 'dashboard' %}" class="nav-link {% if active_tab == 'overall' %}active{% else %}{% endif %} d-flex align-items-center">
-        <i class="bi bi-speedometer2"></i>
-        <span>Dashboard</span>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{% url 'community_list' %}" class="nav-link d-flex align-items-center">
-        <i class="bi bi-people"></i>
-        <span>Community</span>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="#" class="nav-link d-flex align-items-center">
-        <i class="bi bi-robot"></i>
-        <span>AI Advice</span>
-      </a>
-    </li>
-    <li class="nav-item mt-5">
-      <a href="{% url 'account_logout' %}" class="nav-link d-flex align-items-center">
-        <i class="bi bi-box-arrow-right"></i>
-        <span>Logout</span>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="#" class="nav-link d-flex align-items-center">
-        <i class="bi bi-gear"></i>
-        <span>Settings</span>
-      </a>
-    </li>
-  </ul>
-</div>
-
-<!-- Main Content Area -->
-<div class="main-content">
-  <!-- Navigation Tabs -->
-  <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
-    <ul class="nav nav-tabs">
-      <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'overall' %}active{% endif %}" href="{% url 'dashboard' %}">Overview</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'running' %}active{% endif %}" href="{% url 'running_history' %}">Running</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'step' %}active{% endif %}" href="{% url 'steps_history' %}">Steps</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'training' %}active{% endif %}" href="{% url 'training_history' %}">Training</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'sleep' %}active{% endif %}" href="{% url 'sleep_history' %}">Sleep</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'diet' %}active{% endif %}" href="{% url 'diet_history' %}">Diet</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'mood' %}active{% endif %}" href="{% url 'mood_history' %}">Mood</a>
-      </li>
-    </ul>
-    <div>
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDataModal">
-        <i class="bi bi-plus-circle me-1"></i> Add Data
-      </button>
-      <button class="btn btn-outline-primary">
-        <i class="bi bi-trophy me-1"></i> Set Goals
-      </button>
+<!-- Health Dashboard Content -->
+<div class="container-fluid py-4">
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h2>
+        <i class="bi bi-heart-pulse me-2"></i>Health Dashboard
+      </h2>
+    </div>
+    
+    <!-- Navigation Tabs -->
+    <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
+      <ul class="nav nav-tabs" id="healthTabs">
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'dashboard' %}">
+            <i class="bi bi-grid-3x3-gap me-1"></i>Overall
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'running_history' %}">
+            <i class="bi bi-lightning me-1"></i>Running
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'steps_history' %}">
+            <i class="bi bi-activity me-1"></i>Steps
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'training_history' %}">
+            <i class="bi bi-trophy me-1"></i>Training
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'sleep_history' %}">
+            <i class="bi bi-moon me-1"></i>Sleep
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'diet_history' %}">
+            <i class="bi bi-egg-fried me-1"></i>Diet
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'mood_history' %}">
+            <i class="bi bi-emoji-smile me-1"></i>Mood
+          </a>
+        </li>
+      </ul>
+      <div>
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addDataModal">
+          <i class="bi bi-plus-circle me-1"></i>Add Data
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- Health Data Cards -->
-  <div class="row">
-    <!-- Steps Record Card -->
-    <div class="col-md-4 mb-4">
-      <div class="card health-card h-100 text-center">
-        <div class="card-header d-flex align-items-center justify-content-center">
-          <span class="me-2">🏃</span>
-          <h5 class="card-title mb-0">Steps Record</h5>
-        </div>
-        <div class="card-body">
-          {% if steps_record %}
-            <p class="card-text display-4">{{ steps_record.steps_count }}</p>
-            <p class="text-muted">Steps</p>
-          {% else %}
-            <p class="card-text display-4">0</p>
-            <p class="text-muted">No step data today</p>
-          {% endif %}
-          <div class="mt-3">
-            <a href="{% url 'steps_history' %}" class="btn btn-outline-primary">
-              <i class="bi bi-clock-history me-1"></i> View History
-            </a>
-            {% if steps_record %}
-              <a href="{% url 'steps_edit' steps_record.id %}" class="btn btn-outline-secondary">
-                <i class="bi bi-pencil me-1"></i> Edit
-              </a>
-            {% else %}
-              <a href="{% url 'steps_add' %}" class="btn btn-outline-success">
-                <i class="bi bi-plus-lg me-1"></i> Add
-              </a>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sleep Record Card -->
-    <div class="col-md-4 mb-4">
-      <div class="card health-card h-100 text-center">
-        <div class="card-header d-flex align-items-center justify-content-center">
-          <span class="me-2">😴</span>
-          <h5 class="card-title mb-0">Sleep Record</h5>
-        </div>
-        <div class="card-body">
-          {% if sleep_record %}
-            <p class="card-text display-4">{{ sleep_record.hours }}h {{ sleep_record.minutes }}min</p>
-            <p class="text-muted">Quality: {{ sleep_record.quality|default:"Not specified" }}</p>
-          {% else %}
-            <p class="card-text display-4">0h 0min</p>
-            <p class="text-muted">No sleep data today</p>
-          {% endif %}
-          <div class="mt-3">
-            <a href="{% url 'sleep_history' %}" class="btn btn-outline-primary">
-              <i class="bi bi-clock-history me-1"></i> View History
-            </a>
-            {% if sleep_record %}
-              <a href="{% url 'sleep_edit' sleep_record.id %}" class="btn btn-outline-secondary">
-                <i class="bi bi-pencil me-1"></i> Edit
-              </a>
-            {% else %}
-              <a href="{% url 'sleep_add' %}" class="btn btn-outline-success">
-                <i class="bi bi-plus-lg me-1"></i> Add
-              </a>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Diet Record Card -->
-    <div class="col-md-4 mb-4">
-      <div class="card health-card h-100 text-center">
-        <div class="card-header d-flex align-items-center justify-content-center">
-          <span class="me-2">🍽️</span>
-          <h5 class="card-title mb-0">Diet</h5>
-        </div>
-        <div class="card-body">
-          {% if diet_record %}
-            <p class="card-text display-4">{{ diet_record.calories }}</p>
-            <p class="text-muted">Calories</p>
-          {% else %}
-            <p class="card-text display-4">0</p>
-            <p class="text-muted">No diet data today</p>
-          {% endif %}
-          <div class="mt-3">
-            <a href="{% url 'diet_history' %}" class="btn btn-outline-primary">
-              <i class="bi bi-clock-history me-1"></i> View History
-            </a>
-            {% if diet_record %}
-              <a href="{% url 'diet_edit' diet_record.id %}" class="btn btn-outline-secondary">
-                <i class="bi bi-pencil me-1"></i> Edit
-              </a>
-            {% else %}
-              <a href="{% url 'diet_add' %}" class="btn btn-outline-success">
-                <i class="bi bi-plus-lg me-1"></i> Add
-              </a>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Running Record Card -->
-    <div class="col-md-4 mb-4">
-      <div class="card health-card h-100 text-center">
-        <div class="card-header d-flex align-items-center justify-content-center">
-          <span class="me-2">🏃‍♂️</span>
-          <h5 class="card-title mb-0">Running</h5>
-        </div>
-        <div class="card-body">
-          {% if running_record %}
-            <p class="card-text display-4">{{ running_record.distance }}</p>
-            <p class="text-muted">km ({{ running_record.duration_minutes }} minutes)</p>
-          {% else %}
-            <p class="card-text display-4">0</p>
-            <p class="text-muted">No running data today</p>
-          {% endif %}
-          <div class="mt-3">
-            <a href="{% url 'running_history' %}" class="btn btn-outline-primary">
-              <i class="bi bi-clock-history me-1"></i> View History
-            </a>
-            <a href="{% url 'running_add' %}" class="btn btn-outline-success">
-              <i class="bi bi-plus-lg me-1"></i> Add
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Training Record Card -->
-    <div class="col-md-4 mb-4">
-      <div class="card health-card h-100 text-center">
-        <div class="card-header d-flex align-items-center justify-content-center">
-          <span class="me-2">💪</span>
-          <h5 class="card-title mb-0">Training</h5>
-        </div>
-        <div class="card-body">
-          {% if training_record %}
-            <p class="card-text display-4">{{ training_record.exercise_type }}</p>
-            <p class="text-muted">
-              {% if training_record.sets %}Sets: {{ training_record.sets }}{% endif %}
-              {% if training_record.reps %}Reps: {{ training_record.reps }}{% endif %}
-            </p>
-          {% else %}
-            <p class="card-text">No training today</p>
-          {% endif %}
-          <div class="mt-3">
-            <a href="{% url 'training_history' %}" class="btn btn-outline-primary">
-              <i class="bi bi-clock-history me-1"></i> View History
-            </a>
-            <a href="{% url 'training_add' %}" class="btn btn-outline-success">
-              <i class="bi bi-plus-lg me-1"></i> Add
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Mood Record Card -->
-    <div class="col-md-4 mb-4">
-      <div class="card health-card h-100 text-center">
-        <div class="card-header d-flex align-items-center justify-content-center">
-          <span class="me-2">😊</span>
-          <h5 class="card-title mb-0">Mood</h5>
-        </div>
-        <div class="card-body">
-          {% if mood_record %}
-            <p class="card-text display-4">
-              {% if mood_record.mood == 'excellent' %}😁
-              {% elif mood_record.mood == 'good' %}😊
-              {% elif mood_record.mood == 'neutral' %}😐
-              {% elif mood_record.mood == 'bad' %}😔
-              {% elif mood_record.mood == 'terrible' %}😢
+  <!-- Tab Content -->
+  <div class="tab-content mt-4" id="overallContent">
+    <div class="tab-pane fade show active" id="overall" role="tabpanel" aria-labelledby="overall-tab">
+      <div class="row">
+        <!-- Steps Record Card -->
+        <div class="col-md-4 mb-4">
+          <div class="card health-card h-100 text-center">
+            <div class="card-header">
+              <span>🏃</span>
+              <h5 class="card-title">Steps Record</h5>
+            </div>
+            <div class="card-body">
+              {% if steps_record %}
+                <p class="card-text display-4">{{ steps_record.steps_count }}</p>
+                <p class="text-muted">Steps</p>
+              {% else %}
+                <p class="card-text display-4">0</p>
+                <p class="text-muted">No step data today</p>
               {% endif %}
-            </p>
-            <p class="text-muted">{{ mood_record.mood|title }}</p>
-          {% else %}
-            <p class="card-text display-4">😶</p>
-            <p class="text-muted">No mood data today</p>
-          {% endif %}
-          <div class="mt-3">
-            <a href="{% url 'mood_history' %}" class="btn btn-outline-primary">
-              <i class="bi bi-clock-history me-1"></i> View History
-            </a>
-            <a href="{% url 'mood_add' %}" class="btn btn-outline-success">
-              <i class="bi bi-plus-lg me-1"></i> Add
-            </a>
+              <div class="mt-3">
+                <a href="{% url 'steps_history' %}" class="btn btn-outline-primary">
+                  <i class="bi bi-clock-history me-1"></i> View History
+                </a>
+                {% if steps_record %}
+                  <a href="{% url 'steps_edit' steps_record.id %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-pencil me-1"></i> Edit
+                  </a>
+                {% else %}
+                  <a href="{% url 'steps_add' %}" class="btn btn-outline-success">
+                    <i class="bi bi-plus-lg me-1"></i> Add
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sleep Record Card -->
+        <div class="col-md-4 mb-4">
+          <div class="card health-card h-100 text-center">
+            <div class="card-header">
+              <span>😴</span>
+              <h5 class="card-title">Sleep Record</h5>
+            </div>
+            <div class="card-body">
+              {% if sleep_record %}
+                <p class="card-text display-4">{{ sleep_record.hours }}h {{ sleep_record.minutes }}min</p>
+                <p class="text-muted">Quality: {{ sleep_record.quality|default:"Not specified" }}</p>
+              {% else %}
+                <p class="card-text display-4">0h 0min</p>
+                <p class="text-muted">No sleep data today</p>
+              {% endif %}
+              <div class="mt-3">
+                <a href="{% url 'sleep_history' %}" class="btn btn-outline-primary">
+                  <i class="bi bi-clock-history me-1"></i> View History
+                </a>
+                {% if sleep_record %}
+                  <a href="{% url 'sleep_edit' sleep_record.id %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-pencil me-1"></i> Edit
+                  </a>
+                {% else %}
+                  <a href="{% url 'sleep_add' %}" class="btn btn-outline-success">
+                    <i class="bi bi-plus-lg me-1"></i> Add
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diet Record Card -->
+        <div class="col-md-4 mb-4">
+          <div class="card health-card h-100 text-center">
+            <div class="card-header">
+              <span>🍽️</span>
+              <h5 class="card-title">Diet</h5>
+            </div>
+            <div class="card-body">
+              {% if diet_record %}
+                <p class="card-text display-4">{{ diet_record.calories }}</p>
+                <p class="text-muted">Calories</p>
+              {% else %}
+                <p class="card-text display-4">0</p>
+                <p class="text-muted">No diet data today</p>
+              {% endif %}
+              <div class="mt-3">
+                <a href="{% url 'diet_history' %}" class="btn btn-outline-primary">
+                  <i class="bi bi-clock-history me-1"></i> View History
+                </a>
+                {% if diet_record %}
+                  <a href="{% url 'diet_edit' diet_record.id %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-pencil me-1"></i> Edit
+                  </a>
+                {% else %}
+                  <a href="{% url 'diet_add' %}" class="btn btn-outline-success">
+                    <i class="bi bi-plus-lg me-1"></i> Add
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Running Record Card -->
+        <div class="col-md-4 mb-4">
+          <div class="card health-card h-100 text-center">
+            <div class="card-header">
+              <span>🏃‍♂️</span>
+              <h5 class="card-title">Running</h5>
+            </div>
+            <div class="card-body">
+              {% if running_record %}
+                <p class="card-text display-4">{{ running_record.distance }} km</p>
+                <p class="text-muted">{{ running_record.duration }} min | {{ running_record.calories_burned }} calories</p>
+              {% else %}
+                <p class="card-text display-4">0 km</p>
+                <p class="text-muted">No running data today</p>
+              {% endif %}
+              <div class="mt-3">
+                <a href="{% url 'running_history' %}" class="btn btn-outline-primary">
+                  <i class="bi bi-clock-history me-1"></i> View History
+                </a>
+                {% if running_record %}
+                  <a href="{% url 'running_edit' running_record.id %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-pencil me-1"></i> Edit
+                  </a>
+                {% else %}
+                  <a href="{% url 'running_add' %}" class="btn btn-outline-success">
+                    <i class="bi bi-plus-lg me-1"></i> Add
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Training Record Card -->
+        <div class="col-md-4 mb-4">
+          <div class="card health-card h-100 text-center">
+            <div class="card-header">
+              <span>💪</span>
+              <h5 class="card-title">Training</h5>
+            </div>
+            <div class="card-body">
+              {% if training_record %}
+                <p class="card-text display-4">{{ training_record.exercise_type }}</p>
+                <p class="text-muted">
+                  {% if training_record.sets %}Sets: {{ training_record.sets }}{% endif %}
+                  {% if training_record.reps %}Reps: {{ training_record.reps }}{% endif %}
+                </p>
+              {% else %}
+                <p class="card-text display-4">-</p>
+                <p class="text-muted">No training today</p>
+              {% endif %}
+              <div class="mt-3">
+                <a href="{% url 'training_history' %}" class="btn btn-outline-primary">
+                  <i class="bi bi-clock-history me-1"></i> View History
+                </a>
+                <a href="{% url 'training_add' %}" class="btn btn-outline-success">
+                  <i class="bi bi-plus-lg me-1"></i> Add
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mood Record Card -->
+        <div class="col-md-4 mb-4">
+          <div class="card health-card h-100 text-center">
+            <div class="card-header">
+              <span>😊</span>
+              <h5 class="card-title">Mood</h5>
+            </div>
+            <div class="card-body">
+              {% if mood_record %}
+                <p class="card-text display-4">
+                  {% if mood_record.mood == 'excellent' %}😁
+                  {% elif mood_record.mood == 'good' %}😊
+                  {% elif mood_record.mood == 'neutral' %}😐
+                  {% elif mood_record.mood == 'bad' %}😔
+                  {% elif mood_record.mood == 'terrible' %}😢
+                  {% endif %}
+                </p>
+                <p class="text-muted">{{ mood_record.mood|title }}</p>
+              {% else %}
+                <p class="card-text display-4">😶</p>
+                <p class="text-muted">No mood data today</p>
+              {% endif %}
+              <div class="mt-3">
+                <a href="{% url 'mood_history' %}" class="btn btn-outline-primary">
+                  <i class="bi bi-clock-history me-1"></i> View History
+                </a>
+                <a href="{% url 'mood_add' %}" class="btn btn-outline-success">
+                  <i class="bi bi-plus-lg me-1"></i> Add
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+    
+    <!-- Other tabs content -->
+    <div class="tab-pane fade" id="running" role="tabpanel" aria-labelledby="running-tab">
+      <div class="chart-container">
+        <canvas id="runningChart"></canvas>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card health-card h-100 text-center">
+            <div class="card-header">
+              <span>🏃‍♂️</span>
+              <h5 class="card-title">Running Details</h5>
+            </div>
+            <div class="card-body">
+              {% if running_record %}
+                <p class="card-text display-4">{{ running_record.distance }} km</p>
+                <p class="text-muted">Duration: {{ running_record.duration }} min</p>
+                <p class="text-muted">Calories Burned: {{ running_record.calories_burned }}</p>
+              {% else %}
+                <div class="empty-state">
+                  <i class="bi bi-lightning"></i>
+                  <h5>No Running Data</h5>
+                  <p>Start tracking your running to see statistics here</p>
+                  <a href="{% url 'running_add' %}" class="btn btn-outline-success mt-3">
+                    <i class="bi bi-plus-lg me-1"></i> Add Running Record
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Other tabs similar structure -->
+    <div class="tab-pane fade" id="steps" role="tabpanel" aria-labelledby="steps-tab">
+      <!-- Steps tab content -->
+    </div>
+    
+    <div class="tab-pane fade" id="training" role="tabpanel" aria-labelledby="training-tab">
+      <!-- Training tab content -->
+    </div>
+    
+    <div class="tab-pane fade" id="sleep" role="tabpanel" aria-labelledby="sleep-tab">
+      <!-- Sleep tab content -->
+    </div>
+    
+    <div class="tab-pane fade" id="diet" role="tabpanel" aria-labelledby="diet-tab">
+      <!-- Diet tab content -->
+    </div>
+    
+    <div class="tab-pane fade" id="mood" role="tabpanel" aria-labelledby="mood-tab">
+      <!-- Mood tab content -->
     </div>
   </div>
 </div>
@@ -488,8 +411,9 @@
 
 {% block javascript %}
 {{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/health.js' %}"></script>
 <script>
-  // Mobile sidebar toggle
   document.addEventListener('DOMContentLoaded', function() {
     const menuToggle = document.querySelector('.menu-toggle');
     if (menuToggle) {
@@ -497,6 +421,109 @@
         document.body.classList.toggle('sidebar-expanded');
       });
     }
+    
+    // 确保内容正确显示
+    const tabContent = document.getElementById('overallContent');
+    if (tabContent) {
+      tabContent.style.display = 'block';
+    }
+    
+    // 初始化图表
+    if (document.getElementById('runningChart')) {
+      const ctx = document.getElementById('runningChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            label: 'Distance (km)',
+            data: [5, 3, 0, 7, 2, 8, 4],
+            borderColor: '#0d6efd',
+            backgroundColor: 'rgba(13, 110, 253, 0.1)',
+            tension: 0.3,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Running Distance This Week'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+    
+    // 彻底解决导航链接需要点击两次的问题
+    // 1. 获取所有导航链接
+    const navLinks = document.querySelectorAll('#healthTabs .nav-link');
+    
+    // 2. 为每个链接创建一个克隆，并替换原来的链接
+    navLinks.forEach(link => {
+      // 创建一个新链接元素
+      const newLink = document.createElement('a');
+      
+      // 复制原链接的所有属性
+      newLink.className = link.className;
+      newLink.href = link.href;
+      newLink.innerHTML = link.innerHTML;
+      
+      // 确保链接可以正常工作，禁用Bootstrap的tab功能
+      newLink.setAttribute('data-bs-toggle', '');
+      
+      // 替换原来的链接
+      link.parentNode.replaceChild(newLink, link);
+    });
+    
+    // 3. 根据当前URL自动设置active类
+    function setActiveNavLink() {
+      // 获取当前页面URL路径
+      const currentPath = window.location.pathname;
+      
+      // 获取所有已替换的导航链接
+      const allNavLinks = document.querySelectorAll('#healthTabs a');
+      
+      // 移除所有链接的active类
+      allNavLinks.forEach(navLink => {
+        navLink.classList.remove('active');
+      });
+      
+      // 为匹配当前URL的链接添加active类
+      allNavLinks.forEach(navLink => {
+        const linkPath = navLink.getAttribute('href');
+        if (currentPath === linkPath || 
+           (currentPath === '/' && linkPath.includes('dashboard')) || 
+           (currentPath.includes(linkPath) && linkPath !== '/')) {
+          navLink.classList.add('active');
+        }
+      });
+    }
+    
+    // 页面加载时设置active类
+    setActiveNavLink();
+    
+    // 点击导航链接时处理active类
+    document.querySelectorAll('#healthTabs a').forEach(link => {
+      link.addEventListener('click', function() {
+        // 移除所有链接的active类
+        document.querySelectorAll('#healthTabs a').forEach(l => {
+          l.classList.remove('active');
+        });
+        
+        // 添加active类到当前点击的链接
+        this.classList.add('active');
+      });
+    });
   });
 </script>
 {% endblock %} 
