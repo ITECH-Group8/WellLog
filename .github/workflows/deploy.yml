@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies with Conda
       shell: bash -l {0}  # 必须使用 login shell 以激活 Conda
       run: |
-        conda install -c conda-forge --file conda-requirements.txt  # 如果使用 Conda 包
+        # conda install -c conda-forge --file conda-requirements.txt  # 如果使用 Conda 包
         pip install -r requirements.txt  # 补充安装 PyPI 包
 
     - name: Run tests
