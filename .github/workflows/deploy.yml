@@ -2,44 +2,48 @@ name: Deploy Django to Server
 
 on:
   push:
-    branches:
-      - main  # 监听 main 分支的 push 事件
+    branches: [ main ]
 
 jobs:
-  deploy:
+  test-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Setup SSH
+    - name: Set up Conda
+      uses: conda-incubator/setup-miniconda@v2  # 使用 Conda 官方 Action
+      with:
+        miniconda-version: "latest"
+        activate-environment: WellLog
+        auto-update-conda: true
+        python-version: "3.10"
+
+    - name: Install dependencies with Conda
+      shell: bash -l {0}  # 必须使用 login shell 以激活 Conda
       run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+        conda install -c conda-forge --file conda-requirements.txt  # 如果使用 Conda 包
+        pip install -r requirements.txt  # 补充安装 PyPI 包
+
+    - name: Run tests
+      shell: bash -l {0}
+      run: |
+        python manage.py test
 
     - name: Deploy to Server
-      run: |
-        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-        cd /root/WellLog
-        git pull origin main
-
-        # 加载 Conda
-        source ~/miniconda3/bin/activate
-        conda activate WellLog  # 修改为你的 Conda 环境名
-
-        # 安装依赖
-        pip install -r requirements.txt
-
-        # 迁移数据库
-        python3 manage.py migrate
-
-        # 收集静态文件
-        python3 manage.py collectstatic --noinput
-
-        # 重启服务
-        sudo systemctl restart gunicorn
-        sudo systemctl restart nginx
-        EOF
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /var/www/WellLog
+          git pull origin main
+          # 激活 Conda 环境并重启服务
+          source /opt/miniconda3/bin/activate WellLog
+          pip install -r requirements.txt
+          python manage.py collectstatic --noinput
+          python manage.py migrate
+          sudo systemctl restart gunicorn
+          sudo systemctl reload nginx
