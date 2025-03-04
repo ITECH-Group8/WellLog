@@ -27,7 +27,7 @@ jobs:
         git pull origin main
 
         # 加载 Conda
-        source ~/miniconda3/etc/profile.d/conda.sh
+        source ~/miniconda3/bin/activate
         conda activate WellLog  # 修改为你的 Conda 环境名
 
         # 安装依赖
