@@ -9,7 +9,7 @@
   <title>{% block title %}WellLog{% endblock title %}</title>
   <meta name="description" content="A framework for launching new Django projects quickly.">
   <meta name="author" content="">
-  <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+  <link rel="shortcut icon" href="{% static 'images/logo.webp' %}">
 
   {% block css %}
   <!-- Bootstrap CSS -->
@@ -66,6 +66,23 @@
       padding: 0 20px 20px;
     }
     
+    .sidebar-bottom {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      padding: 0 15px;
+    }
+    
+    .sidebar-bottom .nav-link {
+      border-radius: 5px;
+      margin-bottom: 5px;
+    }
+    
+    .sidebar-main-menu {
+      margin-bottom: 150px;
+    }
+    
     .menu-toggle {
       position: fixed;
       top: 10px;
@@ -118,12 +135,34 @@
       .sidebar .nav-link i {
         font-size: 1rem;
       }
+      
+      /* 移动设备上底部菜单样式 */
+      .sidebar-bottom {
+        position: absolute;
+        bottom: 70px;
+        width: 100%;
+      }
+      
+      .sidebar-main-menu {
+        margin-bottom: 120px;
+      }
     }
     
     @media (max-width: 576px) {
       .sidebar {
         width: 85%;
         max-width: 300px;
+        overflow-y: auto;
+      }
+      
+      .sidebar-bottom {
+        position: fixed;
+        bottom: 20px;
+        width: calc(85% - 30px);
+        max-width: 270px;
+        background-color: #f8f9fa;
+        padding-top: 10px;
+        border-top: 1px solid rgba(0,0,0,0.05);
       }
     }
     
@@ -133,6 +172,11 @@
     
     body.sidebar-expanded .main-content {
       margin-left: 0;
+    }
+    
+    /* 侧边栏展开时底部菜单样式 */
+    body.sidebar-expanded .sidebar-bottom {
+      display: block;
     }
   </style>
   {% endblock %}
@@ -194,10 +238,9 @@
   <!-- Left Sidebar -->
   <div class="sidebar">
     <div class="sidebar-logo text-center">
-      <img src="https://via.placeholder.com/80" class="rounded-circle mb-2" alt="Logo" width="60" height="60">
-      <h5>WellLog</h5>
+      <img src="{% static 'images/logo.png' %}" alt="Logo" width="120" height="100">
     </div>
-    <ul class="nav flex-column px-3">
+    <ul class="nav flex-column px-3 sidebar-main-menu">
       <li class="nav-item">
         <a href="{% url 'dashboard' %}" class="nav-link d-flex align-items-center">
           <i class="bi bi-speedometer2"></i>
@@ -216,19 +259,25 @@
           <span>AI Advice</span>
         </a>
       </li>
-      <li class="nav-item mt-5">
-        <a href="{% url 'account_logout' %}" class="nav-link d-flex align-items-center">
-          <i class="bi bi-box-arrow-right"></i>
-          <span>Logout</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="#" class="nav-link d-flex align-items-center">
-          <i class="bi bi-gear"></i>
-          <span>Settings</span>
-        </a>
-      </li>
     </ul>
+    
+    <!-- 底部固定菜单 -->
+    <div class="sidebar-bottom">
+      <ul class="nav flex-column">
+        <li class="nav-item">
+          <a href="#" class="nav-link d-flex align-items-center">
+            <i class="bi bi-gear"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'account_logout' %}" class="nav-link d-flex align-items-center">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+          </a>
+        </li>
+      </ul>
+    </div>
   </div>
 
   <!-- Main Content Area -->

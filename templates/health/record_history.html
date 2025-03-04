@@ -1,205 +1,663 @@
-{% extends 'health/dashboard.html' %}
+{% extends 'base_with_sidebar.html' %}
+{% load static %}
+
+{% block title %}健康记录历史{% endblock %}
+
+{% block css %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<style>
+  /* 历史记录页面优化样式 */
+  .history-container {
+    padding: 1rem;
+  }
+  
+  .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .history-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .history-header h2 i {
+    font-size: 1.2rem;
+  }
+  
+  .dashboard-header {
+    margin-bottom: 1rem !important;
+  }
+  
+  .nav-tabs .nav-link {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.8rem;
+  }
+  
+  .nav-tabs .nav-link i {
+    font-size: 0.9rem;
+  }
+  
+  .export-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .export-btn:hover {
+    background-color: #e9ecef;
+  }
+  
+  .export-btn i {
+    margin-right: 0.3rem;
+    font-size: 0.8rem;
+  }
+  
+  /* 统计卡片优化 */
+  .summary-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .stat-card {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 0.8rem 1rem;
+    flex: 1;
+    min-width: 120px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    text-align: center;
+    transition: transform 0.2s;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-3px);
+  }
+  
+  .stat-title {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-bottom: 0.3rem;
+  }
+  
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #212529;
+  }
+  
+  /* 图表区域优化 - 自适应尺寸 */
+  .chart-container {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    width: 100%;
+    margin: 0 auto 1.5rem auto;
+  }
+  
+  /* 图表包装容器 */
+  .chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-height: 250px;
+    max-height: 450px;
+  }
+  
+  .chart-types {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .chart-type-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .chart-type-btn.active {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+  }
+  
+  /* 过滤器卡片 */
+  .filter-card {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  .filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  /* 数据表优化 */
+  .history-card {
+    background: white;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  .history-card .card-header {
+    padding: 0.75rem 1rem;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  
+  .history-card .card-header h5 {
+    font-size: 1rem;
+    margin: 0;
+  }
+  
+  .history-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .history-table th,
+  .history-table td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  .history-table th {
+    background-color: #f8f9fa;
+    font-weight: 500;
+    text-align: left;
+  }
+  
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 0.25rem;
+    margin-right: 0.3rem;
+    transition: all 0.2s;
+  }
+  
+  .action-btn.edit {
+    background-color: #e9ecef;
+    color: #495057;
+  }
+  
+  .action-btn.delete {
+    background-color: #f8d7da;
+    color: #dc3545;
+  }
+  
+  .action-btn:hover {
+    opacity: 0.8;
+  }
+  
+  /* 空状态优化 */
+  .empty-state {
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  
+  .empty-state i {
+    font-size: 2rem;
+    color: #adb5bd;
+    margin-bottom: 1rem;
+  }
+  
+  /* 分页优化 */
+  .pagination {
+    margin-top: 1rem;
+    justify-content: center;
+  }
+  
+  /* 响应式调整 */
+  @media (max-width: 576px) {
+    .chart-wrapper {
+      min-height: 200px;
+    }
+    
+    .history-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    
+    .chart-type-btn {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    
+    .stat-card {
+      min-width: 100px;
+      padding: 0.6rem 0.8rem;
+    }
+    
+    .stat-value {
+      font-size: 1.25rem;
+    }
+  }
+  
+  @media (min-width: 577px) and (max-width: 991px) {
+    .chart-wrapper {
+      min-height: 300px;
+    }
+  }
+  
+  @media (min-width: 992px) {
+    .chart-wrapper {
+      min-height: 400px;
+    }
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-<!-- Mobile Menu Toggle Button -->
-<button class="menu-toggle d-md-none d-block btn">
-  <i class="bi bi-list"></i>
-</button>
-
-<!-- Left Sidebar -->
-<div class="sidebar">
-  <div class="sidebar-logo text-center">
-    <img src="https://via.placeholder.com/80" class="rounded-circle mb-2" alt="Logo" width="60" height="60">
-    <h5>WellLog</h5>
-  </div>
-  <ul class="nav flex-column px-3">
-    <li class="nav-item">
-      <a href="{% url 'dashboard' %}" class="nav-link {% if active_tab == 'overall' %}active{% else %}{% endif %} d-flex align-items-center">
-        <i class="bi bi-speedometer2"></i>
-        <span>Dashboard</span>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="{% url 'community_list' %}" class="nav-link d-flex align-items-center">
-        <i class="bi bi-people"></i>
-        <span>Community</span>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="#" class="nav-link d-flex align-items-center">
-        <i class="bi bi-robot"></i>
-        <span>AI Advice</span>
-      </a>
-    </li>
-    <li class="nav-item mt-5">
-      <a href="{% url 'account_logout' %}" class="nav-link d-flex align-items-center">
-        <i class="bi bi-box-arrow-right"></i>
-        <span>Logout</span>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="#" class="nav-link d-flex align-items-center">
-        <i class="bi bi-gear"></i>
-        <span>Settings</span>
-      </a>
-    </li>
-  </ul>
-</div>
-
-<!-- Main Content Area -->
-<div class="main-content">
-  <!-- Navigation Tabs -->
-  <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
-    <ul class="nav nav-tabs">
-      <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'overall' %}active{% endif %}" href="{% url 'dashboard' %}">Overview</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'running' %}active{% endif %}" href="{% url 'running_history' %}">Running</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'step' %}active{% endif %}" href="{% url 'steps_history' %}">Steps</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'training' %}active{% endif %}" href="{% url 'training_history' %}">Training</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'sleep' %}active{% endif %}" href="{% url 'sleep_history' %}">Sleep</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'diet' %}active{% endif %}" href="{% url 'diet_history' %}">Diet</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'mood' %}active{% endif %}" href="{% url 'mood_history' %}">Mood</a>
-      </li>
-    </ul>
-    <div>
-      <a href="
-      {% if active_tab == 'step' %}{% url 'steps_add' %}
-      {% elif active_tab == 'sleep' %}{% url 'sleep_add' %}
-      {% elif active_tab == 'diet' %}{% url 'diet_add' %}
-      {% elif active_tab == 'running' %}{% url 'running_add' %}
-      {% elif active_tab == 'training' %}{% url 'training_add' %}
-      {% elif active_tab == 'mood' %}{% url 'mood_add' %}
-      {% else %}#{% endif %}" class="btn btn-primary">
-        <i class="bi bi-plus-circle me-1"></i> Add {{ record_type }} Record
-      </a>
+<!-- 健康记录历史内容 -->
+<div class="container-fluid py-4">
+  <div class="history-container animate__animated animate__fadeIn">
+    <div class="history-header">
+      <h2>
+        {% if record_type == 'Steps' %}
+          <i class="bi bi-activity me-2"></i>
+        {% elif record_type == 'Sleep' %}
+          <i class="bi bi-moon me-2"></i>
+        {% elif record_type == 'Diet' %}
+          <i class="bi bi-egg-fried me-2"></i>
+        {% elif record_type == 'Running' %}
+          <i class="bi bi-lightning me-2"></i>
+        {% elif record_type == 'Training' %}
+          <i class="bi bi-trophy me-2"></i>
+        {% elif record_type == 'Mood' %}
+          <i class="bi bi-emoji-smile me-2"></i>
+        {% endif %}
+        {{ record_type }} 记录历史
+      </h2>
+      <div>
+        <button class="export-btn">
+          <i class="bi bi-download"></i>导出数据
+        </button>
+      </div>
     </div>
-  </div>
-  
-  <!-- Chart -->
-  <div class="card mb-4 shadow-sm">
-    <div class="card-header bg-light">
-      <h5>{{ record_type }} History - Last 30 Days</h5>
+    
+    <!-- 添加导航标签 -->
+    <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
+      <ul class="nav nav-tabs" id="healthTabs">
+        <li class="nav-item">
+          <a class="nav-link {% if active_tab == 'overall' %}active{% endif %}" href="{% url 'dashboard' %}">
+            <i class="bi bi-grid-3x3-gap me-1"></i>Overview
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if active_tab == 'running' %}active{% endif %}" href="{% url 'running_history' %}">
+            <i class="bi bi-lightning me-1"></i>Running
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if active_tab == 'step' %}active{% endif %}" href="{% url 'steps_history' %}">
+            <i class="bi bi-activity me-1"></i>Steps
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if active_tab == 'training' %}active{% endif %}" href="{% url 'training_history' %}">
+            <i class="bi bi-trophy me-1"></i>Training
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if active_tab == 'sleep' %}active{% endif %}" href="{% url 'sleep_history' %}">
+            <i class="bi bi-moon me-1"></i>Sleep
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if active_tab == 'diet' %}active{% endif %}" href="{% url 'diet_history' %}">
+            <i class="bi bi-egg-fried me-1"></i>Diet
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if active_tab == 'mood' %}active{% endif %}" href="{% url 'mood_history' %}">
+            <i class="bi bi-emoji-smile me-1"></i>Mood
+          </a>
+        </li>
+      </ul>
+      <div>
+        {% if record_type == 'Steps' %}
+          <a href="{% url 'steps_add' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle me-1"></i> 添加步数记录
+          </a>
+        {% elif record_type == 'Sleep' %}
+          <a href="{% url 'sleep_add' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle me-1"></i> 添加睡眠记录
+          </a>
+        {% elif record_type == 'Diet' %}
+          <a href="{% url 'diet_add' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle me-1"></i> 添加饮食记录
+          </a>
+        {% elif record_type == 'Running' %}
+          <a href="{% url 'running_add' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle me-1"></i> 添加跑步记录
+          </a>
+        {% elif record_type == 'Mood' %}
+          <a href="{% url 'mood_add' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle me-1"></i> 添加心情记录
+          </a>
+        {% endif %}
+      </div>
     </div>
-    <div class="card-body">
-      <canvas id="recordChart" height="300"></canvas>
-    </div>
-  </div>
-  
-  <!-- Records Table -->
-  <div class="card shadow-sm">
-    <div class="card-header bg-light">
-      <h5>{{ record_type }} Records</h5>
-    </div>
-    <div class="card-body">
-      {% if records %}
-        <div class="table-responsive">
-          <table class="table table-striped table-hover">
-            <thead class="table-light">
-              <tr>
-                <th>Date</th>
-                {% if record_type == 'Steps' %}
-                  <th>Steps Count</th>
-                {% elif record_type == 'Sleep' %}
-                  <th>Hours</th>
-                  <th>Minutes</th>
-                  <th>Quality</th>
-                {% elif record_type == 'Diet' %}
-                  <th>Calories</th>
-                  <th>Protein (g)</th>
-                  <th>Carbs (g)</th>
-                  <th>Fat (g)</th>
-                {% elif record_type == 'Running' %}
-                  <th>Distance (km)</th>
-                  <th>Duration (min)</th>
-                  <th>Calories Burned</th>
-                {% elif record_type == 'Mood' %}
-                  <th>Mood</th>
-                  <th>Stress Level</th>
-                {% endif %}
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for record in records %}
-                <tr>
-                  <td>{{ record.date }}</td>
-                  {% if record_type == 'Steps' %}
-                    <td>{{ record.steps_count }}</td>
-                  {% elif record_type == 'Sleep' %}
-                    <td>{{ record.hours }}</td>
-                    <td>{{ record.minutes }}</td>
-                    <td>{{ record.quality|default:"-"|title }}</td>
-                  {% elif record_type == 'Diet' %}
-                    <td>{{ record.calories }}</td>
-                    <td>{{ record.protein|default:"-" }}</td>
-                    <td>{{ record.carbs|default:"-" }}</td>
-                    <td>{{ record.fat|default:"-" }}</td>
-                  {% elif record_type == 'Running' %}
-                    <td>{{ record.distance }}</td>
-                    <td>{{ record.duration_minutes }}</td>
-                    <td>{{ record.calories_burned|default:"-" }}</td>
-                  {% elif record_type == 'Mood' %}
-                    <td>{{ record.mood|title }}</td>
-                    <td>{{ record.stress_level|default:"-" }}</td>
-                  {% endif %}
-                  <td>
-                    {% if record_type == 'Steps' %}
-                      <a href="{% url 'steps_edit' record.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                      <a href="{% url 'steps_delete' record.id %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
-                    {% elif record_type == 'Sleep' %}
-                      <a href="{% url 'sleep_edit' record.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                      <a href="{% url 'sleep_delete' record.id %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
-                    {% elif record_type == 'Diet' %}
-                      <a href="{% url 'diet_edit' record.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                      <a href="{% url 'diet_delete' record.id %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
-                    {% elif record_type == 'Running' %}
-                      <a href="{% url 'running_edit' record.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                      <a href="{% url 'running_delete' record.id %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
-                    {% elif record_type == 'Training' %}
-                      <a href="{% url 'training_edit' record.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                      <a href="{% url 'training_delete' record.id %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
-                    {% elif record_type == 'Mood' %}
-                      <a href="{% url 'mood_edit' record.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                      <a href="{% url 'mood_delete' record.id %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
-                    {% endif %}
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      {% else %}
-        <div class="text-center py-5">
-          <div class="mb-4">
-            <i class="bi bi-clipboard-data" style="font-size: 3rem; color: #ddd;"></i>
-          </div>
-          <p class="text-muted">No {{ record_type }} records found</p>
-          <div>
-            <a href="
-            {% if active_tab == 'step' %}{% url 'steps_add' %}
-            {% elif active_tab == 'sleep' %}{% url 'sleep_add' %}
-            {% elif active_tab == 'diet' %}{% url 'diet_add' %}
-            {% elif active_tab == 'running' %}{% url 'running_add' %}
-            {% elif active_tab == 'training' %}{% url 'training_add' %}
-            {% elif active_tab == 'mood' %}{% url 'mood_add' %}
-            {% else %}#{% endif %}" class="btn btn-primary">
-              <i class="bi bi-plus-lg me-1"></i> Add Your First {{ record_type }} Record
-            </a>
-          </div>
-        </div>
+    
+    <!-- 统计摘要 -->
+    <div class="summary-stats">
+      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+        <div class="stat-title">记录总数</div>
+        <div class="stat-value">{{ records|length }}</div>
+      </div>
+      
+      {% if record_type == 'Steps' %}
+      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+        <div class="stat-title">平均步数</div>
+        <div class="stat-value">{{ avg_steps|default:"0" }}</div>
+      </div>
+      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
+        <div class="stat-title">最高步数</div>
+        <div class="stat-value">{{ max_steps|default:"0" }}</div>
+      </div>
+      {% elif record_type == 'Sleep' %}
+      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+        <div class="stat-title">平均睡眠时长</div>
+        <div class="stat-value">{{ avg_sleep|default:"0" }}h</div>
+      </div>
+      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
+        <div class="stat-title">平均睡眠质量</div>
+        <div class="stat-value">{{ avg_quality|default:"良好" }}</div>
+      </div>
+      {% elif record_type == 'Diet' %}
+      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+        <div class="stat-title">平均卡路里</div>
+        <div class="stat-value">{{ avg_calories|default:"0" }}</div>
+      </div>
+      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
+        <div class="stat-title">平均蛋白质</div>
+        <div class="stat-value">{{ avg_protein|default:"0" }}g</div>
+      </div>
+      {% elif record_type == 'Running' %}
+      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+        <div class="stat-title">总距离</div>
+        <div class="stat-value">{{ total_distance|default:"0" }}km</div>
+      </div>
+      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
+        <div class="stat-title">平均配速</div>
+        <div class="stat-value">{{ avg_pace|default:"0" }}分/km</div>
+      </div>
       {% endif %}
+    </div>
+    
+    <!-- 图表区域 - 自适应尺寸 -->
+    <div class="chart-container mb-4 animate__animated animate__fadeInUp" style="animation-delay: 0.4s;">
+      <div class="chart-types">
+        <button class="chart-type-btn {% if chart_type == 'line' or not chart_type %}active{% endif %}" data-chart-type="line">折线图</button>
+        <button class="chart-type-btn {% if chart_type == 'bar' %}active{% endif %}" data-chart-type="bar">柱状图</button>
+        <button class="chart-type-btn {% if chart_type == 'pie' %}active{% endif %}" data-chart-type="pie">饼图</button>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="recordChart"></canvas>
+      </div>
+    </div>
+    
+    <!-- 过滤器 - 默认显示当前数据范围 -->
+    <div class="filter-card animate__animated animate__fadeInUp" style="animation-delay: 0.5s;">
+      <form method="get" action="" id="dateFilterForm">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="date_from" class="form-label">开始日期</label>
+              <input type="date" class="form-control" id="date_from" name="date_from" 
+                     value="{{ date_from|default:'' }}">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="date_to" class="form-label">结束日期</label>
+              <input type="date" class="form-control" id="date_to" name="date_to" 
+                     value="{{ date_to|default:'' }}">
+            </div>
+          </div>
+        </div>
+        <!-- 添加一个隐藏的输入框来保存当前的图表类型 -->
+        <input type="hidden" name="chart_type" id="chartTypeInput" value="{{ chart_type|default:'line' }}">
+        <p class="text-muted small mb-2"><i class="bi bi-info-circle me-1"></i>如果未设置日期，将自动使用现有记录的日期范围</p>
+        <div class="filter-buttons">
+          <button type="submit" class="btn btn-primary btn-sm">
+            <i class="bi bi-filter me-1"></i>过滤
+          </button>
+          {% if record_type == 'Steps' %}
+            <a href="{% url 'steps_history' %}" class="btn btn-outline-secondary btn-sm" id="resetButton">
+              <i class="bi bi-x-circle me-1"></i>重置
+            </a>
+          {% elif record_type == 'Sleep' %}
+            <a href="{% url 'sleep_history' %}" class="btn btn-outline-secondary btn-sm" id="resetButton">
+              <i class="bi bi-x-circle me-1"></i>重置
+            </a>
+          {% elif record_type == 'Diet' %}
+            <a href="{% url 'diet_history' %}" class="btn btn-outline-secondary btn-sm" id="resetButton">
+              <i class="bi bi-x-circle me-1"></i>重置
+            </a>
+          {% elif record_type == 'Running' %}
+            <a href="{% url 'running_history' %}" class="btn btn-outline-secondary btn-sm" id="resetButton">
+              <i class="bi bi-x-circle me-1"></i>重置
+            </a>
+          {% elif record_type == 'Mood' %}
+            <a href="{% url 'mood_history' %}" class="btn btn-outline-secondary btn-sm" id="resetButton">
+              <i class="bi bi-x-circle me-1"></i>重置
+            </a>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+    
+    <!-- 数据记录表 -->
+    <div class="history-card animate__animated animate__fadeInUp" style="animation-delay: 0.6s;">
+      <div class="card-header">
+        <h5>{{ record_type }} 记录列表</h5>
+      </div>
+      <div class="card-body">
+        {% if records %}
+          <div class="table-responsive">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>日期</th>
+                  {% if record_type == 'Steps' %}
+                    <th>步数</th>
+                  {% elif record_type == 'Sleep' %}
+                    <th>小时</th>
+                    <th>分钟</th>
+                    <th>质量</th>
+                  {% elif record_type == 'Diet' %}
+                    <th>卡路里</th>
+                    <th>蛋白质 (g)</th>
+                    <th>碳水 (g)</th>
+                    <th>脂肪 (g)</th>
+                  {% elif record_type == 'Running' %}
+                    <th>距离 (km)</th>
+                    <th>时长 (分钟)</th>
+                    <th>消耗卡路里</th>
+                  {% elif record_type == 'Mood' %}
+                    <th>心情</th>
+                    <th>压力水平</th>
+                  {% endif %}
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for record in records %}
+                  <tr class="animate__animated animate__fadeIn" style="animation-delay: {{ forloop.counter0|floatformat:1 }}0ms">
+                    <td>{{ record.date|date:"Y-m-d" }}</td>
+                    {% if record_type == 'Steps' %}
+                      <td>{{ record.steps_count }}</td>
+                    {% elif record_type == 'Sleep' %}
+                      <td>{{ record.hours }}</td>
+                      <td>{{ record.minutes }}</td>
+                      <td>{{ record.quality|default:"未指定" }}</td>
+                    {% elif record_type == 'Diet' %}
+                      <td>{{ record.calories }}</td>
+                      <td>{{ record.protein }}</td>
+                      <td>{{ record.carbs }}</td>
+                      <td>{{ record.fat }}</td>
+                    {% elif record_type == 'Running' %}
+                      <td>{{ record.distance }}</td>
+                      <td>{{ record.duration }}</td>
+                      <td>{{ record.calories_burned }}</td>
+                    {% elif record_type == 'Mood' %}
+                      <td>
+                        {% if record.mood == 'excellent' %}😁 极好
+                        {% elif record.mood == 'good' %}😊 良好
+                        {% elif record.mood == 'neutral' %}😐 一般
+                        {% elif record.mood == 'bad' %}😔 不佳
+                        {% elif record.mood == 'terrible' %}😢 糟糕
+                        {% endif %}
+                      </td>
+                      <td>{{ record.stress_level|default:"未指定" }}</td>
+                    {% endif %}
+                    <td>
+                      {% if record_type == 'Steps' %}
+                        <a href="{% url 'steps_edit' record.id %}" class="action-btn edit">
+                          <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'steps_delete' record.id %}" class="action-btn delete">
+                          <i class="bi bi-trash"></i>
+                        </a>
+                      {% elif record_type == 'Sleep' %}
+                        <a href="{% url 'sleep_edit' record.id %}" class="action-btn edit">
+                          <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'sleep_delete' record.id %}" class="action-btn delete">
+                          <i class="bi bi-trash"></i>
+                        </a>
+                      {% elif record_type == 'Diet' %}
+                        <a href="{% url 'diet_edit' record.id %}" class="action-btn edit">
+                          <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'diet_delete' record.id %}" class="action-btn delete">
+                          <i class="bi bi-trash"></i>
+                        </a>
+                      {% elif record_type == 'Running' %}
+                        <a href="{% url 'running_edit' record.id %}" class="action-btn edit">
+                          <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'running_delete' record.id %}" class="action-btn delete">
+                          <i class="bi bi-trash"></i>
+                        </a>
+                      {% elif record_type == 'Mood' %}
+                        <a href="{% url 'mood_edit' record.id %}" class="action-btn edit">
+                          <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'mood_delete' record.id %}" class="action-btn delete">
+                          <i class="bi bi-trash"></i>
+                        </a>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- 分页 -->
+          {% if is_paginated %}
+            <nav aria-label="Page navigation">
+              <ul class="pagination">
+                {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page=1{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}{% if chart_type %}&chart_type={{ chart_type }}{% endif %}" aria-label="First">
+                      <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}{% if chart_type %}&chart_type={{ chart_type }}{% endif %}" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                  {% if page_obj.number == num %}
+                    <li class="page-item active">
+                      <span class="page-link">{{ num }}</span>
+                    </li>
+                  {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ num }}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}{% if chart_type %}&chart_type={{ chart_type }}{% endif %}">{{ num }}</a>
+                    </li>
+                  {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}{% if chart_type %}&chart_type={{ chart_type }}{% endif %}" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}{% if chart_type %}&chart_type={{ chart_type }}{% endif %}" aria-label="Last">
+                      <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                  </li>
+                {% endif %}
+              </ul>
+            </nav>
+          {% endif %}
+        {% else %}
+          <div class="empty-state">
+            <i class="bi bi-clipboard-x"></i>
+            <h5>暂无记录</h5>
+            <p>您还没有添加任何{{ record_type }}记录</p>
+            {% if record_type == 'Steps' %}
+              <a href="{% url 'steps_add' %}" class="btn btn-outline-success btn-sm mt-3">
+                <i class="bi bi-plus-lg"></i> 添加步数记录
+              </a>
+            {% elif record_type == 'Sleep' %}
+              <a href="{% url 'sleep_add' %}" class="btn btn-outline-success btn-sm mt-3">
+                <i class="bi bi-plus-lg"></i> 添加睡眠记录
+              </a>
+            {% elif record_type == 'Diet' %}
+              <a href="{% url 'diet_add' %}" class="btn btn-outline-success btn-sm mt-3">
+                <i class="bi bi-plus-lg"></i> 添加饮食记录
+              </a>
+            {% elif record_type == 'Running' %}
+              <a href="{% url 'running_add' %}" class="btn btn-outline-success btn-sm mt-3">
+                <i class="bi bi-plus-lg"></i> 添加跑步记录
+              </a>
+            {% elif record_type == 'Mood' %}
+              <a href="{% url 'mood_add' %}" class="btn btn-outline-success btn-sm mt-3">
+                <i class="bi bi-plus-lg"></i> 添加心情记录
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
     </div>
   </div>
 </div>
@@ -209,152 +667,297 @@
 {{ block.super }}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  // Debug information
-  console.log('Chart.js version:', Chart ? Chart.version : 'not loaded');
-  
-  // Convert Django template variables to JavaScript variables
-  var chartDates = {{ chart_dates|safe }};
-  var chartValues = {{ chart_data|safe }};
-  var recordType = "{{ record_type }}";
-  var activeTab = "{{ active_tab }}";
-  
-  // Debug data
-  console.log('Date data:', chartDates);
-  console.log('Chart data:', chartValues);
-  console.log('Record type:', recordType);
-  console.log('Active tab:', activeTab);
-  
-  // Ensure DOM is fully loaded before rendering chart
-  window.addEventListener('DOMContentLoaded', function() {
-    // Get chart context
-    var ctx = document.getElementById('recordChart').getContext('2d');
+  document.addEventListener('DOMContentLoaded', function() {
+    // 获取当前URL中的chart_type参数，如果没有则默认为'line'
+    const params = new URLSearchParams(window.location.search);
+    const chartType = params.get('chart_type') || 'line';
     
-    // Check if data is valid
-    if (!chartDates || !chartValues || chartDates.length === 0 || chartValues.length === 0) {
-      console.error('Chart data is empty or invalid');
-      // Display a "no data" message
-      var noDataMessage = document.createElement('div');
-      noDataMessage.textContent = 'No historical data available';
-      noDataMessage.style.textAlign = 'center';
-      noDataMessage.style.padding = '50px';
-      noDataMessage.style.color = '#999';
-      document.getElementById('recordChart').parentNode.appendChild(noDataMessage);
-      document.getElementById('recordChart').style.display = 'none';
-      return;
+    // 初始化图表
+    initCharts(chartType);
+    
+    // 图表类型切换
+    document.querySelectorAll('.chart-type-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.chart-type-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        // 更新隐藏输入框的值，确保提交表单时包含当前图表类型
+        document.getElementById('chartTypeInput').value = this.dataset.chartType;
+        
+        initCharts(this.dataset.chartType);
+      });
+    });
+    
+    // 确保导航链接直接跳转，不被任何事件阻止
+    document.querySelectorAll('#healthTabs .nav-link').forEach(link => {
+      // 使用克隆节点来删除所有可能的事件监听器
+      const newLink = link.cloneNode(true);
+      if (link.parentNode) {
+        link.parentNode.replaceChild(newLink, link);
+      }
+    });
+    
+    // 确保重置按钮也不被事件阻止
+    const resetButton = document.getElementById('resetButton');
+    if (resetButton) {
+      const newResetButton = resetButton.cloneNode(true);
+      if (resetButton.parentNode) {
+        resetButton.parentNode.replaceChild(newResetButton, resetButton);
+      }
+      
+      // 点击重置按钮时，确保完全重置所有过滤参数
+      newResetButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // 清空表单输入框
+        document.getElementById('date_from').value = '';
+        document.getElementById('date_to').value = '';
+        document.getElementById('chartTypeInput').value = 'line';
+        
+        // 直接跳转到不带参数的URL
+        window.location.href = this.getAttribute('href');
+      });
     }
     
-    // Chart color configuration
-    var chartColors = {
-      step: '#4BC0C0',
-      sleep: '#9966FF',
-      diet: '#FF9F40',
-      running: '#36A2EB',
-      training: '#FF7043',
-      mood: '#FF6384'
-    };
+    // 初始化日期过滤器并立即设置值
+    initDateFilters();
     
-    // Get current tab color
-    var color = chartColors[activeTab] || '#4BC0C0';
-    
-    // Chart data configuration
-    var chartConfig = {
-      labels: chartDates,
-      datasets: [{
-        label: recordType,
-        data: chartValues,
-        backgroundColor: color + '33', // with alpha
-        borderColor: color,
-        borderWidth: 2,
-        tension: 0.1,
-        fill: true,
-        pointRadius: 4,
-        pointHoverRadius: 6
-      }]
-    };
-    
-    // Chart options configuration
-    var options = {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: getYAxisLabel(recordType)
-          },
-          grid: {
-            color: 'rgba(0,0,0,0.05)'
-          }
-        },
-        x: {
-          title: {
-            display: true,
-            text: 'Date'
-          },
-          grid: {
-            color: 'rgba(0,0,0,0.05)'
-          }
+    // 优化日期过滤器提交
+    document.getElementById('dateFilterForm').addEventListener('submit', function(e) {
+      // 不再阻止默认提交，使用表单原生提交
+      // e.preventDefault(); 
+      
+      const dateFrom = document.getElementById('date_from');
+      const dateTo = document.getElementById('date_to');
+      
+      // 确保日期有效
+      if (dateFrom.value && dateTo.value) {
+        const fromDate = new Date(dateFrom.value);
+        const toDate = new Date(dateTo.value);
+        
+        if (fromDate > toDate) {
+          e.preventDefault();
+          alert('开始日期不能晚于结束日期');
+          return false;
         }
-      },
-      animation: {
-        duration: 1000,
-        easing: 'easeOutQuart'
-      },
-      plugins: {
-        tooltip: {
-          mode: 'index',
-          intersect: false,
-          backgroundColor: 'rgba(0,0,0,0.7)',
-          padding: 10,
-          titleFont: {
-            size: 14
-          },
-          bodyFont: {
-            size: 14
-          }
+      }
+      
+      // 使用表单原生提交方式，不再手动构建URL
+      return true;
+    });
+  });
+  
+  // 初始化日期过滤器
+  function initDateFilters() {
+    {% if chart_dates %}
+      const chartDates = {{ chart_dates|safe }};
+      if (chartDates && chartDates.length > 0) {
+        const dateFrom = document.getElementById('date_from');
+        const dateTo = document.getElementById('date_to');
+        
+        // 确保始终设置有效的默认日期范围
+        if (!dateFrom.value && chartDates.length > 0) {
+          dateFrom.value = chartDates[0];
+          console.log('设置开始日期:', dateFrom.value);
+        }
+        
+        if (!dateTo.value && chartDates.length > 0) {
+          dateTo.value = chartDates[chartDates.length - 1];
+          console.log('设置结束日期:', dateTo.value);
+        }
+      }
+    {% else %}
+      console.log('没有可用的日期数据设置默认过滤范围');
+    {% endif %}
+    
+    // 获取URL参数中的日期值并设置到表单中
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromParam = urlParams.get('date_from');
+    const toParam = urlParams.get('date_to');
+    
+    if (fromParam) {
+      document.getElementById('date_from').value = fromParam;
+      console.log('从URL设置开始日期:', fromParam);
+    }
+    
+    if (toParam) {
+      document.getElementById('date_to').value = toParam;
+      console.log('从URL设置结束日期:', toParam);
+    }
+  }
+  
+  // 初始化图表
+  function initCharts(type) {
+    const ctx = document.getElementById('recordChart').getContext('2d');
+    let chartData = {};
+    
+    {% if chart_dates and chart_data %}
+      const chartDates = {{ chart_dates|safe }};
+      const chartValues = {{ chart_data|safe }};
+      
+      {% if record_type == 'Steps' %}
+        chartData = {
+          labels: chartDates,
+          datasets: [{
+            label: '步数',
+            data: chartValues,
+            backgroundColor: 'rgba(40, 167, 69, 0.7)',
+            borderColor: 'rgba(40, 167, 69, 1)',
+            borderWidth: 1,
+            tension: 0.3,
+            fill: type === 'line'
+          }]
+        };
+      {% elif record_type == 'Sleep' %}
+        chartData = {
+          labels: chartDates,
+          datasets: [{
+            label: '睡眠时长 (小时)',
+            data: chartValues,
+            backgroundColor: 'rgba(111, 66, 193, 0.7)',
+            borderColor: 'rgba(111, 66, 193, 1)',
+            borderWidth: 1,
+            tension: 0.3,
+            fill: type === 'line'
+          }]
+        };
+      {% elif record_type == 'Diet' %}
+        chartData = {
+          labels: chartDates,
+          datasets: [{
+            label: '卡路里',
+            data: chartValues,
+            backgroundColor: 'rgba(220, 53, 69, 0.7)',
+            borderColor: 'rgba(220, 53, 69, 1)',
+            borderWidth: 1,
+            tension: 0.3,
+            fill: type === 'line'
+          }]
+        };
+      {% elif record_type == 'Running' %}
+        chartData = {
+          labels: chartDates,
+          datasets: [{
+            label: '距离 (km)',
+            data: chartValues,
+            backgroundColor: 'rgba(13, 110, 253, 0.7)',
+            borderColor: 'rgba(13, 110, 253, 1)',
+            borderWidth: 1,
+            tension: 0.3,
+            fill: type === 'line'
+          }]
+        };
+      {% elif record_type == 'Mood' %}
+        chartData = {
+          labels: chartDates,
+          datasets: [{
+            label: '心情水平',
+            data: chartValues,
+            backgroundColor: 'rgba(255, 193, 7, 0.7)',
+            borderColor: 'rgba(255, 193, 7, 1)',
+            borderWidth: 1,
+            tension: 0.3,
+            fill: type === 'line'
+          }]
+        };
+      {% endif %}
+    {% else %}
+      // 没有数据时的空图表
+      chartData = {
+        labels: [],
+        datasets: [{
+          label: '无数据',
+          data: [],
+          backgroundColor: 'rgba(108, 117, 125, 0.7)',
+          borderColor: 'rgba(108, 117, 125, 1)',
+        }]
+      };
+    {% endif %}
+    
+    // 销毁旧图表（如果存在）
+    if (window.recordChart instanceof Chart) {
+      window.recordChart.destroy();
+    }
+    
+    // 创建新图表 - 完全自适应
+    window.recordChart = new Chart(ctx, {
+      type: type,
+      data: chartData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+          duration: 800,
+          easing: 'easeOutQuart'
         },
-        legend: {
-          display: true,
-          position: 'top',
-          labels: {
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              boxWidth: 12,
+              padding: 8,
+              font: {
+                size: 12
+              }
+            }
+          },
+          title: {
+            display: true,
+            text: '{{ record_type }} 历史趋势',
             font: {
               size: 14
             },
-            padding: 20
+            padding: {
+              top: 10,
+              bottom: 10
+            }
+          },
+          tooltip: {
+            titleFont: {
+              size: 13
+            },
+            bodyFont: {
+              size: 12
+            },
+            padding: 10
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              font: {
+                size: 11
+              }
+            },
+            grid: {
+              display: true,
+              color: 'rgba(0, 0, 0, 0.05)'
+            }
+          },
+          x: {
+            ticks: {
+              font: {
+                size: 11
+              },
+              maxRotation: 45,
+              minRotation: 0
+            },
+            grid: {
+              display: false
+            }
+          }
+        },
+        layout: {
+          padding: {
+            left: 10,
+            right: 10,
+            top: 10,
+            bottom: 10
           }
         }
       }
-    };
-    
-    // Create chart
-    console.log('Starting chart creation, data length:', chartValues.length);
-    var myChart = new Chart(ctx, {
-      type: activeTab === 'mood' ? 'bar' : 'line',
-      data: chartConfig,
-      options: options
     });
-    console.log('Chart creation complete');
-    
-    // Add window resize event to ensure chart displays correctly
-    window.addEventListener('resize', function() {
-      if(myChart.resize) {
-        myChart.resize();
-      }
-    });
-    
-    // Get Y axis label based on record type
-    function getYAxisLabel(recordType) {
-      switch(recordType) {
-        case 'Steps': return 'Steps Count';
-        case 'Sleep': return 'Hours';
-        case 'Diet': return 'Calories';
-        case 'Running': return 'Distance (km)';
-        case 'Mood': return 'Mood Level';
-        case 'Training': return 'Training Volume';
-        default: return 'Value';
-      }
-    }
-  });
+  }
 </script>
 {% endblock %} 
