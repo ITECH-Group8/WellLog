@@ -15,9 +15,9 @@ def register_view(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # 自动登录
+            # auto login
             login(request, user)
-            return redirect('home')  # 注册成功后跳转主页
+            return redirect('home')  # Register success
     else:
         form = UserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
@@ -31,7 +31,7 @@ def login_view(request):
             login(request, user)
             return redirect('home')
         else:
-            return render(request, 'accounts/login.html', {'error': '用户名或密码错误'})
+            return render(request, 'accounts/login.html', {'error': 'Error username or password'})
     return render(request, 'accounts/login.html')
 
 def logout_view(request):
@@ -45,17 +45,17 @@ class SignupPageView(generic.CreateView):
 
 @login_required
 def profile_view(request):
-    """显示用户个人资料页面"""
+    """Show user personal information page"""
     return render(request, 'account/profile.html')
 
 @login_required
 def profile_update(request):
-    """更新用户个人资料"""
+    """Update user personal information"""
     if request.method == 'POST':
         profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
         if profile_form.is_valid():
             profile_form.save()
-            messages.success(request, '个人资料已成功更新！')
+            messages.success(request, 'Successfully updated profile')
             return redirect('profile')
     else:
         profile_form = ProfileUpdateForm(instance=request.user.profile)

@@ -1,6 +1,6 @@
 {% extends 'base_with_sidebar.html' %}
 
-{% block title %}个人资料{% endblock %}
+{% block title %}Personal Information{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -21,19 +21,19 @@
           <img src="{{ user.profile.avatar_url }}" class="rounded-circle img-fluid mb-3" style="width: 150px; height: 150px; object-fit: cover;">
           <h4>{{ user.username }}</h4>
           <p class="text-muted">{{ user.email }}</p>
-          <a href="{% url 'profile_update' %}" class="btn btn-primary">编辑个人资料</a>
+          <a href="{% url 'profile_update' %}" class="btn btn-primary">Edit Profile</a>
         </div>
       </div>
     </div>
     <div class="col-md-8">
       <div class="card">
         <div class="card-header">
-          <h5>个人资料信息</h5>
+          <h5>Profile Information</h5>
         </div>
         <div class="card-body">
           <div class="row mb-3">
             <div class="col-sm-3">
-              <h6 class="mb-0">用户名</h6>
+              <h6 class="mb-0">Username</h6>
             </div>
             <div class="col-sm-9 text-secondary">
               {{ user.username }}
@@ -41,7 +41,7 @@
           </div>
           <div class="row mb-3">
             <div class="col-sm-3">
-              <h6 class="mb-0">邮箱</h6>
+              <h6 class="mb-0">Email</h6>
             </div>
             <div class="col-sm-9 text-secondary">
               {{ user.email }}
@@ -49,15 +49,15 @@
           </div>
           <div class="row mb-3">
             <div class="col-sm-3">
-              <h6 class="mb-0">个人简介</h6>
+              <h6 class="mb-0">Personal Bio</h6>
             </div>
             <div class="col-sm-9 text-secondary">
-              {{ user.profile.bio|default:"暂无简介" }}
+              {{ user.profile.bio|default:"Without bio" }}
             </div>
           </div>
           <div class="row mb-3">
             <div class="col-sm-3">
-              <h6 class="mb-0">注册时间</h6>
+              <h6 class="mb-0">Register Time</h6>
             </div>
             <div class="col-sm-9 text-secondary">
               {{ user.date_joined|date:"Y-m-d H:i" }}
@@ -65,7 +65,7 @@
           </div>
           <div class="row">
             <div class="col-sm-3">
-              <h6 class="mb-0">最后登录</h6>
+              <h6 class="mb-0">Last Login</h6>
             </div>
             <div class="col-sm-9 text-secondary">
               {{ user.last_login|date:"Y-m-d H:i" }}
