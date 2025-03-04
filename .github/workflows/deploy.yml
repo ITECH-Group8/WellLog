@@ -1,0 +1,45 @@
+name: Deploy Django to Server
+
+on:
+  push:
+    branches:
+      - main  # 监听 main 分支的 push 事件
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Deploy to Server
+      run: |
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+        cd /root/WellLog
+        git pull origin main
+
+        # 加载 Conda
+        source ~/miniconda3/etc/profile.d/conda.sh
+        conda activate WellLog  # 修改为你的 Conda 环境名
+
+        # 安装依赖
+        pip install -r requirements.txt
+
+        # 迁移数据库
+        python manage.py migrate
+
+        # 收集静态文件
+        python manage.py collectstatic --noinput
+
+        # 重启服务
+        sudo systemctl restart gunicorn
+        sudo systemctl restart nginx
+        EOF
