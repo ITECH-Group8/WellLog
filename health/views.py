@@ -14,6 +14,7 @@ from .forms import (
 )
 import json
 from datetime import datetime, timedelta
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 @login_required
 def dashboard(request):
@@ -488,33 +489,17 @@ def mood_record_delete(request, pk):
 
 @login_required
 def mood_record_history(request):
-    """View mood history"""
-    records = MoodRecord.objects.filter(user=request.user).order_by('-date')
+    """渲染心情记录历史页面"""
+    mood_records = MoodRecord.objects.filter(user=request.user).order_by('-record_date')
     
-    # Get data for chart
-    last_30_days = timezone.now().date() - timedelta(days=30)
-    chart_records = MoodRecord.objects.filter(
-        user=request.user, 
-        date__gte=last_30_days
-    ).order_by('date')
+    paginator = Paginator(mood_records, 10)
+    page = request.GET.get('page')
     
-    mood_values = {
-        'terrible': 1,
-        'bad': 2,
-        'neutral': 3,
-        'good': 4,
-        'excellent': 5
-    }
-    
-    dates = [record.date.strftime('%Y-%m-%d') for record in chart_records]
-    moods = [mood_values.get(record.mood, 3) for record in chart_records]
-    
-    context = {
-        'records': records,
-        'record_type': 'Mood',
-        'chart_dates': json.dumps(dates),
-        'chart_data': json.dumps(moods),
-        'active_tab': 'mood'
-    }
-    
-    return render(request, 'health/record_history.html', context)
+    try:
+        records = paginator.page(page)
+    except PageNotAnInteger:
+        records = paginator.page(1)
+    except EmptyPage:
+        records = paginator.page(paginator.num_pages)
+        
+    return render(request, 'health/mood_record_history.html', {'records': records})
