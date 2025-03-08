@@ -69,7 +69,7 @@ def get_weight_data(user, start_date):
         date__gte=start_date
     ).order_by('-date').values('id', 'date', 'weight', 'height', 'notes'))
     
-    # 计算BMI
+    # Calculate BMI
     for record in weight_records:
         if record['height'] and record['weight']:
             # BMI = weight(kg) / (height(m))^2
@@ -80,12 +80,12 @@ def get_weight_data(user, start_date):
 
 @login_required
 def ai_advice(request):
-    """主AI建议页面视图"""
-    # 确保用户有配置文件
+    """Main AI Advice page view"""
+    # Ensure user has a profile
     try:
         profile = request.user.profile
     except Exception:
-        # 如果用户没有配置文件，创建一个
+        # If user has no profile, create one
         from accounts.models import Profile
         Profile.objects.create(user=request.user)
     
@@ -99,7 +99,7 @@ def ai_advice(request):
     mood_records = MoodRecord.objects.filter(user=request.user, date__gte=last_30_days).order_by('-date')
     training_records = TrainingRecord.objects.filter(user=request.user, date__gte=last_30_days).order_by('-date')
     
-    # 获取最新保存的健康建议
+    # Get the latest saved health advice
     latest_advice = HealthAdvice.objects.filter(user=request.user).first()
     
     context = {
@@ -117,15 +117,15 @@ def ai_advice(request):
 
 @login_required
 async def generate_advice_async(request):
-    """异步生成健康建议"""
+    """Asynchronously generate health advice"""
     if request.method != 'POST':
-        return JsonResponse({'error': '只允许POST请求'}, status=405)
+        return JsonResponse({'error': 'Only POST requests allowed'}, status=405)
     
     try:
         # Get the last 30 days of health records
         last_30_days = timezone.now().date() - timedelta(days=30)
         
-        # 使用sync_to_async包装同步数据库查询
+        # Wrap synchronous database queries with sync_to_async
         running_data = await sync_to_async(get_running_data)(request.user, last_30_days)
         sleep_data = await sync_to_async(get_sleep_data)(request.user, last_30_days)
         steps_data = await sync_to_async(get_steps_data)(request.user, last_30_days)
@@ -151,20 +151,20 @@ async def generate_advice_async(request):
             'weight_records': weight_data
         }
         
-        # 计算用户数据统计值，以填充进提示词
-        # 获取用户信息
+        # Calculate user data statistics to fill in the prompt
+        # Get user information
         try:
             user_profile = await sync_to_async(lambda: request.user.profile)()
         except Exception:
-            # 如果用户没有配置文件，创建一个
+            # If user has no profile, create one
             from accounts.models import Profile
             await sync_to_async(Profile.objects.create)(user=request.user)
             user_profile = await sync_to_async(lambda: request.user.profile)()
             
-        user_age = user_profile.age if hasattr(user_profile, 'age') else "未知"
-        user_gender = user_profile.get_gender_display() if hasattr(user_profile, 'gender') else "未知"
+        user_age = user_profile.age if hasattr(user_profile, 'age') else "Unknown"
+        user_gender = user_profile.get_gender_display() if hasattr(user_profile, 'gender') else "Unknown"
         
-        # 获取最近的体重记录
+        # Get the latest weight record
         latest_weight = None
         height = None
         bmi = None
@@ -173,12 +173,12 @@ async def generate_advice_async(request):
             height = user_data['weight_records'][0].get('height', None)
             bmi = user_data['weight_records'][0].get('bmi', None)
         
-        # 计算步数平均值
+        # Calculate average steps
         avg_steps = 0
         if len(steps_data) > 0:
             avg_steps = sum(item.get('steps_count', 0) for item in steps_data) // len(steps_data)
         
-        # 计算睡眠平均值
+        # Calculate average sleep
         avg_sleep_hours = 0
         if len(sleep_data) > 0:
             avg_sleep_hours = sum(item.get('hours', 0) for item in sleep_data) / len(sleep_data)
@@ -186,21 +186,21 @@ async def generate_advice_async(request):
             avg_sleep_hours += avg_sleep_minutes / 60
             avg_sleep_hours = round(avg_sleep_hours, 1)
         
-        # 计算跑步数据
+        # Calculate running data
         avg_running_distance = 0
         avg_running_pace = 0
         running_sessions = len(running_data)
         if running_sessions > 0:
             avg_running_distance = sum(item.get('distance', 0) for item in running_data) / running_sessions
             avg_running_distance = round(avg_running_distance, 1)
-            # 计算平均配速（分钟/公里）
+            # Calculate average pace (minutes/km)
             if sum(item.get('distance', 0) for item in running_data) > 0:
                 total_minutes = sum(item.get('duration_minutes', 0) for item in running_data)
                 total_distance = sum(item.get('distance', 0) for item in running_data)
                 avg_running_pace = total_minutes / total_distance
                 avg_running_pace = round(avg_running_pace, 1)
         
-        # 计算饮食数据
+        # Calculate diet data
         avg_calories = 0
         avg_protein = 0
         if len(diet_data) > 0:
@@ -210,17 +210,17 @@ async def generate_advice_async(request):
                 avg_protein = sum(protein_values) / len(protein_values)
                 avg_protein = round(avg_protein, 1)
         
-        # 计算训练频率
+        # Calculate training frequency
         training_sessions = len(training_data)
         
-        # 计算活跃天数（任意一种活动记录的天数）
+        # Calculate active days (any one activity record day)
         all_dates = set()
         for data_list in [running_data, steps_data, training_data]:
             all_dates.update(item.get('date') for item in data_list)
         active_days = len(all_dates)
         
-        # 获取主要情绪状态
-        predominant_mood = "未记录"
+        # Get main mood status
+        predominant_mood = "Not recorded"
         if len(mood_data) > 0:
             mood_counts = {}
             for item in mood_data:
@@ -230,7 +230,7 @@ async def generate_advice_async(request):
             if mood_counts:
                 predominant_mood = max(mood_counts.items(), key=lambda x: x[1])[0]
         
-        # 获取目标值
+        # Get target value
         try:
             health_goal = await sync_to_async(lambda: HealthGoal.objects.get(user=request.user))()
             weight_target = health_goal.target_weight
@@ -241,53 +241,53 @@ async def generate_advice_async(request):
             training_sessions_goal = health_goal.weekly_training_sessions_goal
             calories_goal = health_goal.daily_calories_goal
             
-            # 计算与目标的差距
+            # Calculate the difference from the target
             weight_diff = ""
             if latest_weight and weight_target:
                 diff = latest_weight - weight_target
                 weight_diff = f"+{diff:.1f}" if diff > 0 else f"{diff:.1f}"
         except:
-            weight_target = "未设置"
-            steps_target = "未设置"
-            sleep_target_hours = "未设置"
-            sleep_target_minutes = "未设置"
-            running_distance_goal = "未设置"
-            training_sessions_goal = "未设置"
-            calories_goal = "未设置"
-            weight_diff = "未知"
+            weight_target = "Not set"
+            steps_target = "Not set"
+            sleep_target_hours = "Not set"
+            sleep_target_minutes = "Not set"
+            running_distance_goal = "Not set"
+            training_sessions_goal = "Not set"
+            calories_goal = "Not set"
+            weight_diff = "Unknown"
         
-        # 计算睡眠目标的完整表示
-        sleep_target = "未设置"
-        if sleep_target_hours != "未设置":
+        # Calculate sleep target complete representation
+        sleep_target = "Not set"
+        if sleep_target_hours != "Not set":
             sleep_target = f"{sleep_target_hours}h {sleep_target_minutes}min"
         
-        # 确定用户的成就
+        # Determine user achievements
         achievements = []
-        if avg_steps > 0 and steps_target != "未设置" and avg_steps >= steps_target:
-            achievements.append(f"平均步数达到目标 ({avg_steps} 步/天)")
+        if avg_steps > 0 and steps_target != "Not set" and avg_steps >= steps_target:
+            achievements.append(f"Average steps reached target ({avg_steps} steps/day)")
         if running_sessions > 0:
-            achievements.append(f"保持跑步习惯 (每周 {running_sessions} 次)")
+            achievements.append(f"Maintain running habit (Weekly {running_sessions} times)")
         if avg_sleep_hours > 7:
-            achievements.append(f"良好的睡眠时间 (平均 {avg_sleep_hours} 小时/晚)")
+            achievements.append(f"Good sleep time (Average {avg_sleep_hours} hours/night)")
         if latest_weight and weight_target and abs(latest_weight - weight_target) < 3:
-            achievements.append(f"体重接近目标值 ({latest_weight} kg)")
-        if avg_calories > 0 and calories_goal != "未设置":
-            achievements.append(f"保持饮食记录习惯")
+            achievements.append(f"Weight close to target value ({latest_weight} kg)")
+        if avg_calories > 0 and calories_goal != "Not set":
+            achievements.append(f"Maintain diet record habit")
         if active_days >= 5:
-            achievements.append(f"每周保持 {active_days} 天活跃")
+            achievements.append(f"Weekly maintain {active_days}/7 active days")
         
-        # 如果没有足够的成就，添加一些默认的
+        # If there are not enough achievements, add some default ones
         if len(achievements) < 2:
             if len(steps_data) > 0:
-                achievements.append("持续记录步数数据")
+                achievements.append("Continuous record steps data")
             if len(sleep_data) > 0:
-                achievements.append("持续记录睡眠数据")
+                achievements.append("Continuous record sleep data")
             if len(running_data) > 0:
-                achievements.append("坚持进行跑步锻炼")
+                achievements.append("Stick to running exercise")
             if len(training_data) > 0:
-                achievements.append("坚持进行力量训练")
+                achievements.append("Stick to strength training")
         
-        # 选择前3个成就
+        # Select top 3 achievements
         achievements = achievements[:3]
         achievements_text = ", ".join(achievements)
         
@@ -324,20 +324,20 @@ async def generate_advice_async(request):
         Recent Progress: {achievements_text}
         """
         
-        # 使用OpenAI客户端调用DeepSeek API
-        api_key = "sk-185da6fa5b874706b5254969e3531c75"  # 替换为实际的API密钥
+        # Use OpenAI client to call DeepSeek API
+        api_key = "sk-185da6fa5b874706b5254969e3531c75"  # Replace with actual API key
         
-        # 初始化OpenAI客户端（使用DeepSeek的API基础URL）
+        # Initialize OpenAI client (using DeepSeek's API base URL)
         client = AsyncOpenAI(api_key=api_key, base_url="https://api.deepseek.com")
         
-        # 构建请求参数
+        # Build request parameters
         messages = [
             {"role": "system", "content": "You are a health and fitness advisor with expertise in analyzing health data patterns and providing personalized recommendations."},
             {"role": "user", "content": prompt}
         ]
         
         try:
-            # 发送请求到DeepSeek API
+            # Send request to DeepSeek API
             response = await client.chat.completions.create(
                 model="deepseek-chat",
                 messages=messages,
@@ -345,21 +345,21 @@ async def generate_advice_async(request):
                 max_tokens=2000
             )
             
-            # 获取回复内容
+            # Get reply content
             advice = response.choices[0].message.content
             generated_time = timezone.now()
             
-            # 格式化建议内容为HTML，确保不包含任何标题标签或特殊格式
+            # Format advice content as HTML, ensuring no title tags or special formatting
             formatted_advice = ""
             paragraphs = advice.split('\n\n')
             for para in paragraphs:
                 if para.strip():
-                    # 移除可能的Markdown或HTML标记
+                    # Remove possible Markdown or HTML tags
                     clean_para = para.strip()
-                    # 将段落包装在p标签中
+                    # Wrap paragraph in p tags
                     formatted_advice += f"<p>{clean_para}</p>"
             
-            # 保存建议到数据库
+            # Save advice to database
             await sync_to_async(save_advice_to_db)(request.user, formatted_advice)
             
             return JsonResponse({
@@ -367,19 +367,19 @@ async def generate_advice_async(request):
                 'generated_time': generated_time.strftime('%Y-%m-%d %H:%M:%S')
             })
         except Exception as api_error:
-            return JsonResponse({'error': f'API调用错误: {str(api_error)}'}, status=500)
+            return JsonResponse({'error': f'API call error: {str(api_error)}'}, status=500)
                     
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
 def save_advice_to_db(user, advice_content):
-    """保存生成的建议到数据库"""
-    # 内容已经在生成时格式化为HTML，无需再次处理
+    """Save generated advice to database"""
+    # Content is already formatted as HTML during generation, no need to process again
     HealthAdvice.objects.create(
         user=user,
         content=advice_content
     )
-    # 保留最新的5条建议，删除更早的
+    # Keep latest 5 pieces of advice, delete older ones
     old_advice = HealthAdvice.objects.filter(user=user)[5:]
     if old_advice.exists():
         for advice in old_advice:
@@ -392,4 +392,4 @@ def generate_advice(request):
         result = asyncio.run(generate_advice_async(request))
         return result
     except Exception as e:
-        return JsonResponse({'error': f'处理请求时出错: {str(e)}'}, status=500)
+        return JsonResponse({'error': f'Processing request failed: {str(e)}'}, status=500)

@@ -121,23 +121,23 @@ def steps_record_history(request):
     # Get data for chart - last 30 days
     last_30_days = timezone.now().date() - timedelta(days=30)
     
-    # 直接获取每天的步数，不使用Sum聚合
+    # Get daily steps directly, without using Sum aggregation
     chart_records = StepsRecord.objects.filter(
         user=request.user, 
         date__gte=last_30_days
     ).order_by('date')
     
-    # 确保有记录
+    # Ensure there are records
     if chart_records.exists():
-        # 简化数据处理逻辑
+        # Simplify data processing logic
         dates = [record.date.strftime('%Y-%m-%d') for record in chart_records]
         steps = [record.steps_count for record in chart_records]
     else:
-        # 无数据时设置为空列表
+        # Set empty lists when no data
         dates = []
         steps = []
     
-    # 添加调试信息
+    # Add debug information
     print(f"Steps chart data: {len(dates)} records found")
     for i, (date, step) in enumerate(zip(dates, steps)):
         print(f"  {i+1}: {date} - {step} steps")
@@ -502,7 +502,7 @@ def mood_record_delete(request, pk):
 
 @login_required
 def mood_record_history(request):
-    """渲染心情记录历史页面"""
+    """Render mood record history page"""
     mood_records = MoodRecord.objects.filter(user=request.user).order_by('-date')
     
     paginator = Paginator(mood_records, 10)

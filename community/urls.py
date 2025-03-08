@@ -11,6 +11,6 @@ urlpatterns = [
     path('posts/<int:post_id>/comment/', views.comment_create, name='comment_create'),
     path('posts/<int:post_id>/like/', views.like_toggle, name='like_toggle'),
     
-    # 图片代理路由
+    # Image proxy routes
     path('media/proxy/<str:image_type>/<path:filename>', views.proxy_image, name='proxy_image'),
 ] 

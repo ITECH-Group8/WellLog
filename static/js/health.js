@@ -45,27 +45,27 @@ document.addEventListener('DOMContentLoaded', function() {
     initDashboard();
   }
 
-  // 健康卡片动画
+  // Health card animations
   animateHealthCards();
   
-  // 初始化图表（如果存在）
+  // Initialize charts (if they exist)
   initCharts();
   
-  // 初始化交互动作
+  // Initialize interactions
   initInteractions();
 });
 
 // Dashboard Initialization and Data Loading
 function initDashboard() {
-  console.log('初始化健康仪表板');
+  console.log('Initializing health dashboard');
   
-  // 加载最新的健康数据
+  // Load latest health data
   loadLatestHealthData();
   
-  // 初始化健康趋势图表
+  // Initialize health trend charts
   initHealthTrendCharts();
   
-  // 设置仪表板刷新按钮
+  // Set up dashboard refresh button
   const refreshBtn = document.getElementById('refresh-dashboard');
   if (refreshBtn) {
     refreshBtn.addEventListener('click', function() {
@@ -73,7 +73,7 @@ function initDashboard() {
     });
   }
   
-  // 设置日期范围选择器
+  // Set up date range selector
   const dateRangeSelector = document.getElementById('date-range-selector');
   if (dateRangeSelector) {
     dateRangeSelector.addEventListener('change', function() {
@@ -82,20 +82,20 @@ function initDashboard() {
   }
 }
 
-// 加载最新的健康数据
+// Load latest health data
 function loadLatestHealthData(showLoader = false) {
-  console.log('加载最新健康数据');
+  console.log('Loading latest health data');
   
   if (showLoader) {
     document.querySelectorAll('.health-card .card-body').forEach(card => {
-      card.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">加载中...</span></div><p class="mt-2">加载数据中...</p></div>';
+      card.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2">Loading data...</p></div>';
     });
   }
   
-  // 这里应该是从API获取数据的代码
-  // 为演示目的，使用setTimeout模拟API请求延迟
+  // Here should be the code to get data from API
+  // For demonstration purposes, use setTimeout to simulate API request delay
   setTimeout(() => {
-    // 模拟数据 - 实际项目中应该替换为真实的API调用
+    // Simulated data - in actual project this should be replaced with real API calls
     const healthData = {
       steps: {
         today: 8765,
@@ -129,33 +129,33 @@ function loadLatestHealthData(showLoader = false) {
       }
     };
     
-    // 更新仪表板卡片
+    // Update dashboard cards
     updateDashboardCards(healthData);
     
   }, 1000);
 }
 
-// 更新仪表板卡片
+// Update dashboard cards
 function updateDashboardCards(data) {
-  console.log('更新仪表板卡片', data);
+  console.log('Updating dashboard cards', data);
   
-  // 更新步数卡片
+  // Update steps card
   updateHealthCard('steps', data.steps);
   
-  // 更新睡眠卡片
+  // Update sleep card
   updateHealthCard('sleep', data.sleep);
   
-  // 更新饮食卡片
+  // Update diet card
   updateHealthCard('diet', data.diet);
   
-  // 更新跑步卡片
+  // Update running card
   updateHealthCard('running', data.running);
   
-  // 更新心情卡片
+  // Update mood card
   updateHealthCard('mood', data.mood);
 }
 
-// 更新单个健康卡片
+// Update single health card
 function updateHealthCard(type, data) {
   const card = document.getElementById(`${type}-card`);
   if (!card) return;
@@ -164,17 +164,17 @@ function updateHealthCard(type, data) {
   const descElement = card.querySelector('.text-muted');
   const progressElement = card.querySelector('.progress-bar');
   
-  // 为更新添加动画效果
+  // Add animation effect for updates
   if (valueElement) {
-    // 保存当前值
+    // Save current value
     const oldValue = parseFloat(valueElement.textContent) || 0;
     const newValue = parseFloat(data.today) || 0;
     
-    // 创建动画效果
-    const duration = 1000; // 1秒
+    // Create animation effect
+    const duration = 1000; // 1 second
     const startTime = performance.now();
     
-    // 根据类型设置单位
+    // Set unit according to type
     let unit = '';
     switch(type) {
       case 'steps':
@@ -191,12 +191,12 @@ function updateHealthCard(type, data) {
         break;
     }
     
-    // 数字递增/递减动画
+    // Number increment/decrement animation
     function updateValue(timestamp) {
       const elapsed = timestamp - startTime;
       const progress = Math.min(elapsed / duration, 1);
       
-      // 使用缓动函数使动画更自然
+      // Use easing function to make the animation more natural
       const easeProgress = 1 - Math.pow(1 - progress, 3);
       
       const currentValue = oldValue + (newValue - oldValue) * easeProgress;
@@ -216,7 +216,7 @@ function updateHealthCard(type, data) {
     descElement.textContent = data.description;
     descElement.classList.add('animate__animated', 'animate__fadeIn');
     
-    // 重置动画
+    // Reset animation
     setTimeout(() => {
       descElement.classList.remove('animate__animated', 'animate__fadeIn');
     }, 1000);
@@ -239,18 +239,18 @@ function updateHealthCard(type, data) {
         break;
     }
     
-    // 为进度条添加动画效果
+    // Add animation effect to progress bar
     const oldWidth = parseFloat(progressElement.style.width) || 0;
     const newWidth = percentage;
     
-    const duration = 1000; // 1秒
+    const duration = 1000; // 1 second
     const startTime = performance.now();
     
     function updateProgress(timestamp) {
       const elapsed = timestamp - startTime;
       const progress = Math.min(elapsed / duration, 1);
       
-      // 使用缓动函数
+      // Use easing function
       const easeProgress = 1 - Math.pow(1 - progress, 3);
       
       const currentWidth = oldWidth + (newWidth - oldWidth) * easeProgress;
@@ -269,43 +269,43 @@ function updateHealthCard(type, data) {
   }
 }
 
-// 初始化健康趋势图表
+// Initialize health trend charts
 function initHealthTrendCharts() {
-  console.log('初始化健康趋势图表');
+  console.log('Initializing health trend charts');
   
-  // 模拟获取历史数据
+  // Simulated data retrieval
   setTimeout(() => {
-    // 模拟过去7天的数据
+    // Simulated data for past 7 days
     const dates = [];
     const stepsData = [];
     const sleepData = [];
     
-    // 生成过去7天的日期和随机数据
+    // Generate dates and random data for past 7 days
     for (let i = 6; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
       dates.push(date.toLocaleDateString('zh-CN', {month: 'short', day: 'numeric'}));
       
-      stepsData.push(Math.floor(Math.random() * 5000) + 5000); // 5000-10000步
-      sleepData.push((Math.random() * 3) + 5); // 5-8小时睡眠
+      stepsData.push(Math.floor(Math.random() * 5000) + 5000); // 5000-10000 steps
+      sleepData.push((Math.random() * 3) + 5); // 5-8 hours sleep
     }
     
-    // 渲染步数趋势图
+    // Render steps trend chart
     renderTrendChart('steps-trend-chart', {
       labels: dates,
       values: stepsData
     }, {
-      yAxisLabel: '步数',
+      yAxisLabel: 'steps',
       backgroundColor: 'rgba(75, 192, 192, 0.2)',
       borderColor: 'rgba(75, 192, 192, 1)'
     });
     
-    // 渲染睡眠趋势图
+    // Render sleep trend chart
     renderTrendChart('sleep-trend-chart', {
       labels: dates,
       values: sleepData
     }, {
-      yAxisLabel: '小时',
+      yAxisLabel: 'hours',
       backgroundColor: 'rgba(153, 102, 255, 0.2)',
       borderColor: 'rgba(153, 102, 255, 1)'
     });
@@ -313,7 +313,7 @@ function initHealthTrendCharts() {
   }, 1500);
 }
 
-// 渲染趋势图表
+// Render trend chart
 function renderTrendChart(chartId, data, options) {
   const ctx = document.getElementById(chartId);
   if (!ctx) return;
@@ -375,7 +375,7 @@ function renderTrendChart(chartId, data, options) {
     }
   };
 
-  // 创建图表实例并存储在window对象上，以便后续更新
+  // Create chart instance and store in window object for future updates
   if (window[chartId]) {
     window[chartId].destroy();
   }
@@ -383,29 +383,29 @@ function renderTrendChart(chartId, data, options) {
   window[chartId] = new Chart(ctx, chartConfig);
 }
 
-// 更新仪表板日期范围
+// Update dashboard date range
 function updateDashboardDateRange(range) {
-  console.log('更新仪表板日期范围为:', range);
+  console.log('Updating dashboard date range to:', range);
   
   document.querySelectorAll('.health-card .card-body').forEach(card => {
-    card.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">加载中...</span></div><p class="mt-2">正在更新数据...</p></div>';
+    card.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2">Updating data...</p></div>';
   });
   
-  // 模拟API调用
+  // Simulated API call
   setTimeout(() => {
-    // 根据所选范围更新数据
+    // Update data based on selected range
     loadLatestHealthData();
     
-    // 更新图表数据
+    // Update chart data
     updateChartsForDateRange(range);
   }, 1000);
 }
 
-// 根据日期范围更新图表
+// Update charts based on date range
 function updateChartsForDateRange(range) {
-  console.log('为日期范围更新图表:', range);
+  console.log('Updating charts for date range:', range);
   
-  // 生成日期标签
+  // Generate date labels
   const labels = [];
   const daysCount = range === 'week' ? 7 : range === 'month' ? 30 : 90;
   
@@ -414,17 +414,17 @@ function updateChartsForDateRange(range) {
     date.setDate(date.getDate() - i);
     
     if (range === 'week') {
-      labels.push(date.toLocaleDateString('zh-CN', {weekday: 'short'}));
+      labels.push(date.toLocaleDateString('en-US', {weekday: 'short'}));
     } else {
-      labels.push(date.toLocaleDateString('zh-CN', {month: 'short', day: 'numeric'}));
+      labels.push(date.toLocaleDateString('en-US', {month: 'short', day: 'numeric'}));
     }
   }
   
-  // 生成随机数据
+  // Generate random data
   const stepsData = Array.from({length: daysCount}, () => Math.floor(Math.random() * 5000) + 5000);
   const sleepData = Array.from({length: daysCount}, () => (Math.random() * 3) + 5);
   
-  // 更新图表
+  // Update charts
   if (window['steps-trend-chart']) {
     window['steps-trend-chart'].data.labels = labels;
     window['steps-trend-chart'].data.datasets[0].data = stepsData;
@@ -599,25 +599,25 @@ function renderRecordHistoryChart(chartData, recordType) {
   });
 }
 
-// 健康卡片动画函数
+// Health card animations function
 function animateHealthCards() {
   const cards = document.querySelectorAll('.health-card');
   
-  // 使用IntersectionObserver监测卡片进入视口
+  // Use IntersectionObserver to monitor card visibility
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        // 添加动画类
+        // Add animation class
         entry.target.classList.add('animate__animated', 'animate__fadeInUp');
-        // 卡片已显示，不再监测
+        // Card is visible, no longer monitor
         observer.unobserve(entry.target);
       }
     });
   }, {
-    threshold: 0.1  // 当卡片10%进入视口时触发
+    threshold: 0.1  // Trigger when card is 10% visible
   });
   
-  // 为每个卡片添加淡入动画，并设置延迟
+  // Add fade-in animation to each card and set delay
   cards.forEach((card, index) => {
     card.style.opacity = "0";
     card.style.animationDelay = `${index * 0.1}s`;
@@ -625,17 +625,17 @@ function animateHealthCards() {
   });
 }
 
-// 初始化图表函数
+// Initialize charts function
 function initCharts() {
-  // 运动图表
+  // Running chart
   if (document.getElementById('runningChart')) {
     const ctx = document.getElementById('runningChart').getContext('2d');
     const chart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
         datasets: [{
-          label: '距离 (km)',
+          label: 'Distance (km)',
           data: [5, 3, 0, 7, 2, 8, 4],
           borderColor: '#0d6efd',
           backgroundColor: 'rgba(13, 110, 253, 0.1)',
@@ -655,7 +655,7 @@ function initCharts() {
           },
           title: {
             display: true,
-            text: '本周跑步距离'
+            text: 'This Week Running Distance'
           }
         },
         scales: {
@@ -667,15 +667,15 @@ function initCharts() {
     });
   }
   
-  // 步数图表
+  // Steps chart
   if (document.getElementById('stepsChart')) {
     const ctx = document.getElementById('stepsChart').getContext('2d');
     const chart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
         datasets: [{
-          label: '步数',
+          label: 'Steps',
           data: [8000, 6500, 9000, 7500, 5000, 10000, 7800],
           backgroundColor: 'rgba(40, 167, 69, 0.7)',
           borderColor: 'rgba(40, 167, 69, 1)',
@@ -694,7 +694,7 @@ function initCharts() {
           },
           title: {
             display: true,
-            text: '本周步数统计'
+            text: 'This Week Steps Statistics'
           }
         },
         scales: {
@@ -706,15 +706,15 @@ function initCharts() {
     });
   }
   
-  // 睡眠图表
+  // Sleep chart
   if (document.getElementById('sleepChart')) {
     const ctx = document.getElementById('sleepChart').getContext('2d');
     const chart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
         datasets: [{
-          label: '睡眠时长 (小时)',
+          label: 'Sleep Duration (hours)',
           data: [7.5, 6, 8, 7, 6.5, 9, 8.5],
           borderColor: '#6f42c1',
           backgroundColor: 'rgba(111, 66, 193, 0.1)',
@@ -734,7 +734,7 @@ function initCharts() {
           },
           title: {
             display: true,
-            text: '本周睡眠统计'
+            text: 'This Week Sleep Statistics'
           }
         },
         scales: {
@@ -748,23 +748,23 @@ function initCharts() {
   }
 }
 
-// 初始化交互函数
+// Initialize interactions function
 function initInteractions() {
-  // 为健康卡片添加点击效果
+  // Add click effect to health cards
   const healthCards = document.querySelectorAll('.health-card');
   healthCards.forEach(card => {
     card.addEventListener('click', function() {
-      // 添加点击动画
+      // Add click animation
       this.classList.add('card-clicked');
       
-      // 移除动画类（允许再次点击）
+      // Remove animation class (allow multiple clicks)
       setTimeout(() => {
         this.classList.remove('card-clicked');
       }, 300);
     });
   });
   
-  // 为按钮添加波纹效果
+  // Add ripple effect to buttons
   const buttons = document.querySelectorAll('.btn');
   buttons.forEach(button => {
     button.addEventListener('mousedown', function(e) {
@@ -784,7 +784,7 @@ function initInteractions() {
     });
   });
   
-  // 实现健康数据卡片轮播（对于移动设备）
+  // Implement health data card carousel (for mobile devices)
   if (window.innerWidth < 768) {
     const cardsContainer = document.querySelector('.row');
     if (cardsContainer) {
@@ -802,16 +802,16 @@ function initInteractions() {
       function handleSwipe() {
         const threshold = 50;
         const cards = cardsContainer.querySelectorAll('.col-md-4');
-        const cardWidth = cards[0].offsetWidth + 16; // 包含间距
+        const cardWidth = cards[0].offsetWidth + 16; // Include spacing
         
         if (startX - endX > threshold) {
-          // 向左滑动
+          // Left swipe
           cardsContainer.scrollBy({
             left: cardWidth,
             behavior: 'smooth'
           });
         } else if (endX - startX > threshold) {
-          // 向右滑动
+          // Right swipe
           cardsContainer.scrollBy({
             left: -cardWidth,
             behavior: 'smooth'
@@ -821,11 +821,11 @@ function initInteractions() {
     }
   }
   
-  // 实现标签页平滑过渡
+  // Implement tab smooth transition
   const tabButtons = document.querySelectorAll('[data-bs-toggle="tab"]');
   tabButtons.forEach(button => {
     button.addEventListener('shown.bs.tab', function() {
-      // 切换标签时触发动画
+      // Animation triggered when switching tabs
       const targetId = this.getAttribute('data-bs-target');
       const targetPane = document.querySelector(targetId);
       
@@ -836,7 +836,7 @@ function initInteractions() {
           card.classList.add('animate__animated', 'animate__fadeInUp');
           card.style.animationDelay = `${index * 0.1}s`;
           
-          // 重置动画
+          // Reset animation
           void card.offsetWidth;
           card.style.opacity = "1";
         });

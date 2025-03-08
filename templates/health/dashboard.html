@@ -53,6 +53,19 @@
   .dashboard-header {
     margin-bottom: 1rem !important;
   }
+  
+  /* Progress Bar Width Classes */
+  .progress-width-0 { width: 0%; }
+  .progress-width-10 { width: 10%; }
+  .progress-width-20 { width: 20%; }
+  .progress-width-30 { width: 30%; }
+  .progress-width-40 { width: 40%; }
+  .progress-width-50 { width: 50%; }
+  .progress-width-60 { width: 60%; }
+  .progress-width-70 { width: 70%; }
+  .progress-width-80 { width: 80%; }
+  .progress-width-90 { width: 90%; }
+  .progress-width-100 { width: 100%; }
 </style>
 {% endblock %}
 
@@ -138,7 +151,9 @@
                 {% if health_goal and health_goal.daily_steps_goal %}
                   <div class="progress mb-2" style="height: 8px;">
                     {% with progress=steps_record.steps_count|div:health_goal.daily_steps_goal|mul:100|floatformat:0 %}
-                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    {% with progress_class="progress-width-"|add:progress|slice:"0:17" %}
+                    <div class="progress-bar bg-success {{ progress_class }}" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    {% endwith %}
                     {% endwith %}
                   </div>
                   <p class="text-muted small">Goal: {{ health_goal.daily_steps_goal }} steps</p>
@@ -183,7 +198,9 @@
                   {% with goal_minutes=health_goal.daily_sleep_hours_goal|mul:60|add:health_goal.daily_sleep_minutes_goal %}
                   {% with progress=sleep_minutes|div:goal_minutes|mul:100|floatformat:0 %}
                   <div class="progress mb-2" style="height: 8px;">
-                    <div class="progress-bar bg-info" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    {% with progress_class="progress-width-"|add:progress|slice:"0:17" %}
+                    <div class="progress-bar bg-info {{ progress_class }}" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    {% endwith %}
                   </div>
                   <p class="text-muted small">Goal: {{ health_goal.daily_sleep_hours_goal }}h {{ health_goal.daily_sleep_minutes_goal }}min</p>
                   {% endwith %}
@@ -228,7 +245,9 @@
                 {% if health_goal and health_goal.daily_calories_goal %}
                   {% with progress=diet_record.calories|div:health_goal.daily_calories_goal|mul:100|floatformat:0 %}
                   <div class="progress mb-2" style="height: 8px;">
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    {% with progress_class="progress-width-"|add:progress|slice:"0:17" %}
+                    <div class="progress-bar bg-warning {{ progress_class }}" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    {% endwith %}
                   </div>
                   <p class="text-muted small">Goal: {{ health_goal.daily_calories_goal }} calories</p>
                   {% endwith %}

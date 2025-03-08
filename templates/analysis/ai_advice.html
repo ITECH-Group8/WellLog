@@ -42,7 +42,6 @@
     justify-content: center;
   }
   
-  /* 建议内容的样式优化 */
   #adviceContent {
     line-height: 1.7;
     color: #495057;
@@ -73,7 +72,6 @@
     vertical-align: middle;
   }
   
-  /* 确保内部任何标签都不会影响整体样式 */
   #adviceContent strong, 
   #adviceContent b, 
   #adviceContent h1, 
@@ -146,7 +144,6 @@
     display: block;
   }
   
-  /* 响应式调整 */
   @media (max-width: 767.98px) {
     .advice-body, .advice-content {
       padding: 1.5rem;
@@ -204,7 +201,13 @@
         </div>
         
         <!-- Advice content container (filled by JavaScript) -->
-        <div class="advice-body d-none" id="adviceContent"></div>
+        <div class="advice-body d-none" id="adviceContent" 
+          {% if latest_advice %} 
+          data-has-advice="true" 
+          data-created-at="{{ latest_advice.created_at|date:'Y-m-d H:i' }}"
+          {% endif %}>
+          {% if latest_advice %}{{ latest_advice.content|safe }}{% endif %}
+        </div>
         <div class="advice-timestamp d-none" id="adviceTimestamp"></div>
         
         <!-- Error message (hidden initially) -->
@@ -231,18 +234,19 @@
     const adviceError = document.getElementById('adviceError');
     const errorMessage = document.getElementById('errorMessage');
     
-    // 检查是否有保存的建议
-    {% if latest_advice %}
+    // Check if there is saved advice using data attributes
+    const hasAdvice = adviceContent.dataset.hasAdvice === "true";
+    if (hasAdvice) {
       advicePlaceholder.classList.add('d-none');
       adviceContent.classList.remove('d-none');
       adviceTimestamp.classList.remove('d-none');
-      adviceContent.innerHTML = `{{ latest_advice.content|safe|escapejs }}`;
-      adviceTimestamp.textContent = `Generated on: {{ latest_advice.created_at|date:"Y-m-d H:i" }}`;
-    {% endif %}
+      // Convert created_at to a human-readable format
+      adviceTimestamp.textContent = `Generated on: ${adviceContent.dataset.createdAt}`;
+    }
     
-    // 生成新建议的点击事件处理
+    // Generate new advice click event handler
     generateBtn.addEventListener('click', async function() {
-      // 显示加载状态
+      // Show loading state
       advicePlaceholder.classList.add('d-none');
       adviceContent.classList.add('d-none');
       adviceTimestamp.classList.add('d-none');
@@ -250,7 +254,7 @@
       adviceLoading.classList.remove('d-none');
       
       try {
-        // 发送请求到后端
+        // Send request to backend
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         const response = await fetch('{% url "analysis:generate_advice" %}', {
           method: 'POST',
@@ -263,24 +267,24 @@
         
         const data = await response.json();
         
-        // 隐藏加载状态
+        // Hide loading state
         adviceLoading.classList.add('d-none');
         
         if (response.ok) {
-          // 显示建议内容 - 直接使用后端返回的格式化内容
+          // Show advice content - directly use backend formatted content
           adviceContent.innerHTML = data.advice;
           adviceContent.classList.remove('d-none');
           
-          // 显示生成时间
+          // Show generated time
           adviceTimestamp.textContent = `Generated on: ${data.generated_time}`;
           adviceTimestamp.classList.remove('d-none');
         } else {
-          // 显示错误信息
+          // Show error message
           errorMessage.textContent = data.error || 'An unknown error occurred';
           adviceError.classList.remove('d-none');
         }
       } catch (error) {
-        // 隐藏加载状态，显示错误信息
+        // Hide loading state, show error message
         adviceLoading.classList.add('d-none');
         errorMessage.textContent = 'Failed to generate advice. Please try again later.';
         adviceError.classList.remove('d-none');
