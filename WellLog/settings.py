@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     "storages",
+    "mathfilters",
     # "debug_toolbar",
     # Local
     "pages",

@@ -1,0 +1,292 @@
+{% extends 'base_with_sidebar.html' %}
+{% load static %}
+
+{% block title %}AI Health Advice | WellLog{% endblock title %}
+
+{% block css %}
+{{ block.super }}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<link rel="stylesheet" href="{% static 'css/analysis.css' %}">
+<style>
+  .advice-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .advice-section {
+    margin-bottom: 2rem;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .advice-header {
+    background: linear-gradient(90deg, #6f42c1 0%, #6610f2 100%);
+    color: white;
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .advice-body {
+    padding: 2rem;
+  }
+  
+  .advice-content {
+    padding: 2rem;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  /* 建议内容的样式优化 */
+  #adviceContent {
+    line-height: 1.7;
+    color: #495057;
+    font-size: 0.95rem;
+    font-weight: normal;
+    text-align: justify;
+  }
+  
+  #adviceContent p {
+    margin-bottom: 1.5rem;
+    text-align: justify;
+    font-weight: normal;
+  }
+  
+  #adviceContent p:last-child {
+    margin-bottom: 0;
+  }
+  
+  #adviceContent p:first-of-type::before {
+    content: "";
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%236f42c1" class="bi bi-chat-quote" viewBox="0 0 16 16"><path d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z"/><path d="M7.066 6.76A1.665 1.665 0 0 0 4 7.668a1.667 1.667 0 0 0 2.561 1.406c-.131.389-.375.804-.777 1.22a.417.417 0 0 0 .6.58c1.486-1.54 1.293-3.214.682-4.112zm4 0A1.665 1.665 0 0 0 8 7.668a1.667 1.667 0 0 0 2.561 1.406c-.131.389-.375.804-.777 1.22a.417.417 0 0 0 .6.58c1.486-1.54 1.293-3.214.682-4.112z"/></svg>');
+    background-repeat: no-repeat;
+    background-size: 24px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  
+  /* 确保内部任何标签都不会影响整体样式 */
+  #adviceContent strong, 
+  #adviceContent b, 
+  #adviceContent h1, 
+  #adviceContent h2, 
+  #adviceContent h3, 
+  #adviceContent h4, 
+  #adviceContent h5, 
+  #adviceContent h6 {
+    font-weight: normal;
+    font-size: 0.95rem;
+    color: #495057;
+    margin: 0;
+    padding: 0;
+  }
+  
+  #adviceContent blockquote {
+    border-left: 4px solid #6f42c1;
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    color: #6c757d;
+    font-style: italic;
+    font-weight: normal;
+  }
+  
+  #adviceContent strong {
+    color: #495057;
+    font-weight: normal;
+  }
+  
+  .advice-timestamp {
+    text-align: right;
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-style: italic;
+    margin-top: 2rem;
+  }
+
+  .generate-btn {
+    background: linear-gradient(135deg, #6f42c1 0%, #a66eff 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 10px rgba(111, 66, 193, 0.3);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 200px;
+  }
+  
+  .generate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(111, 66, 193, 0.4);
+    color: white;
+  }
+  
+  .advice-placeholder {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .advice-placeholder i {
+    font-size: 3rem;
+    color: #6f42c1;
+    opacity: 0.7;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  
+  /* 响应式调整 */
+  @media (max-width: 767.98px) {
+    .advice-body, .advice-content {
+      padding: 1.5rem;
+    }
+    
+    .generate-btn {
+      width: 100%;
+      padding: 0.8rem 1.5rem;
+    }
+  }
+</style>
+{% endblock css %}
+
+{% block content %}
+<div class="container-fluid py-4">
+  {% csrf_token %}
+  <div class="advice-container">
+    <header class="mb-4 text-center">
+      <h1 class="display-5 fw-bold mb-3">AI Health Advisor</h1>
+      <p class="lead text-muted">Get personalized health recommendations based on your data patterns</p>
+    </header>
+
+    <!-- Generate Advice Section -->
+    <div class="advice-section mb-4">
+      <div class="advice-header">
+        <h2 class="mb-0 fs-4"><i class="bi bi-magic me-2"></i>Generate Health Insights</h2>
+      </div>
+      <div class="advice-body text-center">
+        <p class="mb-4">Click the button below to generate personalized health advice based on your activity data.</p>
+        <!-- Generate advice button -->
+        <button class="generate-btn" id="generateAdviceBtn">
+          <i class="bi bi-magic me-2"></i> Generate AI Advice
+        </button>
+      </div>
+    </div>
+    
+    <!-- AI Advice Section -->
+    <div class="advice-section">
+      <div class="advice-header">
+        <h2 class="mb-0 fs-4"><i class="bi bi-robot me-2"></i>Personalized Health Advice</h2>
+      </div>
+      <div class="advice-content">
+        <!-- Initial placeholder -->
+        <div class="advice-placeholder" id="advicePlaceholder">
+          <i class="bi bi-lightbulb"></i>
+          <h3>Ready to generate your personalized advice</h3>
+          <p class="text-muted">Click the "Generate AI Advice" button to get insights based on your health data.</p>
+        </div>
+        
+        <!-- Loading state (hidden initially) -->
+        <div class="advice-loading d-none" id="adviceLoading">
+          <div class="pulse mb-4"></div>
+          <h3>Analyzing your health data...</h3>
+          <p class="text-muted">Our AI is examining your patterns and preparing personalized recommendations.</p>
+        </div>
+        
+        <!-- Advice content container (filled by JavaScript) -->
+        <div class="advice-body d-none" id="adviceContent"></div>
+        <div class="advice-timestamp d-none" id="adviceTimestamp"></div>
+        
+        <!-- Error message (hidden initially) -->
+        <div class="advice-error d-none" id="adviceError">
+          <h4><i class="bi bi-exclamation-triangle me-2"></i>Sorry, something went wrong</h4>
+          <p id="errorMessage">We couldn't generate advice at this time. Please try again later.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+{{ block.super }}
+<script src="{% static 'js/analysis.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const generateBtn = document.getElementById('generateAdviceBtn');
+    const advicePlaceholder = document.getElementById('advicePlaceholder');
+    const adviceLoading = document.getElementById('adviceLoading');
+    const adviceContent = document.getElementById('adviceContent');
+    const adviceTimestamp = document.getElementById('adviceTimestamp');
+    const adviceError = document.getElementById('adviceError');
+    const errorMessage = document.getElementById('errorMessage');
+    
+    // 检查是否有保存的建议
+    {% if latest_advice %}
+      advicePlaceholder.classList.add('d-none');
+      adviceContent.classList.remove('d-none');
+      adviceTimestamp.classList.remove('d-none');
+      adviceContent.innerHTML = `{{ latest_advice.content|safe|escapejs }}`;
+      adviceTimestamp.textContent = `Generated on: {{ latest_advice.created_at|date:"Y-m-d H:i" }}`;
+    {% endif %}
+    
+    // 生成新建议的点击事件处理
+    generateBtn.addEventListener('click', async function() {
+      // 显示加载状态
+      advicePlaceholder.classList.add('d-none');
+      adviceContent.classList.add('d-none');
+      adviceTimestamp.classList.add('d-none');
+      adviceError.classList.add('d-none');
+      adviceLoading.classList.remove('d-none');
+      
+      try {
+        // 发送请求到后端
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const response = await fetch('{% url "analysis:generate_advice" %}', {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({})
+        });
+        
+        const data = await response.json();
+        
+        // 隐藏加载状态
+        adviceLoading.classList.add('d-none');
+        
+        if (response.ok) {
+          // 显示建议内容 - 直接使用后端返回的格式化内容
+          adviceContent.innerHTML = data.advice;
+          adviceContent.classList.remove('d-none');
+          
+          // 显示生成时间
+          adviceTimestamp.textContent = `Generated on: ${data.generated_time}`;
+          adviceTimestamp.classList.remove('d-none');
+        } else {
+          // 显示错误信息
+          errorMessage.textContent = data.error || 'An unknown error occurred';
+          adviceError.classList.remove('d-none');
+        }
+      } catch (error) {
+        // 隐藏加载状态，显示错误信息
+        adviceLoading.classList.add('d-none');
+        errorMessage.textContent = 'Failed to generate advice. Please try again later.';
+        adviceError.classList.remove('d-none');
+        console.error('Error generating advice:', error);
+      }
+    });
+  });
+</script>
+{% endblock javascript %} 

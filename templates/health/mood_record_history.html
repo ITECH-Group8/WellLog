@@ -1,0 +1,328 @@
+{% extends 'base_with_sidebar.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block title %}情绪记录历史{% endblock %}
+
+{% block css %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<style>
+  /* 历史记录页面样式 */
+  .history-container {
+    padding: 1rem;
+  }
+  
+  .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .history-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .history-header h2 i {
+    font-size: 1.2rem;
+  }
+  
+  .dashboard-header {
+    margin-bottom: 1rem !important;
+  }
+  
+  .nav-tabs .nav-link {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.8rem;
+  }
+  
+  .nav-tabs .nav-link i {
+    font-size: 0.9rem;
+  }
+  
+  .export-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+  }
+  
+  .data-list {
+    margin-top: 1.5rem;
+  }
+  
+  .data-list .table {
+    background-color: white;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  .data-list .table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-top: none;
+  }
+  
+  .data-list .table td {
+    vertical-align: middle;
+    font-size: 0.9rem;
+  }
+  
+  .mood-excellent {
+    color: #28a745;
+  }
+  
+  .mood-good {
+    color: #17a2b8;
+  }
+  
+  .mood-neutral {
+    color: #6c757d;
+  }
+  
+  .mood-bad {
+    color: #ffc107;
+  }
+  
+  .mood-terrible {
+    color: #dc3545;
+  }
+  
+  .mood-emoji {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+  }
+  
+  .pagination {
+    margin-top: 1.5rem;
+    justify-content: center;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  .empty-state i {
+    font-size: 2.5rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  
+  .empty-state h4 {
+    font-weight: 600;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+  }
+  
+  .empty-state p {
+    color: #adb5bd;
+    margin-bottom: 1.5rem;
+  }
+  
+  @media (max-width: 767.98px) {
+    .history-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .history-header .btn-group {
+      margin-top: 1rem;
+      align-self: flex-end;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- 情绪记录历史内容 -->
+<div class="container-fluid py-4">
+  <div class="history-container">
+    <div class="dashboard-header">
+      <h2>
+        <i class="bi bi-emoji-smile me-2"></i>情绪记录历史
+      </h2>
+    </div>
+    
+    <!-- 导航标签 -->
+    <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
+      <ul class="nav nav-tabs" id="healthTabs">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'dashboard' %}">
+            <i class="bi bi-grid-3x3-gap me-1"></i>总览
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'running_history' %}">
+            <i class="bi bi-lightning me-1"></i>跑步
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'steps_history' %}">
+            <i class="bi bi-activity me-1"></i>步数
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'training_history' %}">
+            <i class="bi bi-trophy me-1"></i>训练
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'sleep_history' %}">
+            <i class="bi bi-moon me-1"></i>睡眠
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'diet_history' %}">
+            <i class="bi bi-egg-fried me-1"></i>饮食
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'mood_history' %}">
+            <i class="bi bi-emoji-smile me-1"></i>情绪
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'weight_history' %}">
+            <i class="bi bi-clipboard-data me-1"></i>体重
+          </a>
+        </li>
+      </ul>
+      <div>
+        <a href="{% url 'mood_add' %}" class="btn btn-primary btn-sm">
+          <i class="bi bi-plus-circle me-1"></i>添加记录
+        </a>
+      </div>
+    </div>
+    
+    <!-- 数据列表 -->
+    <div class="data-list">
+      {% if records %}
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>日期</th>
+              <th>情绪状态</th>
+              <th>压力水平</th>
+              <th>备注</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for record in records %}
+              <tr class="animate__animated animate__fadeIn" style="animation-delay: {{ forloop.counter0|floatformat:2|div:10 }}s">
+                <td>{{ record.date|date:"Y-m-d" }}</td>
+                <td>
+                  {% if record.mood == 'excellent' %}
+                    <span class="mood-emoji mood-excellent">😁</span><span class="mood-excellent">极好</span>
+                  {% elif record.mood == 'good' %}
+                    <span class="mood-emoji mood-good">😊</span><span class="mood-good">良好</span>
+                  {% elif record.mood == 'neutral' %}
+                    <span class="mood-emoji mood-neutral">😐</span><span class="mood-neutral">一般</span>
+                  {% elif record.mood == 'bad' %}
+                    <span class="mood-emoji mood-bad">😔</span><span class="mood-bad">糟糕</span>
+                  {% elif record.mood == 'terrible' %}
+                    <span class="mood-emoji mood-terrible">😢</span><span class="mood-terrible">极差</span>
+                  {% endif %}
+                </td>
+                <td>{% if record.stress_level %}{{ record.stress_level }}/10{% else %}-{% endif %}</td>
+                <td>{% if record.notes %}{{ record.notes|truncatechars:50 }}{% else %}-{% endif %}</td>
+                <td>
+                  <a href="{% url 'mood_edit' record.id %}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                  <a href="{% url 'mood_delete' record.id %}" class="btn btn-sm btn-outline-danger ms-1" 
+                     onclick="return confirm('确定要删除这条记录吗？');">
+                    <i class="bi bi-trash"></i>
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        
+        <!-- 分页 -->
+        {% if records.has_other_pages %}
+          <nav aria-label="Page navigation">
+            <ul class="pagination">
+              {% if records.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ records.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+              {% else %}
+                <li class="page-item disabled">
+                  <span class="page-link" aria-hidden="true">&laquo;</span>
+                </li>
+              {% endif %}
+              
+              {% for i in records.paginator.page_range %}
+                {% if records.number == i %}
+                  <li class="page-item active">
+                    <span class="page-link">{{ i }} <span class="sr-only">(current)</span></span>
+                  </li>
+                {% else %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+              
+              {% if records.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ records.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              {% else %}
+                <li class="page-item disabled">
+                  <span class="page-link" aria-hidden="true">&raquo;</span>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
+        {% endif %}
+      {% else %}
+        <div class="empty-state">
+          <i class="bi bi-emoji-neutral"></i>
+          <h4>暂无情绪记录</h4>
+          <p>开始记录您的情绪状态，追踪您的情绪变化</p>
+          <a href="{% url 'mood_add' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i>添加情绪记录
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 为当前活跃的导航标签设置active类
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('#healthTabs .nav-link');
+    
+    navLinks.forEach(link => {
+      if (link.getAttribute('href') === currentPath) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+  });
+</script>
+{% endblock %} 

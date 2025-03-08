@@ -5,11 +5,11 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),
     path('', include('pages.urls')),
     path('health/', include('health.urls')),
-    path('accounts/', include('allauth.urls')),
-    path('accounts/', include('accounts.urls')),
     path('community/', include('community.urls')),
+    path('analysis/', include('analysis.urls', namespace='analysis')),
 ]
 
 # Add media files URL during development

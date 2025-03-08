@@ -39,4 +39,13 @@ urlpatterns = [
     path('mood/edit/<int:pk>/', views.mood_record_edit, name='mood_edit'),
     path('mood/delete/<int:pk>/', views.mood_record_delete, name='mood_delete'),
     path('mood/history/', views.mood_record_history, name='mood_history'),
+    
+    # Weight Records
+    path('weight/add/', views.weight_record_add, name='weight_add'),
+    path('weight/edit/<int:pk>/', views.weight_record_edit, name='weight_edit'),
+    path('weight/delete/<int:pk>/', views.weight_record_delete, name='weight_delete'),
+    path('weight/history/', views.weight_record_history, name='weight_history'),
+    
+    # Health Goals
+    path('goals/', views.health_goal_edit, name='health_goals'),
 ] 

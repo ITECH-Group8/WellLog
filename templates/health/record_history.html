@@ -294,6 +294,8 @@
           <i class="bi bi-trophy me-2"></i>
         {% elif record_type == 'Mood' %}
           <i class="bi bi-emoji-smile me-2"></i>
+        {% elif record_type == 'Weight' %}
+          <i class="bi bi-person-fill me-2"></i>
         {% endif %}
         {{ record_type }} 记录历史
       </h2>
@@ -342,6 +344,11 @@
             <i class="bi bi-emoji-smile me-1"></i>Mood
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link {% if active_tab == 'weight' %}active{% endif %}" href="{% url 'weight_history' %}">
+            <i class="bi bi-person-fill me-1"></i>Weight
+          </a>
+        </li>
       </ul>
       <div>
         {% if record_type == 'Steps' %}
@@ -363,6 +370,10 @@
         {% elif record_type == 'Mood' %}
           <a href="{% url 'mood_add' %}" class="btn btn-primary btn-sm">
             <i class="bi bi-plus-circle me-1"></i> 添加心情记录
+          </a>
+        {% elif record_type == 'Weight' %}
+          <a href="{% url 'weight_add' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle me-1"></i> 添加体重记录
           </a>
         {% endif %}
       </div>
@@ -410,6 +421,15 @@
       <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
         <div class="stat-title">平均配速</div>
         <div class="stat-value">{{ avg_pace|default:"0" }}分/km</div>
+      </div>
+      {% elif record_type == 'Weight' %}
+      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+        <div class="stat-title">平均体重</div>
+        <div class="stat-value">{{ avg_weight|default:"0" }}kg</div>
+      </div>
+      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
+        <div class="stat-title">平均BMI</div>
+        <div class="stat-value">{{ avg_bmi|default:"0" }}</div>
       </div>
       {% endif %}
     </div>
@@ -472,6 +492,10 @@
             <a href="{% url 'mood_history' %}" class="btn btn-outline-secondary btn-sm" id="resetButton">
               <i class="bi bi-x-circle me-1"></i>重置
             </a>
+          {% elif record_type == 'Weight' %}
+            <a href="{% url 'weight_history' %}" class="btn btn-outline-secondary btn-sm" id="resetButton">
+              <i class="bi bi-x-circle me-1"></i>重置
+            </a>
           {% endif %}
         </div>
       </form>
@@ -507,6 +531,9 @@
                   {% elif record_type == 'Mood' %}
                     <th>心情</th>
                     <th>压力水平</th>
+                  {% elif record_type == 'Weight' %}
+                    <th>体重 (kg)</th>
+                    <th>BMI</th>
                   {% endif %}
                   <th>操作</th>
                 </tr>
@@ -540,6 +567,9 @@
                         {% endif %}
                       </td>
                       <td>{{ record.stress_level|default:"未指定" }}</td>
+                    {% elif record_type == 'Weight' %}
+                      <td>{{ record.weight }}</td>
+                      <td>{{ record.bmi }}</td>
                     {% endif %}
                     <td>
                       {% if record_type == 'Steps' %}
@@ -575,6 +605,13 @@
                           <i class="bi bi-pencil"></i>
                         </a>
                         <a href="{% url 'mood_delete' record.id %}" class="action-btn delete">
+                          <i class="bi bi-trash"></i>
+                        </a>
+                      {% elif record_type == 'Weight' %}
+                        <a href="{% url 'weight_edit' record.id %}" class="action-btn edit">
+                          <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'weight_delete' record.id %}" class="action-btn delete">
                           <i class="bi bi-trash"></i>
                         </a>
                       {% endif %}
@@ -653,6 +690,10 @@
             {% elif record_type == 'Mood' %}
               <a href="{% url 'mood_add' %}" class="btn btn-outline-success btn-sm mt-3">
                 <i class="bi bi-plus-lg"></i> 添加心情记录
+              </a>
+            {% elif record_type == 'Weight' %}
+              <a href="{% url 'weight_add' %}" class="btn btn-outline-success btn-sm mt-3">
+                <i class="bi bi-plus-lg"></i> 添加体重记录
               </a>
             {% endif %}
           </div>
@@ -790,10 +831,18 @@
   function initCharts(type) {
     const ctx = document.getElementById('recordChart').getContext('2d');
     let chartData = {};
+    let chartOptions = {};
     
     {% if chart_dates and chart_data %}
       const chartDates = {{ chart_dates|safe }};
       const chartValues = {{ chart_data|safe }};
+      
+      // 为体重图表计算合适的坐标范围
+      {% if record_type == 'Weight' %}
+      const bmiValues = {{ chart_bmi_data|safe }};
+      const [weightMin, weightMax] = calculateAxisRange(chartValues);
+      const [bmiMin, bmiMax] = calculateAxisRange(bmiValues);
+      {% endif %}
       
       {% if record_type == 'Steps' %}
         chartData = {
@@ -860,6 +909,74 @@
             fill: type === 'line'
           }]
         };
+      {% elif record_type == 'Weight' %}
+        chartData = {
+          labels: chartDates,
+          datasets: [
+            {
+              label: 'Weight (kg)',
+              data: chartValues,
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 2,
+              tension: 0.3,
+              pointRadius: 4,
+              yAxisID: 'y'
+            },
+            {
+              label: 'BMI',
+              data: {{ chart_bmi_data|safe }},
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 2,
+              tension: 0.3,
+              pointRadius: 4,
+              yAxisID: 'y1'
+            }
+          ]
+        };
+        
+        // 为体重图表设置特殊的配置
+        chartOptions = {
+          scales: {
+            y: {
+              beginAtZero: false,
+              min: weightMin,
+              max: weightMax,
+              ticks: {
+                font: { size: 11 }
+              },
+              title: {
+                display: true,
+                text: 'Weight (kg)'
+              }
+            },
+            y1: {
+              beginAtZero: false,
+              min: bmiMin,
+              max: bmiMax,
+              position: 'right',
+              grid: {
+                drawOnChartArea: false
+              },
+              ticks: {
+                font: { size: 11 }
+              },
+              title: {
+                display: true,
+                text: 'BMI'
+              }
+            },
+            x: {
+              ticks: {
+                font: { size: 11 },
+                maxRotation: 45,
+                minRotation: 0
+              },
+              grid: { display: false }
+            }
+          }
+        };
       {% endif %}
     {% else %}
       // 没有数据时的空图表
@@ -883,7 +1000,7 @@
     window.recordChart = new Chart(ctx, {
       type: type,
       data: chartData,
-      options: {
+      options: Object.assign({
         responsive: true,
         maintainAspectRatio: false,
         animation: {
@@ -924,7 +1041,9 @@
         },
         scales: {
           y: {
+            {% if record_type != 'Weight' %}
             beginAtZero: true,
+            {% endif %}
             ticks: {
               font: {
                 size: 11
@@ -956,8 +1075,41 @@
             bottom: 10
           }
         }
-      }
+      }, chartOptions)
     });
+  }
+  
+  /**
+   * 计算合适的坐标轴范围，使图表能更好地显示数据变化
+   * @param {Array} values - 数据值数组
+   * @return {Array} - [min, max] 最小值和最大值
+   */
+  function calculateAxisRange(values) {
+    if (!values || values.length === 0) {
+      return [0, 100]; // 默认范围
+    }
+    
+    // 找出数据的最小值和最大值
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    
+    // 计算数据范围
+    const range = max - min;
+    
+    // 如果范围非常小，我们扩大一点以便更好地可视化
+    if (range < 0.5) {
+      // 非常小的变化，扩大视图范围
+      return [min - 0.5, max + 0.5];
+    } else if (range < 2) {
+      // 小范围变化
+      return [min - 0.2 * range, max + 0.2 * range];
+    } else if (range < 5) {
+      // 中等范围变化
+      return [min - 0.1 * range, max + 0.1 * range];
+    } else {
+      // 大范围变化
+      return [min - 0.05 * range, max + 0.05 * range];
+    }
   }
 </script>
 {% endblock %} 

@@ -1,0 +1,207 @@
+/**
+ * AI Health Advice Styles
+ * Contains styles for the AI Advice feature in the WellLog application
+ */
+
+/* AI Advice Section Styles */
+.advice-section {
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  background-color: white;
+  overflow: hidden;
+}
+
+.advice-section:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+}
+
+.advice-header {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  color: white;
+  padding: 20px 25px;
+  border-radius: 12px 12px 0 0;
+}
+
+.advice-body {
+  padding: 30px;
+}
+
+.health-overview {
+  margin-bottom: 30px;
+}
+
+/* Data Display Styles */
+.data-card {
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+  border-left: 4px solid #6a11cb;
+}
+
+.data-card:hover {
+  background-color: #eaecf0;
+}
+
+.health-category-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 10px;
+}
+
+.health-metric {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.health-metric .label {
+  color: #6c757d;
+}
+
+.health-metric .value {
+  font-weight: 600;
+  color: #495057;
+}
+
+/* Button Styles */
+.generate-btn {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 50px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.generate-btn:hover {
+  box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
+  transform: translateY(-2px);
+}
+
+.generate-btn:active {
+  transform: translateY(0);
+}
+
+/* Content Display Styles */
+.advice-content {
+  transition: all 0.5s ease;
+}
+
+.advice-placeholder {
+  text-align: center;
+  padding: 60px 30px;
+  color: #6c757d;
+}
+
+.advice-placeholder i {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  color: #dee2e6;
+}
+
+.advice-loading {
+  text-align: center;
+  padding: 60px 30px;
+}
+
+.advice-section h3 {
+  color: #495057;
+  margin: 25px 0 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* Recommendation Styles */
+.recommendation-item {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-left: 4px solid #2575fc;
+}
+
+.correlation-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.correlation-item i {
+  font-size: 1.2rem;
+  margin-right: 10px;
+  color: #6a11cb;
+}
+
+/* Error Display */
+.advice-error {
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f8d7da;
+  color: #842029;
+  margin: 20px 0;
+}
+
+/* Loading Animation */
+.pulse {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  box-shadow: 0 0 0 rgba(106, 17, 203, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(106, 17, 203, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(106, 17, 203, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(106, 17, 203, 0);
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .health-overview {
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .advice-header {
+    padding: 15px 20px;
+  }
+  
+  .advice-body {
+    padding: 20px;
+  }
+  
+  .health-category-title {
+    font-size: 15px;
+  }
+  
+  .health-metric {
+    font-size: 13px;
+  }
+  
+  .generate-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  
+  .pulse {
+    width: 60px;
+    height: 60px;
+  }
+} 
