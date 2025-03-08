@@ -1,11 +1,12 @@
 # Wellog -- A Web Site to Record Your Health Data.
 ## About
-This Web provide a platform for people to record their health and sports data and get professional AI adivce to help you promote your training. You also can share your moment and tips about sports. Welcome to our website: http://welllog.top Hope you enjoy here.
-## Who I am
-We are from University of Glasgow. This a project of ITECH course.
-Yu Ye
-Junqiang Ji
-Ruihan Xu
+Welcome to our website: [welllog.top](url)  
+This Web provide a platform for people to record their health and sports data and get professional AI adivce to help you promote your training. You also can share your moment and tips about sports. Hope you enjoy here.
+## Who I am 
+Yu Ye  
+Junqiang Ji  
+Ruihan Xu  
+We are Group-08 of ITECH course in University of Glasgow. This a project of this course.
 ## How to run
 
 ```
