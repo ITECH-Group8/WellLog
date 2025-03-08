@@ -136,7 +136,7 @@
         font-size: 1rem;
       }
       
-      /* 移动设备上底部菜单样式 */
+      /* Mobile device bottom menu style */
       .sidebar-bottom {
         position: absolute;
         bottom: 70px;
@@ -174,7 +174,7 @@
       margin-left: 0;
     }
     
-    /* 侧边栏展开时底部菜单样式 */
+    /* Bottom menu style when sidebar is expanded */
     body.sidebar-expanded .sidebar-bottom {
       display: block;
     }
@@ -254,14 +254,14 @@
         </a>
       </li>
       <li class="nav-item">
-        <a href="#" class="nav-link d-flex align-items-center">
+        <a href="{% url 'analysis:ai_advice' %}" class="nav-link d-flex align-items-center">
           <i class="bi bi-robot"></i>
           <span>AI Advice</span>
         </a>
       </li>
     </ul>
     
-    <!-- 底部固定菜单 -->
+    <!-- Bottom fixed menu -->
     <div class="sidebar-bottom">
       <ul class="nav flex-column">
         <li class="nav-item">

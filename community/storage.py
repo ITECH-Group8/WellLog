@@ -9,8 +9,8 @@ import itertools
 @deconstructible
 class AliyunOSSStorage:
     """
-    阿里云OSS存储类，用于处理图片上传
-    注意：此类不是一个完整的Django Storage后端，仅提供图片上传和URL获取功能
+    Aliyun OSS Storage class for image upload handling
+    Note: This class is not a complete Django Storage backend, it only provides image upload and URL retrieval functionality
     """
     
     def __init__(self, base_dir=''):
@@ -20,83 +20,83 @@ class AliyunOSSStorage:
         self.bucket_name = settings.ALIYUN_OSS.get('BUCKET_NAME', '')
         self.endpoint = settings.ALIYUN_OSS.get('ENDPOINT', '')
         
-        # 配置验证
+        # Configuration validation
         if not self.access_key_id:
-            print("警告: OSS AccessKeyID未设置")
+            print("Warning: OSS AccessKeyID not set")
         if not self.access_key_secret:
-            print("警告: OSS AccessKeySecret未设置")
+            print("Warning: OSS AccessKeySecret not set")
         if not self.bucket_name:
-            print("警告: OSS BucketName未设置")
+            print("Warning: OSS BucketName not set")
         if not self.endpoint:
-            print("警告: OSS Endpoint未设置")
+            print("Warning: OSS Endpoint not set")
             
-        # 配置是否有效
+        # Check if configuration is valid
         self.valid = all([self.access_key_id, self.access_key_secret, 
                            self.bucket_name, self.endpoint])
         
         if self.valid:
-            print(f"OSS存储配置有效，连接到存储桶 {self.bucket_name}")
+            print(f"OSS storage configuration valid, connecting to bucket {self.bucket_name}")
             try:
-                # 创建OSS连接
+                # Create OSS connection
                 self.auth = oss2.Auth(self.access_key_id, self.access_key_secret)
                 self.bucket = oss2.Bucket(self.auth, self.endpoint, self.bucket_name)
                 
-                # 测试连接
+                # Test connection
                 self.test_connection()
             except Exception as e:
-                print(f"OSS连接初始化失败: {e}")
+                print(f"OSS connection initialization failed: {e}")
                 self.valid = False
         else:
-            print("OSS存储配置无效，将使用本地文件系统")
+            print("OSS storage configuration invalid, will use local file system")
     
     def test_connection(self):
-        """测试OSS连接"""
+        """Test OSS connection"""
         try:
-            # 列出存储桶中的前5个对象，确认连接是否正常
+            # List first 5 objects in the bucket to confirm connection is working
             list_objects = list(itertools.islice(oss2.ObjectIterator(self.bucket), 5))
-            print(f"OSS连接测试成功，存储桶中包含{len(list_objects)}个对象")
+            print(f"OSS connection test successful, bucket contains {len(list_objects)} objects")
             return True
         except Exception as e:
-            print(f"OSS连接测试失败: {e}")
+            print(f"OSS connection test failed: {e}")
             return False
     
     def upload_image(self, file_obj, file_path):
-        """上传图片到OSS"""
+        """Upload image to OSS"""
         if not self.valid:
-            print("OSS配置无效，无法上传图片")
+            print("OSS configuration invalid, unable to upload image")
             return None
         
-        # 构建完整路径
+        # Build complete path
         if self.base_dir:
             full_path = os.path.join(self.base_dir, file_path)
         else:
             full_path = file_path
             
-        # 上传文件
+        # Upload file
         try:
-            print(f"正在上传到OSS: {full_path}")
-            # 将文件指针重置到开头
+            print(f"Uploading to OSS: {full_path}")
+            # Reset file pointer to beginning
             if hasattr(file_obj, 'seek'):
                 file_obj.seek(0)
                 
-            # 上传文件
+            # Upload file
             result = self.bucket.put_object(full_path, file_obj)
             if result.status == 200:
                 url = self.get_url(full_path)
-                print(f"上传成功: {url}")
+                print(f"Upload successful: {url}")
                 return url
             else:
-                print(f"上传失败，状态码: {result.status}")
+                print(f"Upload failed, status code: {result.status}")
         except Exception as e:
-            print(f"上传到阿里云OSS失败: {e}")
+            print(f"Failed to upload to Aliyun OSS: {e}")
         
         return None
     
     def get_url(self, file_path):
-        """获取文件URL"""
+        """Get file URL"""
         if not self.valid:
             return None
             
-        # 构建OSS URL
+        # Build OSS URL
         url = f"https://{self.bucket_name}.{self.endpoint}/{file_path}"
         return url 

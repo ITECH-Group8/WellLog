@@ -1,13 +1,13 @@
 {% extends 'base_with_sidebar.html' %}
 {% load static %}
 
-{% block title %}健康记录历史{% endblock %}
+{% block title %}Health Record History{% endblock %}
 
 {% block css %}
 {{ block.super }}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <style>
-  /* 历史记录页面优化样式 */
+  /* History page optimized styles */
   .history-container {
     padding: 1rem;
   }
@@ -63,7 +63,7 @@
     font-size: 0.8rem;
   }
   
-  /* 统计卡片优化 */
+  /* Statistics card optimized */
   .summary-stats {
     display: flex;
     flex-wrap: wrap;
@@ -98,7 +98,7 @@
     color: #212529;
   }
   
-  /* 图表区域优化 - 自适应尺寸 */
+  /* Chart area optimized - adaptive size */
   .chart-container {
     background: white;
     border-radius: 0.5rem;
@@ -108,7 +108,7 @@
     margin: 0 auto 1.5rem auto;
   }
   
-  /* 图表包装容器 */
+  /* Chart wrapper container */
   .chart-wrapper {
     position: relative;
     width: 100%;
@@ -140,7 +140,7 @@
     border-color: #0d6efd;
   }
   
-  /* 过滤器卡片 */
+  /* Filter card */
   .filter-card {
     background: white;
     border-radius: 0.5rem;
@@ -156,7 +156,7 @@
     flex-wrap: wrap;
   }
   
-  /* 数据表优化 */
+  /* Data table optimized */
   .history-card {
     background: white;
     border-radius: 0.5rem;
@@ -217,7 +217,7 @@
     opacity: 0.8;
   }
   
-  /* 空状态优化 */
+  /* Empty state optimized */
   .empty-state {
     text-align: center;
     padding: 2rem 1rem;
@@ -229,13 +229,13 @@
     margin-bottom: 1rem;
   }
   
-  /* 分页优化 */
+  /* Pagination optimized */
   .pagination {
     margin-top: 1rem;
     justify-content: center;
   }
   
-  /* 响应式调整 */
+  /* Responsive adjustment */
   @media (max-width: 576px) {
     .chart-wrapper {
       min-height: 200px;
@@ -273,11 +273,29 @@
       min-height: 400px;
     }
   }
+  
+  /* Animation delay classes */
+  .delay-0 { animation-delay: 0s; }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; }
+  .delay-4 { animation-delay: 0.4s; }
+  .delay-5 { animation-delay: 0.5s; }
+  .delay-6 { animation-delay: 0.6s; }
+  .delay-7 { animation-delay: 0.7s; }
+  .delay-8 { animation-delay: 0.8s; }
+  .delay-9 { animation-delay: 0.9s; }
+  .delay-10 { animation-delay: 1.0s; }
+  .delay-11 { animation-delay: 1.1s; }
+  .delay-12 { animation-delay: 1.2s; }
+  .delay-13 { animation-delay: 1.3s; }
+  .delay-14 { animation-delay: 1.4s; }
+  .delay-15 { animation-delay: 1.5s; }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- 健康记录历史内容 -->
+<!-- Health record history content -->
 <div class="container-fluid py-4">
   <div class="history-container animate__animated animate__fadeIn">
     <div class="history-header">
@@ -294,17 +312,19 @@
           <i class="bi bi-trophy me-2"></i>
         {% elif record_type == 'Mood' %}
           <i class="bi bi-emoji-smile me-2"></i>
+        {% elif record_type == 'Weight' %}
+          <i class="bi bi-person-fill me-2"></i>
         {% endif %}
-        {{ record_type }} 记录历史
+        {{ record_type }} Record History
       </h2>
       <div>
         <button class="export-btn">
-          <i class="bi bi-download"></i>导出数据
+          <i class="bi bi-download"></i>Export Data
         </button>
       </div>
     </div>
     
-    <!-- 添加导航标签 -->
+    <!-- Add navigation tabs -->
     <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
       <ul class="nav nav-tabs" id="healthTabs">
         <li class="nav-item">
@@ -342,145 +362,167 @@
             <i class="bi bi-emoji-smile me-1"></i>Mood
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link {% if active_tab == 'weight' %}active{% endif %}" href="{% url 'weight_history' %}">
+            <i class="bi bi-person-fill me-1"></i>Weight
+          </a>
+        </li>
       </ul>
       <div>
         {% if record_type == 'Steps' %}
           <a href="{% url 'steps_add' %}" class="btn btn-primary btn-sm">
-            <i class="bi bi-plus-circle me-1"></i> 添加步数记录
+            <i class="bi bi-plus-circle me-1"></i> Add Steps Record
           </a>
         {% elif record_type == 'Sleep' %}
           <a href="{% url 'sleep_add' %}" class="btn btn-primary btn-sm">
-            <i class="bi bi-plus-circle me-1"></i> 添加睡眠记录
+            <i class="bi bi-plus-circle me-1"></i> Add Sleep Record
           </a>
         {% elif record_type == 'Diet' %}
           <a href="{% url 'diet_add' %}" class="btn btn-primary btn-sm">
-            <i class="bi bi-plus-circle me-1"></i> 添加饮食记录
+            <i class="bi bi-plus-circle me-1"></i> Add Diet Record
           </a>
         {% elif record_type == 'Running' %}
           <a href="{% url 'running_add' %}" class="btn btn-primary btn-sm">
-            <i class="bi bi-plus-circle me-1"></i> 添加跑步记录
+            <i class="bi bi-plus-circle me-1"></i> Add Running Record
           </a>
         {% elif record_type == 'Mood' %}
           <a href="{% url 'mood_add' %}" class="btn btn-primary btn-sm">
-            <i class="bi bi-plus-circle me-1"></i> 添加心情记录
+            <i class="bi bi-plus-circle me-1"></i> Add Mood Record
+          </a>
+        {% elif record_type == 'Weight' %}
+          <a href="{% url 'weight_add' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle me-1"></i> Add Weight Record
           </a>
         {% endif %}
       </div>
     </div>
     
-    <!-- 统计摘要 -->
+    <!-- Statistics summary -->
     <div class="summary-stats">
-      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
-        <div class="stat-title">记录总数</div>
+      <div class="stat-card animate__animated animate__fadeInUp delay-0">
+        <div class="stat-title">Record Total</div>
         <div class="stat-value">{{ records|length }}</div>
       </div>
       
       {% if record_type == 'Steps' %}
-      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
-        <div class="stat-title">平均步数</div>
+      <div class="stat-card animate__animated animate__fadeInUp delay-1">
+        <div class="stat-title">Average Steps</div>
         <div class="stat-value">{{ avg_steps|default:"0" }}</div>
       </div>
-      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
-        <div class="stat-title">最高步数</div>
+      <div class="stat-card animate__animated animate__fadeInUp delay-2">
+        <div class="stat-title">Maximum Steps</div>
         <div class="stat-value">{{ max_steps|default:"0" }}</div>
       </div>
       {% elif record_type == 'Sleep' %}
-      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
-        <div class="stat-title">平均睡眠时长</div>
+      <div class="stat-card animate__animated animate__fadeInUp delay-1">
+        <div class="stat-title">Average Sleep Duration</div>
         <div class="stat-value">{{ avg_sleep|default:"0" }}h</div>
       </div>
-      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
-        <div class="stat-title">平均睡眠质量</div>
-        <div class="stat-value">{{ avg_quality|default:"良好" }}</div>
+      <div class="stat-card animate__animated animate__fadeInUp delay-2">
+        <div class="stat-title">Average Sleep Quality</div>
+        <div class="stat-value">{{ avg_quality|default:"Good" }}</div>
       </div>
       {% elif record_type == 'Diet' %}
-      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
-        <div class="stat-title">平均卡路里</div>
+      <div class="stat-card animate__animated animate__fadeInUp delay-1">
+        <div class="stat-title">Average Calories</div>
         <div class="stat-value">{{ avg_calories|default:"0" }}</div>
       </div>
-      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
-        <div class="stat-title">平均蛋白质</div>
+      <div class="stat-card animate__animated animate__fadeInUp delay-2">
+        <div class="stat-title">Average Protein</div>
         <div class="stat-value">{{ avg_protein|default:"0" }}g</div>
       </div>
       {% elif record_type == 'Running' %}
-      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
-        <div class="stat-title">总距离</div>
+      <div class="stat-card animate__animated animate__fadeInUp delay-1">
+        <div class="stat-title">Total Distance</div>
         <div class="stat-value">{{ total_distance|default:"0" }}km</div>
       </div>
-      <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
-        <div class="stat-title">平均配速</div>
-        <div class="stat-value">{{ avg_pace|default:"0" }}分/km</div>
+      <div class="stat-card animate__animated animate__fadeInUp delay-2">
+        <div class="stat-title">Average Pace</div>
+        <div class="stat-value">{{ avg_pace|default:"0" }}min/km</div>
+      </div>
+      {% elif record_type == 'Weight' %}
+      <div class="stat-card animate__animated animate__fadeInUp delay-1">
+        <div class="stat-title">Average Weight</div>
+        <div class="stat-value">{{ avg_weight|default:"0" }}kg</div>
+      </div>
+      <div class="stat-card animate__animated animate__fadeInUp delay-2">
+        <div class="stat-title">Average BMI</div>
+        <div class="stat-value">{{ avg_bmi|default:"0" }}</div>
       </div>
       {% endif %}
     </div>
     
-    <!-- 图表区域 - 自适应尺寸 -->
-    <div class="chart-container mb-4 animate__animated animate__fadeInUp" style="animation-delay: 0.4s;">
+    <!-- Chart area - adaptive size -->
+    <div class="chart-container mb-4 animate__animated animate__fadeInUp delay-3">
       <div class="chart-types">
-        <button class="chart-type-btn {% if chart_type == 'line' or not chart_type %}active{% endif %}" data-chart-type="line">折线图</button>
-        <button class="chart-type-btn {% if chart_type == 'bar' %}active{% endif %}" data-chart-type="bar">柱状图</button>
-        <button class="chart-type-btn {% if chart_type == 'pie' %}active{% endif %}" data-chart-type="pie">饼图</button>
+        <button class="chart-type-btn {% if chart_type == 'line' or not chart_type %}active{% endif %}" data-chart-type="line">Line Chart</button>
+        <button class="chart-type-btn {% if chart_type == 'bar' %}active{% endif %}" data-chart-type="bar">Bar Chart</button>
+        <button class="chart-type-btn {% if chart_type == 'pie' %}active{% endif %}" data-chart-type="pie">Pie Chart</button>
       </div>
       <div class="chart-wrapper">
         <canvas id="recordChart"></canvas>
       </div>
     </div>
     
-    <!-- 过滤器 - 默认显示当前数据范围 -->
-    <div class="filter-card animate__animated animate__fadeInUp" style="animation-delay: 0.5s;">
+    <!-- Filter - default display current data range -->
+    <div class="filter-card animate__animated animate__fadeInUp delay-4">
       <form method="get" action="" id="dateFilterForm">
         <div class="row">
           <div class="col-md-6">
             <div class="mb-3">
-              <label for="date_from" class="form-label">开始日期</label>
+              <label for="date_from" class="form-label">Start Date</label>
               <input type="date" class="form-control" id="date_from" name="date_from" 
                      value="{{ date_from|default:'' }}">
             </div>
           </div>
           <div class="col-md-6">
             <div class="mb-3">
-              <label for="date_to" class="form-label">结束日期</label>
+              <label for="date_to" class="form-label">End Date</label>
               <input type="date" class="form-control" id="date_to" name="date_to" 
                      value="{{ date_to|default:'' }}">
             </div>
           </div>
         </div>
-        <!-- 添加一个隐藏的输入框来保存当前的图表类型 -->
+        <!-- Add a hidden input field to save the current chart type -->
         <input type="hidden" name="chart_type" id="chartTypeInput" value="{{ chart_type|default:'line' }}">
-        <p class="text-muted small mb-2"><i class="bi bi-info-circle me-1"></i>如果未设置日期，将自动使用现有记录的日期范围</p>
+        <p class="text-muted small mb-2"><i class="bi bi-info-circle me-1"></i>If no date is set, the date range of existing records will be used</p>
         <div class="filter-buttons">
           <button type="submit" class="btn btn-primary btn-sm">
-            <i class="bi bi-filter me-1"></i>过滤
+            <i class="bi bi-filter me-1"></i>Filter
           </button>
           {% if record_type == 'Steps' %}
             <a href="{% url 'steps_history' %}" class="btn btn-outline-secondary btn-sm" id="resetButton">
-              <i class="bi bi-x-circle me-1"></i>重置
+              <i class="bi bi-x-circle me-1"></i>Reset
             </a>
           {% elif record_type == 'Sleep' %}
             <a href="{% url 'sleep_history' %}" class="btn btn-outline-secondary btn-sm" id="resetButton">
-              <i class="bi bi-x-circle me-1"></i>重置
+              <i class="bi bi-x-circle me-1"></i>Reset
             </a>
           {% elif record_type == 'Diet' %}
             <a href="{% url 'diet_history' %}" class="btn btn-outline-secondary btn-sm" id="resetButton">
-              <i class="bi bi-x-circle me-1"></i>重置
+              <i class="bi bi-x-circle me-1"></i>Reset
             </a>
           {% elif record_type == 'Running' %}
             <a href="{% url 'running_history' %}" class="btn btn-outline-secondary btn-sm" id="resetButton">
-              <i class="bi bi-x-circle me-1"></i>重置
+              <i class="bi bi-x-circle me-1"></i>Reset
             </a>
           {% elif record_type == 'Mood' %}
             <a href="{% url 'mood_history' %}" class="btn btn-outline-secondary btn-sm" id="resetButton">
-              <i class="bi bi-x-circle me-1"></i>重置
+              <i class="bi bi-x-circle me-1"></i>Reset
+            </a>
+          {% elif record_type == 'Weight' %}
+            <a href="{% url 'weight_history' %}" class="btn btn-outline-secondary btn-sm" id="resetButton">
+              <i class="bi bi-x-circle me-1"></i>Reset
             </a>
           {% endif %}
         </div>
       </form>
     </div>
     
-    <!-- 数据记录表 -->
-    <div class="history-card animate__animated animate__fadeInUp" style="animation-delay: 0.6s;">
+    <!-- Data record table -->
+    <div class="history-card animate__animated animate__fadeInUp delay-5">
       <div class="card-header">
-        <h5>{{ record_type }} 记录列表</h5>
+        <h5>{{ record_type }} Record List</h5>
       </div>
       <div class="card-body">
         {% if records %}
@@ -488,39 +530,44 @@
             <table class="history-table">
               <thead>
                 <tr>
-                  <th>日期</th>
+                  <th>Date</th>
                   {% if record_type == 'Steps' %}
-                    <th>步数</th>
+                    <th>Steps</th>
                   {% elif record_type == 'Sleep' %}
-                    <th>小时</th>
-                    <th>分钟</th>
-                    <th>质量</th>
+                    <th>Hours</th>
+                    <th>Minutes</th>
+                    <th>Quality</th>
                   {% elif record_type == 'Diet' %}
-                    <th>卡路里</th>
-                    <th>蛋白质 (g)</th>
-                    <th>碳水 (g)</th>
-                    <th>脂肪 (g)</th>
+                    <th>Calories</th>
+                    <th>Protein (g)</th>
+                    <th>Carbs (g)</th>
+                    <th>Fat (g)</th>
                   {% elif record_type == 'Running' %}
-                    <th>距离 (km)</th>
-                    <th>时长 (分钟)</th>
-                    <th>消耗卡路里</th>
+                    <th>Distance (km)</th>
+                    <th>Duration (minutes)</th>
+                    <th>Calories Burned</th>
                   {% elif record_type == 'Mood' %}
-                    <th>心情</th>
-                    <th>压力水平</th>
+                    <th>Mood</th>
+                    <th>Stress Level</th>
+                  {% elif record_type == 'Weight' %}
+                    <th>Weight (kg)</th>
+                    <th>BMI</th>
                   {% endif %}
-                  <th>操作</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {% for record in records %}
-                  <tr class="animate__animated animate__fadeIn" style="animation-delay: {{ forloop.counter0|floatformat:1 }}0ms">
+                  {% with delay_index=forloop.counter0|floatformat:0 %}
+                  <tr class="animate__animated animate__fadeIn delay-{{ delay_index }}">
+                  {% endwith %}
                     <td>{{ record.date|date:"Y-m-d" }}</td>
                     {% if record_type == 'Steps' %}
                       <td>{{ record.steps_count }}</td>
                     {% elif record_type == 'Sleep' %}
                       <td>{{ record.hours }}</td>
                       <td>{{ record.minutes }}</td>
-                      <td>{{ record.quality|default:"未指定" }}</td>
+                      <td>{{ record.quality|default:"Not Specified" }}</td>
                     {% elif record_type == 'Diet' %}
                       <td>{{ record.calories }}</td>
                       <td>{{ record.protein }}</td>
@@ -532,14 +579,17 @@
                       <td>{{ record.calories_burned }}</td>
                     {% elif record_type == 'Mood' %}
                       <td>
-                        {% if record.mood == 'excellent' %}😁 极好
-                        {% elif record.mood == 'good' %}😊 良好
-                        {% elif record.mood == 'neutral' %}😐 一般
-                        {% elif record.mood == 'bad' %}😔 不佳
-                        {% elif record.mood == 'terrible' %}😢 糟糕
+                        {% if record.mood == 'excellent' %}😁 Excellent
+                        {% elif record.mood == 'good' %}😊 Good
+                        {% elif record.mood == 'neutral' %}😐 Neutral
+                        {% elif record.mood == 'bad' %}😔 Bad
+                        {% elif record.mood == 'terrible' %}😢 Terrible
                         {% endif %}
                       </td>
-                      <td>{{ record.stress_level|default:"未指定" }}</td>
+                      <td>{{ record.stress_level|default:"Not Specified" }}</td>
+                    {% elif record_type == 'Weight' %}
+                      <td>{{ record.weight }}</td>
+                      <td>{{ record.bmi }}</td>
                     {% endif %}
                     <td>
                       {% if record_type == 'Steps' %}
@@ -577,6 +627,13 @@
                         <a href="{% url 'mood_delete' record.id %}" class="action-btn delete">
                           <i class="bi bi-trash"></i>
                         </a>
+                      {% elif record_type == 'Weight' %}
+                        <a href="{% url 'weight_edit' record.id %}" class="action-btn edit">
+                          <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'weight_delete' record.id %}" class="action-btn delete">
+                          <i class="bi bi-trash"></i>
+                        </a>
                       {% endif %}
                     </td>
                   </tr>
@@ -585,7 +642,7 @@
             </table>
           </div>
           
-          <!-- 分页 -->
+          <!-- Pagination -->
           {% if is_paginated %}
             <nav aria-label="Page navigation">
               <ul class="pagination">
@@ -632,27 +689,31 @@
         {% else %}
           <div class="empty-state">
             <i class="bi bi-clipboard-x"></i>
-            <h5>暂无记录</h5>
-            <p>您还没有添加任何{{ record_type }}记录</p>
+            <h5>No Records</h5>
+            <p>You haven't added any {{ record_type }} records</p>
             {% if record_type == 'Steps' %}
               <a href="{% url 'steps_add' %}" class="btn btn-outline-success btn-sm mt-3">
-                <i class="bi bi-plus-lg"></i> 添加步数记录
+                <i class="bi bi-plus-lg"></i> Add Steps Record
               </a>
             {% elif record_type == 'Sleep' %}
               <a href="{% url 'sleep_add' %}" class="btn btn-outline-success btn-sm mt-3">
-                <i class="bi bi-plus-lg"></i> 添加睡眠记录
+                <i class="bi bi-plus-lg"></i> Add Sleep Record
               </a>
             {% elif record_type == 'Diet' %}
               <a href="{% url 'diet_add' %}" class="btn btn-outline-success btn-sm mt-3">
-                <i class="bi bi-plus-lg"></i> 添加饮食记录
+                <i class="bi bi-plus-lg"></i> Add Diet Record
               </a>
             {% elif record_type == 'Running' %}
               <a href="{% url 'running_add' %}" class="btn btn-outline-success btn-sm mt-3">
-                <i class="bi bi-plus-lg"></i> 添加跑步记录
+                <i class="bi bi-plus-lg"></i> Add Running Record
               </a>
             {% elif record_type == 'Mood' %}
               <a href="{% url 'mood_add' %}" class="btn btn-outline-success btn-sm mt-3">
-                <i class="bi bi-plus-lg"></i> 添加心情记录
+                <i class="bi bi-plus-lg"></i> Add Mood Record
+              </a>
+            {% elif record_type == 'Weight' %}
+              <a href="{% url 'weight_add' %}" class="btn btn-outline-success btn-sm mt-3">
+                <i class="bi bi-plus-lg"></i> Add Weight Record
               </a>
             {% endif %}
           </div>
@@ -668,36 +729,36 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // 获取当前URL中的chart_type参数，如果没有则默认为'line'
+    // Get the chart_type parameter from the current URL, if not set default to 'line'
     const params = new URLSearchParams(window.location.search);
     const chartType = params.get('chart_type') || 'line';
     
-    // 初始化图表
+    // Initialize charts
     initCharts(chartType);
     
-    // 图表类型切换
+    // Chart type switch
     document.querySelectorAll('.chart-type-btn').forEach(btn => {
       btn.addEventListener('click', function() {
         document.querySelectorAll('.chart-type-btn').forEach(b => b.classList.remove('active'));
         this.classList.add('active');
         
-        // 更新隐藏输入框的值，确保提交表单时包含当前图表类型
+        // Update the hidden input field value to ensure the form submission includes the current chart type
         document.getElementById('chartTypeInput').value = this.dataset.chartType;
         
         initCharts(this.dataset.chartType);
       });
     });
     
-    // 确保导航链接直接跳转，不被任何事件阻止
+    // Ensure navigation links directly jump without being prevented by any event
     document.querySelectorAll('#healthTabs .nav-link').forEach(link => {
-      // 使用克隆节点来删除所有可能的事件监听器
+      // Use cloned nodes to remove all possible event listeners
       const newLink = link.cloneNode(true);
       if (link.parentNode) {
         link.parentNode.replaceChild(newLink, link);
       }
     });
     
-    // 确保重置按钮也不被事件阻止
+    // Ensure reset buttons are not prevented by events
     const resetButton = document.getElementById('resetButton');
     if (resetButton) {
       const newResetButton = resetButton.cloneNode(true);
@@ -705,49 +766,49 @@
         resetButton.parentNode.replaceChild(newResetButton, resetButton);
       }
       
-      // 点击重置按钮时，确保完全重置所有过滤参数
+      // When the reset button is clicked, ensure all filters are completely reset
       newResetButton.addEventListener('click', function(e) {
         e.preventDefault();
         
-        // 清空表单输入框
+        // Clear form input fields
         document.getElementById('date_from').value = '';
         document.getElementById('date_to').value = '';
         document.getElementById('chartTypeInput').value = 'line';
         
-        // 直接跳转到不带参数的URL
+        // Directly jump to URL without parameters
         window.location.href = this.getAttribute('href');
       });
     }
     
-    // 初始化日期过滤器并立即设置值
+    // Initialize date filters and immediately set values
     initDateFilters();
     
-    // 优化日期过滤器提交
+    // Optimize date filter submission
     document.getElementById('dateFilterForm').addEventListener('submit', function(e) {
-      // 不再阻止默认提交，使用表单原生提交
+      // No longer prevent default submission, use form native submission
       // e.preventDefault(); 
       
       const dateFrom = document.getElementById('date_from');
       const dateTo = document.getElementById('date_to');
       
-      // 确保日期有效
+      // Ensure date is valid
       if (dateFrom.value && dateTo.value) {
         const fromDate = new Date(dateFrom.value);
         const toDate = new Date(dateTo.value);
         
         if (fromDate > toDate) {
           e.preventDefault();
-          alert('开始日期不能晚于结束日期');
+          alert('Start date cannot be later than end date');
           return false;
         }
       }
       
-      // 使用表单原生提交方式，不再手动构建URL
+      // Use form native submission without manually building URL
       return true;
     });
   });
   
-  // 初始化日期过滤器
+  // Initialize date filters
   function initDateFilters() {
     {% if chart_dates %}
       const chartDates = {{ chart_dates|safe }};
@@ -755,51 +816,59 @@
         const dateFrom = document.getElementById('date_from');
         const dateTo = document.getElementById('date_to');
         
-        // 确保始终设置有效的默认日期范围
+        // Ensure always set valid default date range
         if (!dateFrom.value && chartDates.length > 0) {
           dateFrom.value = chartDates[0];
-          console.log('设置开始日期:', dateFrom.value);
+          console.log('Set start date:', dateFrom.value);
         }
         
         if (!dateTo.value && chartDates.length > 0) {
           dateTo.value = chartDates[chartDates.length - 1];
-          console.log('设置结束日期:', dateTo.value);
+          console.log('Set end date:', dateTo.value);
         }
       }
     {% else %}
-      console.log('没有可用的日期数据设置默认过滤范围');
+      console.log('No available date data to set default filter range');
     {% endif %}
     
-    // 获取URL参数中的日期值并设置到表单中
+    // Get date values from URL parameters and set to form
     const urlParams = new URLSearchParams(window.location.search);
     const fromParam = urlParams.get('date_from');
     const toParam = urlParams.get('date_to');
     
     if (fromParam) {
       document.getElementById('date_from').value = fromParam;
-      console.log('从URL设置开始日期:', fromParam);
+      console.log('Set start date from URL:', fromParam);
     }
     
     if (toParam) {
       document.getElementById('date_to').value = toParam;
-      console.log('从URL设置结束日期:', toParam);
+      console.log('Set end date from URL:', toParam);
     }
   }
   
-  // 初始化图表
+  // Initialize charts
   function initCharts(type) {
     const ctx = document.getElementById('recordChart').getContext('2d');
     let chartData = {};
+    let chartOptions = {};
     
     {% if chart_dates and chart_data %}
       const chartDates = {{ chart_dates|safe }};
       const chartValues = {{ chart_data|safe }};
       
+      // Calculate suitable axis range for weight chart
+      {% if record_type == 'Weight' %}
+      const bmiValues = {{ chart_bmi_data|safe }};
+      const [weightMin, weightMax] = calculateAxisRange(chartValues);
+      const [bmiMin, bmiMax] = calculateAxisRange(bmiValues);
+      {% endif %}
+      
       {% if record_type == 'Steps' %}
         chartData = {
           labels: chartDates,
           datasets: [{
-            label: '步数',
+            label: 'Steps',
             data: chartValues,
             backgroundColor: 'rgba(40, 167, 69, 0.7)',
             borderColor: 'rgba(40, 167, 69, 1)',
@@ -812,7 +881,7 @@
         chartData = {
           labels: chartDates,
           datasets: [{
-            label: '睡眠时长 (小时)',
+            label: 'Sleep Duration (hours)',
             data: chartValues,
             backgroundColor: 'rgba(111, 66, 193, 0.7)',
             borderColor: 'rgba(111, 66, 193, 1)',
@@ -825,7 +894,7 @@
         chartData = {
           labels: chartDates,
           datasets: [{
-            label: '卡路里',
+            label: 'Calories',
             data: chartValues,
             backgroundColor: 'rgba(220, 53, 69, 0.7)',
             borderColor: 'rgba(220, 53, 69, 1)',
@@ -838,7 +907,7 @@
         chartData = {
           labels: chartDates,
           datasets: [{
-            label: '距离 (km)',
+            label: 'Distance (km)',
             data: chartValues,
             backgroundColor: 'rgba(13, 110, 253, 0.7)',
             borderColor: 'rgba(13, 110, 253, 1)',
@@ -851,7 +920,7 @@
         chartData = {
           labels: chartDates,
           datasets: [{
-            label: '心情水平',
+            label: 'Mood Level',
             data: chartValues,
             backgroundColor: 'rgba(255, 193, 7, 0.7)',
             borderColor: 'rgba(255, 193, 7, 1)',
@@ -860,13 +929,81 @@
             fill: type === 'line'
           }]
         };
+      {% elif record_type == 'Weight' %}
+        chartData = {
+          labels: chartDates,
+          datasets: [
+            {
+              label: 'Weight (kg)',
+              data: chartValues,
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 2,
+              tension: 0.3,
+              pointRadius: 4,
+              yAxisID: 'y'
+            },
+            {
+              label: 'BMI',
+              data: {{ chart_bmi_data|safe }},
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 2,
+              tension: 0.3,
+              pointRadius: 4,
+              yAxisID: 'y1'
+            }
+          ]
+        };
+        
+        // Set special configuration for weight chart
+        chartOptions = {
+          scales: {
+            y: {
+              beginAtZero: false,
+              min: weightMin,
+              max: weightMax,
+              ticks: {
+                font: { size: 11 }
+              },
+              title: {
+                display: true,
+                text: 'Weight (kg)'
+              }
+            },
+            y1: {
+              beginAtZero: false,
+              min: bmiMin,
+              max: bmiMax,
+              position: 'right',
+              grid: {
+                drawOnChartArea: false
+              },
+              ticks: {
+                font: { size: 11 }
+              },
+              title: {
+                display: true,
+                text: 'BMI'
+              }
+            },
+            x: {
+              ticks: {
+                font: { size: 11 },
+                maxRotation: 45,
+                minRotation: 0
+              },
+              grid: { display: false }
+            }
+          }
+        };
       {% endif %}
     {% else %}
-      // 没有数据时的空图表
+      // Empty chart when no data
       chartData = {
         labels: [],
         datasets: [{
-          label: '无数据',
+          label: 'No Data',
           data: [],
           backgroundColor: 'rgba(108, 117, 125, 0.7)',
           borderColor: 'rgba(108, 117, 125, 1)',
@@ -874,16 +1011,16 @@
       };
     {% endif %}
     
-    // 销毁旧图表（如果存在）
+    // Destroy old chart (if exists)
     if (window.recordChart instanceof Chart) {
       window.recordChart.destroy();
     }
     
-    // 创建新图表 - 完全自适应
+    // Create new chart - fully adaptive
     window.recordChart = new Chart(ctx, {
       type: type,
       data: chartData,
-      options: {
+      options: Object.assign({
         responsive: true,
         maintainAspectRatio: false,
         animation: {
@@ -903,7 +1040,7 @@
           },
           title: {
             display: true,
-            text: '{{ record_type }} 历史趋势',
+            text: '{{ record_type }} History Trend',
             font: {
               size: 14
             },
@@ -924,7 +1061,9 @@
         },
         scales: {
           y: {
+            {% if record_type != 'Weight' %}
             beginAtZero: true,
+            {% endif %}
             ticks: {
               font: {
                 size: 11
@@ -956,8 +1095,41 @@
             bottom: 10
           }
         }
-      }
+      }, chartOptions)
     });
+  }
+  
+  /**
+   * Calculate suitable axis range to better display data changes
+   * @param {Array} values - Array of data values
+   * @return {Array} - [min, max] Minimum and maximum values
+   */
+  function calculateAxisRange(values) {
+    if (!values || values.length === 0) {
+      return [0, 100]; // Default range
+    }
+    
+    // Find minimum and maximum values in data
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    
+    // Calculate data range
+    const range = max - min;
+    
+    // If range is very small, we expand a bit for better visualization
+    if (range < 0.5) {
+      // Very small change, expand view range
+      return [min - 0.5, max + 0.5];
+    } else if (range < 2) {
+      // Small range change
+      return [min - 0.2 * range, max + 0.2 * range];
+    } else if (range < 5) {
+      // Medium range change
+      return [min - 0.1 * range, max + 0.1 * range];
+    } else {
+      // Large range change
+      return [min - 0.05 * range, max + 0.05 * range];
+    }
   }
 </script>
 {% endblock %} 

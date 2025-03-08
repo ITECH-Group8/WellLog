@@ -1,31 +1,31 @@
 /**
- * WellLog 主JavaScript文件
- * 包含整个网站共享的功能
+ * WellLog Main JavaScript File
+ * Contains functionality shared across the entire website
  */
 
-// 文档加载完成后执行
+// Execute after document is fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('WellLog应用初始化');
+  console.log('WellLog application initialization');
   
-  // 初始化导航栏
+  // Initialize navigation bar
   initNavbar();
   
-  // 初始化通知系统
+  // Initialize notification system
   initNotifications();
   
-  // 初始化主题切换
+  // Initialize theme toggle
   initThemeToggle();
   
-  // 初始化返回顶部按钮
+  // Initialize back to top button
   initBackToTop();
   
-  // 初始化工具提示
+  // Initialize tooltips
   initTooltips();
 });
 
-// 初始化导航栏
+// Initialize navigation bar
 function initNavbar() {
-  // 移动端导航菜单切换
+  // Mobile navigation menu toggle
   const navbarToggler = document.querySelector('.navbar-toggler');
   if (navbarToggler) {
     navbarToggler.addEventListener('click', function() {
@@ -36,13 +36,13 @@ function initNavbar() {
     });
   }
   
-  // 活动导航项高亮
+  // Active navigation item highlight
   const currentPath = window.location.pathname;
   document.querySelectorAll('.navbar-nav .nav-item .nav-link').forEach(link => {
     const href = link.getAttribute('href');
     if (href && currentPath.indexOf(href) === 0) {
       link.classList.add('active');
-      // 如果在侧边栏内，确保父元素也高亮
+      // If in sidebar, ensure parent element is also highlighted
       const parentItem = link.closest('.nav-item');
       if (parentItem) {
         parentItem.classList.add('active');
@@ -50,7 +50,7 @@ function initNavbar() {
     }
   });
   
-  // 下拉菜单切换
+  // Dropdown menu toggle
   document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
     toggle.addEventListener('click', function(e) {
       e.preventDefault();
@@ -66,7 +66,7 @@ function initNavbar() {
     });
   });
   
-  // 点击外部关闭下拉菜单
+  // Click outside to close dropdown menu
   document.addEventListener('click', function(e) {
     if (!e.target.matches('.dropdown-toggle')) {
       document.querySelectorAll('.dropdown.show').forEach(dropdown => {
@@ -84,15 +84,15 @@ function initNavbar() {
   });
 }
 
-// 初始化通知系统
+// Initialize notification system
 function initNotifications() {
-  // 加载通知数量
+  // Load notification count
   loadNotificationCount();
   
-  // 轮询通知更新（每60秒）
+  // Polling notification updates (every 60 seconds)
   setInterval(loadNotificationCount, 60000);
   
-  // 通知图标点击事件
+  // Notification icon click event
   const notificationIcon = document.getElementById('notification-icon');
   if (notificationIcon) {
     notificationIcon.addEventListener('click', function(e) {
@@ -101,7 +101,7 @@ function initNotifications() {
     });
   }
   
-  // 关闭通知按钮
+  // Close notification button
   document.addEventListener('click', function(e) {
     if (e.target.classList.contains('notification-close')) {
       const notificationId = e.target.getAttribute('data-id');
@@ -112,21 +112,21 @@ function initNotifications() {
   });
 }
 
-// 加载通知数量
+// Load notification count
 function loadNotificationCount() {
   const notificationBadge = document.getElementById('notification-badge');
   if (!notificationBadge) return;
   
-  // AJAX请求获取未读通知数量
+  // AJAX request to get unread notification count
   fetch('/api/notifications/unread-count/')
     .then(response => {
       if (!response.ok) {
-        throw new Error('网络请求失败');
+        throw new Error('Network request failed');
       }
       return response.json();
     })
     .then(data => {
-      // 更新通知数量
+      // Update notification count
       if (data.count > 0) {
         notificationBadge.textContent = data.count > 99 ? '99+' : data.count;
         notificationBadge.style.display = 'block';
@@ -135,11 +135,11 @@ function loadNotificationCount() {
       }
     })
     .catch(error => {
-      console.error('获取通知数量失败:', error);
+      console.error('Failed to get notification count:', error);
     });
 }
 
-// 切换通知面板
+// Toggle notification panel
 function toggleNotificationPanel() {
   const panel = document.getElementById('notification-panel');
   if (!panel) return;
@@ -152,28 +152,28 @@ function toggleNotificationPanel() {
   }
 }
 
-// 加载通知列表
+// Load notification list
 function loadNotifications() {
   const notificationList = document.getElementById('notification-list');
   if (!notificationList) return;
   
-  // 显示加载中状态
-  notificationList.innerHTML = '<div class="text-center p-3"><div class="spinner-border spinner-border-sm text-primary" role="status"></div><span class="ms-2">加载中...</span></div>';
+  // Show loading status
+  notificationList.innerHTML = '<div class="text-center p-3"><div class="spinner-border spinner-border-sm text-primary" role="status"></div><span class="ms-2">Loading...</span></div>';
   
-  // AJAX请求获取最近通知
+  // AJAX request to get recent notifications
   fetch('/api/notifications/recent/')
     .then(response => {
       if (!response.ok) {
-        throw new Error('网络请求失败');
+        throw new Error('Network request failed');
       }
       return response.json();
     })
     .then(data => {
-      // 清空列表
+      // Clear list
       notificationList.innerHTML = '';
       
       if (data.notifications && data.notifications.length > 0) {
-        // 添加通知项
+        // Add notification item
         data.notifications.forEach(notification => {
           const notificationItem = document.createElement('div');
           notificationItem.className = `notification-item p-3 border-bottom ${notification.read ? 'read' : 'unread'}`;
@@ -192,23 +192,23 @@ function loadNotifications() {
           notificationList.appendChild(notificationItem);
         });
         
-        // 添加"查看全部"链接
+        // Add "View All" link
         const viewAllLink = document.createElement('div');
         viewAllLink.className = 'text-center p-2';
-        viewAllLink.innerHTML = '<a href="/notifications/" class="btn btn-link">查看全部通知</a>';
+        viewAllLink.innerHTML = '<a href="/notifications/" class="btn btn-link">View All Notifications</a>';
         notificationList.appendChild(viewAllLink);
       } else {
-        // 无通知状态
-        notificationList.innerHTML = '<div class="text-center p-3 text-muted">暂无通知</div>';
+        // No notifications state
+        notificationList.innerHTML = '<div class="text-center p-3 text-muted">No notifications</div>';
       }
     })
     .catch(error => {
-      console.error('获取通知失败:', error);
-      notificationList.innerHTML = '<div class="text-center p-3 text-danger">加载失败，请重试</div>';
+      console.error('Failed to get notifications:', error);
+      notificationList.innerHTML = '<div class="text-center p-3 text-danger">Load failed, please try again</div>';
     });
 }
 
-// 标记通知为已读
+// Mark notification as read
 function markNotificationAsRead(notificationId) {
   fetch(`/api/notifications/mark-read/${notificationId}/`, {
     method: 'POST',
@@ -219,55 +219,55 @@ function markNotificationAsRead(notificationId) {
   })
     .then(response => {
       if (!response.ok) {
-        throw new Error('网络请求失败');
+        throw new Error('Network request failed');
       }
       return response.json();
     })
     .then(data => {
-      // 更新通知UI
+      // Update notification UI
       const notification = document.querySelector(`.notification-item[data-id="${notificationId}"]`);
       if (notification) {
         notification.classList.remove('unread');
         notification.classList.add('read');
       }
       
-      // 更新通知计数
+      // Update notification count
       loadNotificationCount();
     })
     .catch(error => {
-      console.error('标记通知已读失败:', error);
+      console.error('Failed to mark notification as read:', error);
     });
 }
 
-// 初始化主题切换
+// Initialize theme toggle
 function initThemeToggle() {
   const themeToggle = document.getElementById('theme-toggle');
   if (!themeToggle) return;
   
-  // 获取当前主题
+  // Get current theme
   const currentTheme = localStorage.getItem('theme') || 'light';
   
-  // 设置初始主题
+  // Set initial theme
   document.documentElement.setAttribute('data-bs-theme', currentTheme);
   
-  // 更新切换按钮图标
+  // Update toggle button icon
   updateThemeIcon(currentTheme);
   
-  // 切换按钮点击事件
+  // Toggle button click event
   themeToggle.addEventListener('click', function() {
     const currentTheme = document.documentElement.getAttribute('data-bs-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     
-    // 更新主题
+    // Update theme
     document.documentElement.setAttribute('data-bs-theme', newTheme);
     localStorage.setItem('theme', newTheme);
     
-    // 更新图标
+    // Update icon
     updateThemeIcon(newTheme);
   });
 }
 
-// 更新主题图标
+// Update theme icon
 function updateThemeIcon(theme) {
   const themeIcon = document.getElementById('theme-icon');
   if (!themeIcon) return;
@@ -281,12 +281,12 @@ function updateThemeIcon(theme) {
   }
 }
 
-// 初始化返回顶部按钮
+// Initialize back to top button
 function initBackToTop() {
   const backToTopBtn = document.getElementById('back-to-top');
   if (!backToTopBtn) return;
   
-  // 滚动事件监听
+  // Scroll event listener
   window.addEventListener('scroll', function() {
     if (window.pageYOffset > 300) {
       backToTopBtn.classList.add('show');
@@ -295,7 +295,7 @@ function initBackToTop() {
     }
   });
   
-  // 点击事件
+  // Click event
   backToTopBtn.addEventListener('click', function() {
     window.scrollTo({
       top: 0,
@@ -304,7 +304,7 @@ function initBackToTop() {
   });
 }
 
-// 初始化工具提示
+// Initialize tooltips
 function initTooltips() {
   const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
   if (tooltipTriggerList.length > 0) {
@@ -316,7 +316,7 @@ function initTooltips() {
   }
 }
 
-// 获取CSRF Cookie
+// Get CSRF Cookie
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') {
@@ -332,9 +332,9 @@ function getCookie(name) {
   return cookieValue;
 }
 
-// 显示消息提示
+// Show message prompt
 function showAlert(message, type = 'info', duration = 3000) {
-  // 创建警告元素
+  // Create warning element
   const alertDiv = document.createElement('div');
   alertDiv.className = `alert alert-${type} alert-dismissible fade show custom-alert`;
   alertDiv.innerHTML = `
@@ -342,12 +342,12 @@ function showAlert(message, type = 'info', duration = 3000) {
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   `;
   
-  // 添加到页面
+  // Add to page
   const alertContainer = document.getElementById('alert-container');
   if (alertContainer) {
     alertContainer.appendChild(alertDiv);
   } else {
-    // 如果容器不存在，创建一个
+    // If container doesn't exist, create one
     const container = document.createElement('div');
     container.id = 'alert-container';
     container.className = 'position-fixed top-0 end-0 p-3';
@@ -356,18 +356,18 @@ function showAlert(message, type = 'info', duration = 3000) {
     document.body.appendChild(container);
   }
   
-  // 创建Bootstrap警告对象
+  // Create Bootstrap warning object
   if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
     const bsAlert = new bootstrap.Alert(alertDiv);
     
-    // 设置自动消失
+    // Set auto disappear
     if (duration > 0) {
       setTimeout(() => {
         bsAlert.close();
       }, duration);
     }
   } else {
-    // 如果Bootstrap不可用，手动实现关闭
+    // If Bootstrap is not available, manually implement close
     const closeButton = alertDiv.querySelector('.btn-close');
     if (closeButton) {
       closeButton.addEventListener('click', function() {
@@ -378,7 +378,7 @@ function showAlert(message, type = 'info', duration = 3000) {
       });
     }
     
-    // 设置自动消失
+    // Set auto disappear
     if (duration > 0) {
       setTimeout(() => {
         alertDiv.classList.remove('show');

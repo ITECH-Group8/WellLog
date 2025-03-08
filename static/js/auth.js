@@ -1,28 +1,28 @@
 /**
- * WellLog 认证模块JavaScript文件
- * 处理用户认证相关功能
+ * WellLog Authentication Module JavaScript File
+ * Handles user authentication related functions
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('初始化认证功能');
+  console.log('Initializing authentication functionality');
   
-  // 初始化登录表单验证
+  // Initialize login form validation
   initLoginForm();
   
-  // 初始化注册表单验证
+  // Initialize registration form validation
   initRegisterForm();
   
-  // 初始化密码重置表单
+  // Initialize password reset form
   initPasswordResetForm();
   
-  // 初始化密码确认表单
+  // Initialize password confirmation form
   initPasswordConfirmForm();
   
-  // 初始化社交登录按钮
+  // Initialize social login buttons
   initSocialLogin();
 });
 
-// 初始化登录表单
+// Initialize login form
 function initLoginForm() {
   const loginForm = document.getElementById('login-form');
   if (!loginForm) return;
@@ -34,20 +34,20 @@ function initLoginForm() {
     
     let isValid = true;
     
-    // 清除之前的错误消息
+    // Clear previous error messages
     if (errorMsg) errorMsg.textContent = '';
     
-    // 用户名验证
+    // Username validation
     if (!username.value.trim()) {
-      showInputError(username, '请输入用户名');
+      showInputError(username, 'Please enter a username');
       isValid = false;
     } else {
       clearInputError(username);
     }
     
-    // 密码验证
+    // Password validation
     if (!password.value) {
-      showInputError(password, '请输入密码');
+      showInputError(password, 'Please enter a password');
       isValid = false;
     } else {
       clearInputError(password);
@@ -59,12 +59,12 @@ function initLoginForm() {
   });
 }
 
-// 初始化注册表单
+// Initialize registration form
 function initRegisterForm() {
   const registerForm = document.getElementById('register-form');
   if (!registerForm) return;
   
-  // 用户名可用性检查
+  // Username availability check
   const usernameInput = document.getElementById('username');
   if (usernameInput) {
     usernameInput.addEventListener('blur', function() {
@@ -72,7 +72,7 @@ function initRegisterForm() {
     });
   }
   
-  // 邮箱可用性检查
+  // Email availability check
   const emailInput = document.getElementById('email');
   if (emailInput) {
     emailInput.addEventListener('blur', function() {
@@ -80,7 +80,7 @@ function initRegisterForm() {
     });
   }
   
-  // 密码强度检查
+  // Password strength check
   const passwordInput = document.getElementById('password');
   if (passwordInput) {
     passwordInput.addEventListener('input', function() {
@@ -88,7 +88,7 @@ function initRegisterForm() {
     });
   }
   
-  // 确认密码匹配检查
+  // Confirm password match check
   const passwordConfirmInput = document.getElementById('password_confirm');
   if (passwordConfirmInput) {
     passwordConfirmInput.addEventListener('input', function() {
@@ -99,7 +99,7 @@ function initRegisterForm() {
     });
   }
   
-  // 表单提交验证
+  // Form submission validation
   registerForm.addEventListener('submit', function(e) {
     const username = document.getElementById('username');
     const email = document.getElementById('email');
@@ -108,45 +108,45 @@ function initRegisterForm() {
     
     let isValid = true;
     
-    // 用户名验证
+    // Username validation
     if (!username.value.trim()) {
-      showInputError(username, '请输入用户名');
+      showInputError(username, 'Please enter a username');
       isValid = false;
     } else if (username.value.trim().length < 3) {
-      showInputError(username, '用户名长度至少为3个字符');
+      showInputError(username, 'Username length must be at least 3 characters');
       isValid = false;
     } else {
       clearInputError(username);
     }
     
-    // 邮箱验证
+    // Email validation
     if (!email.value.trim()) {
-      showInputError(email, '请输入邮箱地址');
+      showInputError(email, 'Please enter an email address');
       isValid = false;
     } else if (!isValidEmail(email.value)) {
-      showInputError(email, '请输入有效的邮箱地址');
+      showInputError(email, 'Please enter a valid email address');
       isValid = false;
     } else {
       clearInputError(email);
     }
     
-    // 密码验证
+    // Password validation
     if (!password.value) {
-      showInputError(password, '请输入密码');
+      showInputError(password, 'Please enter a password');
       isValid = false;
     } else if (password.value.length < 8) {
-      showInputError(password, '密码长度至少为8个字符');
+      showInputError(password, 'Password length must be at least 8 characters');
       isValid = false;
     } else {
       clearInputError(password);
     }
     
-    // 确认密码验证
+    // Confirm password validation
     if (!passwordConfirm.value) {
-      showInputError(passwordConfirm, '请确认密码');
+      showInputError(passwordConfirm, 'Please confirm password');
       isValid = false;
     } else if (password.value !== passwordConfirm.value) {
-      showInputError(passwordConfirm, '两次输入的密码不一致');
+      showInputError(passwordConfirm, 'Passwords do not match');
       isValid = false;
     } else {
       clearInputError(passwordConfirm);
@@ -158,129 +158,129 @@ function initRegisterForm() {
   });
 }
 
-// 检查用户名是否可用
+// Check username availability
 function checkUsernameAvailability(username) {
   const usernameInput = document.getElementById('username');
   if (!usernameInput || !username.trim()) return;
   
-  // 显示加载状态
+  // Show loading status
   const feedbackElement = getFeedbackElement(usernameInput);
-  feedbackElement.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 检查中...';
+  feedbackElement.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Checking...';
   feedbackElement.className = 'text-muted form-text';
   
-  // 发送AJAX请求检查用户名
+  // Send AJAX request to check username
   fetch(`/api/auth/check-username/?username=${encodeURIComponent(username)}`)
     .then(response => {
       if (!response.ok) {
-        throw new Error('网络请求失败');
+        throw new Error('Network request failed');
       }
       return response.json();
     })
     .then(data => {
       if (data.available) {
         clearInputError(usernameInput);
-        feedbackElement.textContent = '用户名可用';
+        feedbackElement.textContent = 'Username available';
         feedbackElement.className = 'text-success form-text';
       } else {
-        showInputError(usernameInput, '该用户名已被使用');
+        showInputError(usernameInput, 'Username already taken');
       }
     })
     .catch(error => {
-      console.error('用户名检查失败:', error);
-      feedbackElement.textContent = '用户名检查失败，请重试';
+      console.error('Username check failed:', error);
+      feedbackElement.textContent = 'Username check failed, please try again';
       feedbackElement.className = 'text-danger form-text';
     });
 }
 
-// 检查邮箱是否可用
+// Check email availability
 function checkEmailAvailability(email) {
   const emailInput = document.getElementById('email');
   if (!emailInput || !email.trim() || !isValidEmail(email)) return;
   
-  // 显示加载状态
+  // Show loading status
   const feedbackElement = getFeedbackElement(emailInput);
-  feedbackElement.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 检查中...';
+  feedbackElement.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Checking...';
   feedbackElement.className = 'text-muted form-text';
   
-  // 发送AJAX请求检查邮箱
+  // Send AJAX request to check email
   fetch(`/api/auth/check-email/?email=${encodeURIComponent(email)}`)
     .then(response => {
       if (!response.ok) {
-        throw new Error('网络请求失败');
+        throw new Error('Network request failed');
       }
       return response.json();
     })
     .then(data => {
       if (data.available) {
         clearInputError(emailInput);
-        feedbackElement.textContent = '邮箱可用';
+        feedbackElement.textContent = 'Email available';
         feedbackElement.className = 'text-success form-text';
       } else {
-        showInputError(emailInput, '该邮箱已被注册');
+        showInputError(emailInput, 'Email already registered');
       }
     })
     .catch(error => {
-      console.error('邮箱检查失败:', error);
-      feedbackElement.textContent = '邮箱检查失败，请重试';
+      console.error('Email check failed:', error);
+      feedbackElement.textContent = 'Email check failed, please try again';
       feedbackElement.className = 'text-danger form-text';
     });
 }
 
-// 检查密码强度
+// Check password strength
 function checkPasswordStrength(password) {
   const passwordInput = document.getElementById('password');
   const strengthMeter = document.getElementById('password-strength');
   if (!passwordInput || !strengthMeter) return;
   
-  // 清除之前的错误
+  // Clear previous errors
   clearInputError(passwordInput);
   
-  // 如果密码为空
+  // If password is empty
   if (!password) {
     strengthMeter.style.width = '0%';
     strengthMeter.className = 'progress-bar';
     return;
   }
   
-  // 计算密码强度
+  // Calculate password strength
   let strength = 0;
   
-  // 长度检查
+  // Length check
   if (password.length >= 8) strength += 25;
   
-  // 包含大写字母
+  // Contains uppercase letter
   if (/[A-Z]/.test(password)) strength += 25;
   
-  // 包含小写字母
+  // Contains lowercase letter
   if (/[a-z]/.test(password)) strength += 25;
   
-  // 包含数字
+  // Contains number
   if (/[0-9]/.test(password)) strength += 15;
   
-  // 包含特殊字符
+  // Contains special character
   if (/[^A-Za-z0-9]/.test(password)) strength += 10;
   
-  // 设置强度指示器
+  // Set strength indicator
   strengthMeter.style.width = `${Math.min(100, strength)}%`;
   
-  // 设置颜色
+  // Set color
   if (strength < 30) {
     strengthMeter.className = 'progress-bar bg-danger';
-    showInputError(passwordInput, '密码强度弱');
+    showInputError(passwordInput, 'Weak password');
   } else if (strength < 60) {
     strengthMeter.className = 'progress-bar bg-warning';
     const feedbackElement = getFeedbackElement(passwordInput);
-    feedbackElement.textContent = '密码强度中等';
+    feedbackElement.textContent = 'Medium password strength';
     feedbackElement.className = 'text-warning form-text';
   } else {
     strengthMeter.className = 'progress-bar bg-success';
     const feedbackElement = getFeedbackElement(passwordInput);
-    feedbackElement.textContent = '密码强度强';
+    feedbackElement.textContent = 'Strong password';
     feedbackElement.className = 'text-success form-text';
   }
 }
 
-// 检查两次密码是否匹配
+// Check password match
 function checkPasswordMatch(password, confirmPassword) {
   const confirmInput = document.getElementById('password_confirm');
   if (!confirmInput) return;
@@ -293,14 +293,14 @@ function checkPasswordMatch(password, confirmPassword) {
   if (password === confirmPassword) {
     clearInputError(confirmInput);
     const feedbackElement = getFeedbackElement(confirmInput);
-    feedbackElement.textContent = '密码匹配';
+    feedbackElement.textContent = 'Passwords match';
     feedbackElement.className = 'text-success form-text';
   } else {
-    showInputError(confirmInput, '两次输入的密码不一致');
+    showInputError(confirmInput, 'Passwords do not match');
   }
 }
 
-// 初始化密码重置表单
+// Initialize password reset form
 function initPasswordResetForm() {
   const resetForm = document.getElementById('password-reset-form');
   if (!resetForm) return;
@@ -310,12 +310,12 @@ function initPasswordResetForm() {
     
     let isValid = true;
     
-    // 邮箱验证
+    // Email validation
     if (!email.value.trim()) {
-      showInputError(email, '请输入邮箱地址');
+      showInputError(email, 'Please enter an email address');
       isValid = false;
     } else if (!isValidEmail(email.value)) {
-      showInputError(email, '请输入有效的邮箱地址');
+      showInputError(email, 'Please enter a valid email address');
       isValid = false;
     } else {
       clearInputError(email);
@@ -327,12 +327,12 @@ function initPasswordResetForm() {
   });
 }
 
-// 初始化密码确认表单
+// Initialize password confirmation form
 function initPasswordConfirmForm() {
   const confirmForm = document.getElementById('password-confirm-form');
   if (!confirmForm) return;
   
-  // 密码强度检查
+  // Password strength check
   const passwordInput = document.getElementById('new_password');
   if (passwordInput) {
     passwordInput.addEventListener('input', function() {
@@ -340,7 +340,7 @@ function initPasswordConfirmForm() {
     });
   }
   
-  // 确认密码匹配检查
+  // Confirm password match check
   const passwordConfirmInput = document.getElementById('confirm_password');
   if (passwordConfirmInput) {
     passwordConfirmInput.addEventListener('input', function() {
@@ -357,23 +357,23 @@ function initPasswordConfirmForm() {
     
     let isValid = true;
     
-    // 新密码验证
+    // New password validation
     if (!newPassword.value) {
-      showInputError(newPassword, '请输入新密码');
+      showInputError(newPassword, 'Please enter a new password');
       isValid = false;
     } else if (newPassword.value.length < 8) {
-      showInputError(newPassword, '密码长度至少为8个字符');
+      showInputError(newPassword, 'Password length must be at least 8 characters');
       isValid = false;
     } else {
       clearInputError(newPassword);
     }
     
-    // 确认密码验证
+    // Confirm password validation
     if (!confirmPassword.value) {
-      showInputError(confirmPassword, '请确认密码');
+      showInputError(confirmPassword, 'Please confirm password');
       isValid = false;
     } else if (newPassword.value !== confirmPassword.value) {
-      showInputError(confirmPassword, '两次输入的密码不一致');
+      showInputError(confirmPassword, 'Passwords do not match');
       isValid = false;
     } else {
       clearInputError(confirmPassword);
@@ -385,7 +385,7 @@ function initPasswordConfirmForm() {
   });
 }
 
-// 初始化社交登录按钮
+// Initialize social login buttons
 function initSocialLogin() {
   const socialButtons = document.querySelectorAll('.social-login-btn');
   
@@ -393,12 +393,12 @@ function initSocialLogin() {
     button.addEventListener('click', function(e) {
       const provider = this.getAttribute('data-provider');
       
-      // 显示按钮加载状态
+      // Show button loading status
       this.disabled = true;
       const originalContent = this.innerHTML;
-      this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 连接中...';
+      this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Connecting...';
       
-      // 在适当的延迟后恢复按钮状态（如果页面未被重定向）
+      // In appropriate delay, restore button state (if page not redirected)
       setTimeout(() => {
         if (document.body.contains(this)) {
           this.disabled = false;
@@ -409,7 +409,7 @@ function initSocialLogin() {
   });
 }
 
-// 显示输入错误
+// Show input error
 function showInputError(inputElement, message) {
   inputElement.classList.add('is-invalid');
   
@@ -418,7 +418,7 @@ function showInputError(inputElement, message) {
   feedbackElement.className = 'invalid-feedback';
 }
 
-// 清除输入错误
+// Clear input error
 function clearInputError(inputElement) {
   inputElement.classList.remove('is-invalid');
   
@@ -427,11 +427,11 @@ function clearInputError(inputElement) {
   feedbackElement.className = '';
 }
 
-// 获取或创建反馈元素
+// Get or create feedback element
 function getFeedbackElement(inputElement) {
   let feedbackElement = inputElement.nextElementSibling;
   
-  // 如果下一个元素不是反馈元素，创建一个
+  // If next element is not a feedback element, create one
   if (!feedbackElement || !feedbackElement.classList.contains('invalid-feedback') && !feedbackElement.classList.contains('form-text')) {
     feedbackElement = document.createElement('div');
     inputElement.insertAdjacentElement('afterend', feedbackElement);
@@ -440,7 +440,7 @@ function getFeedbackElement(inputElement) {
   return feedbackElement;
 }
 
-// 验证邮箱格式
+// Validate email format
 function isValidEmail(email) {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(email.toLowerCase());

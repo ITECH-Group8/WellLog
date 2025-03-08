@@ -1,55 +1,55 @@
 /**
- * WellLog 个人资料模块JavaScript文件
- * 处理用户个人资料相关功能
+ * WellLog Profile Module JavaScript File
+ * Handles user profile related functions
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('初始化个人资料功能');
+  console.log('Initializing profile functionality');
   
-  // 初始化资料编辑表单
+  // Initialize profile edit form
   initProfileEditForm();
   
-  // 初始化头像上传
+  // Initialize avatar upload
   initAvatarUpload();
   
-  // 初始化密码修改
+  // Initialize password change
   initPasswordChange();
   
-  // 初始化隐私设置
+  // Initialize privacy settings
   initPrivacySettings();
   
-  // 初始化账号关联
+  // Initialize account connections
   initAccountConnections();
 });
 
-// 初始化个人资料编辑表单
+// Initialize profile edit form
 function initProfileEditForm() {
   const profileForm = document.getElementById('profile-edit-form');
   if (!profileForm) return;
   
-  // 表单提交处理
+  // Form submission handling
   profileForm.addEventListener('submit', function(e) {
     e.preventDefault();
     
-    // 基本验证
+    // Basic validation
     let isValid = true;
     
     const username = document.getElementById('username');
     const email = document.getElementById('email');
     const nickname = document.getElementById('nickname');
     
-    // 用户名验证
+    // Username validation
     if (username && !username.value.trim()) {
-      showInputError(username, '请输入用户名');
+      showInputError(username, 'Please enter a username');
       isValid = false;
     }
     
-    // 邮箱验证
+    // Email validation
     if (email && !email.value.trim()) {
-      showInputError(email, '请输入邮箱地址');
+      showInputError(email, 'Please enter an email address');
       isValid = false;
     } else if (email && !isValidEmail(email.value)) {
-      showInputError(email, '请输入有效的邮箱地址');
+      showInputError(email, 'Please enter a valid email address');
       isValid = false;
     }
     
@@ -57,16 +57,16 @@ function initProfileEditForm() {
       return;
     }
     
-    // 显示提交中状态
+    // Show submission status
     const submitBtn = document.querySelector('#profile-edit-form button[type="submit"]');
     const originalText = submitBtn.textContent;
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 保存中...';
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
     
-    // 使用FormData收集表单数据
+    // Use FormData to collect form data
     const formData = new FormData(profileForm);
     
-    // 发送AJAX请求
+    // Send AJAX request
     fetch(profileForm.action, {
       method: 'POST',
       body: formData,
@@ -76,29 +76,29 @@ function initProfileEditForm() {
     })
     .then(response => {
       if (!response.ok) {
-        throw new Error('网络请求失败');
+        throw new Error('Network request failed');
       }
       return response.json();
     })
     .then(data => {
-      // 恢复按钮状态
+      // Restore button state
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
       
       if (data.success) {
-        // 显示成功消息
-        showAlert('个人资料已成功更新', 'success');
+        // Show success message
+        showAlert('Profile updated successfully', 'success');
         
-        // 更新页面上显示的用户信息
+        // Update displayed user information
         const profileName = document.querySelector('.profile-name');
         if (profileName && nickname) {
           profileName.textContent = nickname.value;
         }
       } else {
-        // 显示错误信息
-        showAlert(data.error || '更新失败，请稍后重试', 'danger');
+        // Show error message
+        showAlert(data.error || 'Update failed, please try again later', 'danger');
         
-        // 处理字段错误
+        // Handle field errors
         if (data.errors) {
           for (const field in data.errors) {
             const inputElement = document.getElementById(field);
@@ -110,19 +110,19 @@ function initProfileEditForm() {
       }
     })
     .catch(error => {
-      console.error('更新个人资料失败:', error);
+      console.error('Update profile failed:', error);
       
-      // 恢复按钮状态
+      // Restore button state
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
       
-      // 显示错误消息
-      showAlert('更新失败，请检查网络连接后重试', 'danger');
+      // Show error message
+      showAlert('Update failed, please check network connection and try again', 'danger');
     });
   });
 }
 
-// 初始化头像上传
+// Initialize avatar upload
 function initAvatarUpload() {
   const avatarUpload = document.getElementById('avatar-upload');
   const avatarPreview = document.getElementById('avatar-preview');
@@ -130,40 +130,40 @@ function initAvatarUpload() {
   
   if (!avatarUpload || !avatarPreview || !avatarInput) return;
   
-  // 点击头像预览触发文件选择
+  // Click avatar preview to trigger file selection
   avatarPreview.addEventListener('click', function() {
     avatarInput.click();
   });
   
-  // 文件选择变化处理
+  // File selection change handling
   avatarInput.addEventListener('change', function() {
     if (this.files && this.files[0]) {
       const file = this.files[0];
       
-      // 验证文件类型
+      // Verify file type
       if (!file.type.match('image.*')) {
-        showAlert('请选择图片文件', 'warning');
+        showAlert('Please select an image file', 'warning');
         return;
       }
       
-      // 验证文件大小 (最大2MB)
+      // Verify file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
-        showAlert('图片大小不能超过2MB', 'warning');
+        showAlert('Image size cannot exceed 2MB', 'warning');
         return;
       }
       
-      // 创建预览
+      // Create preview
       const reader = new FileReader();
       reader.onload = function(e) {
         avatarPreview.src = e.target.result;
-        // 显示上传按钮
+        // Show upload button
         document.getElementById('avatar-upload-btn').style.display = 'block';
       };
       reader.readAsDataURL(file);
     }
   });
   
-  // 上传按钮点击处理
+  // Upload button click handling
   const uploadBtn = document.getElementById('avatar-upload-btn');
   if (uploadBtn) {
     uploadBtn.addEventListener('click', function() {
@@ -171,16 +171,16 @@ function initAvatarUpload() {
         return;
       }
       
-      // 显示上传中状态
+      // Show upload status
       this.disabled = true;
       const originalText = this.textContent;
-      this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 上传中...';
+      this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Uploading...';
       
-      // 创建FormData对象
+      // Create FormData object
       const formData = new FormData();
       formData.append('avatar', avatarInput.files[0]);
       
-      // 发送AJAX请求
+      // Send AJAX request
       fetch('/api/user/upload-avatar/', {
         method: 'POST',
         body: formData,
@@ -190,52 +190,52 @@ function initAvatarUpload() {
       })
       .then(response => {
         if (!response.ok) {
-          throw new Error('网络请求失败');
+          throw new Error('Network request failed');
         }
         return response.json();
       })
       .then(data => {
-        // 恢复按钮状态
+        // Restore button state
         this.disabled = false;
         this.textContent = originalText;
         
         if (data.success) {
-          // 显示成功消息
-          showAlert('头像已成功更新', 'success');
+          // Show success message
+          showAlert('Avatar updated successfully', 'success');
           
-          // 隐藏上传按钮
+          // Hide upload button
           this.style.display = 'none';
           
-          // 更新所有显示用户头像的地方
+          // Update all displayed user avatar places
           document.querySelectorAll('.user-avatar').forEach(avatar => {
-            // 添加时间戳防止缓存
+            // Add timestamp to prevent caching
             avatar.src = data.avatar_url + '?t=' + new Date().getTime();
           });
         } else {
-          // 显示错误信息
-          showAlert(data.error || '上传失败，请稍后重试', 'danger');
+          // Show error message
+          showAlert(data.error || 'Upload failed, please try again later', 'danger');
         }
       })
       .catch(error => {
-        console.error('上传头像失败:', error);
+        console.error('Upload avatar failed:', error);
         
-        // 恢复按钮状态
+        // Restore button state
         this.disabled = false;
         this.textContent = originalText;
         
-        // 显示错误消息
-        showAlert('上传失败，请检查网络连接后重试', 'danger');
+        // Show error message
+        showAlert('Upload failed, please check network connection and try again', 'danger');
       });
     });
   }
 }
 
-// 初始化密码修改
+// Initialize password change
 function initPasswordChange() {
   const passwordForm = document.getElementById('password-change-form');
   if (!passwordForm) return;
   
-  // 密码强度检查
+  // Password strength check
   const newPasswordInput = document.getElementById('new_password');
   if (newPasswordInput) {
     newPasswordInput.addEventListener('input', function() {
@@ -243,7 +243,7 @@ function initPasswordChange() {
     });
   }
   
-  // 确认密码匹配检查
+  // Confirm password match check
   const confirmPasswordInput = document.getElementById('confirm_password');
   if (confirmPasswordInput) {
     confirmPasswordInput.addEventListener('input', function() {
@@ -254,7 +254,7 @@ function initPasswordChange() {
     });
   }
   
-  // 表单提交处理
+  // Form submission handling
   passwordForm.addEventListener('submit', function(e) {
     e.preventDefault();
     
@@ -264,27 +264,27 @@ function initPasswordChange() {
     
     let isValid = true;
     
-    // 当前密码验证
+    // Current password validation
     if (!currentPassword.value) {
-      showInputError(currentPassword, '请输入当前密码');
+      showInputError(currentPassword, 'Please enter current password');
       isValid = false;
     }
     
-    // 新密码验证
+    // New password validation
     if (!newPassword.value) {
-      showInputError(newPassword, '请输入新密码');
+      showInputError(newPassword, 'Please enter new password');
       isValid = false;
     } else if (newPassword.value.length < 8) {
-      showInputError(newPassword, '密码长度至少为8个字符');
+      showInputError(newPassword, 'Password length must be at least 8 characters');
       isValid = false;
     }
     
-    // 确认密码验证
+    // Confirm password validation
     if (!confirmPassword.value) {
-      showInputError(confirmPassword, '请确认新密码');
+      showInputError(confirmPassword, 'Please confirm new password');
       isValid = false;
     } else if (newPassword.value !== confirmPassword.value) {
-      showInputError(confirmPassword, '两次输入的密码不一致');
+      showInputError(confirmPassword, 'Two passwords do not match');
       isValid = false;
     }
     
@@ -292,16 +292,16 @@ function initPasswordChange() {
       return;
     }
     
-    // 显示提交中状态
+    // Show submission status
     const submitBtn = document.querySelector('#password-change-form button[type="submit"]');
     const originalText = submitBtn.textContent;
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 更新中...';
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
     
-    // 准备表单数据
+    // Prepare form data
     const formData = new FormData(passwordForm);
     
-    // 发送AJAX请求
+    // Send AJAX request
     fetch(passwordForm.action, {
       method: 'POST',
       body: formData,
@@ -311,23 +311,23 @@ function initPasswordChange() {
     })
     .then(response => {
       if (!response.ok) {
-        throw new Error('网络请求失败');
+        throw new Error('Network request failed');
       }
       return response.json();
     })
     .then(data => {
-      // 恢复按钮状态
+      // Restore button state
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
       
       if (data.success) {
-        // 显示成功消息
-        showAlert('密码已成功更新', 'success');
+        // Show success message
+        showAlert('Password updated successfully', 'success');
         
-        // 清空表单
+        // Clear form
         passwordForm.reset();
         
-        // 隐藏模态框（如果在模态框中）
+        // Hide modal (if in modal)
         const modal = passwordForm.closest('.modal');
         if (modal && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
           const modalInstance = bootstrap.Modal.getInstance(modal);
@@ -336,46 +336,46 @@ function initPasswordChange() {
           }
         }
       } else {
-        // 显示错误信息
+        // Show error message
         if (data.error === 'current_password') {
-          showInputError(currentPassword, '当前密码不正确');
+          showInputError(currentPassword, 'Current password is incorrect');
         } else {
-          showAlert(data.error || '更新失败，请稍后重试', 'danger');
+          showAlert(data.error || 'Update failed, please try again later', 'danger');
         }
       }
     })
     .catch(error => {
-      console.error('更新密码失败:', error);
+      console.error('Update password failed:', error);
       
-      // 恢复按钮状态
+      // Restore button state
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
       
-      // 显示错误消息
-      showAlert('更新失败，请检查网络连接后重试', 'danger');
+      // Show error message
+      showAlert('Update failed, please check network connection and try again', 'danger');
     });
   });
 }
 
-// 初始化隐私设置
+// Initialize privacy settings
 function initPrivacySettings() {
   const privacyForm = document.getElementById('privacy-settings-form');
   if (!privacyForm) return;
   
-  // 表单提交处理
+  // Form submission handling
   privacyForm.addEventListener('submit', function(e) {
     e.preventDefault();
     
-    // 显示提交中状态
+    // Show submission status
     const submitBtn = document.querySelector('#privacy-settings-form button[type="submit"]');
     const originalText = submitBtn.textContent;
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 保存中...';
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
     
-    // 收集设置状态
+    // Collect setting status
     const formData = new FormData(privacyForm);
     
-    // 发送AJAX请求
+    // Send AJAX request
     fetch(privacyForm.action, {
       method: 'POST',
       body: formData,
@@ -385,52 +385,52 @@ function initPrivacySettings() {
     })
     .then(response => {
       if (!response.ok) {
-        throw new Error('网络请求失败');
+        throw new Error('Network request failed');
       }
       return response.json();
     })
     .then(data => {
-      // 恢复按钮状态
+      // Restore button state
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
       
       if (data.success) {
-        // 显示成功消息
-        showAlert('隐私设置已保存', 'success');
+        // Show success message
+        showAlert('Privacy settings saved', 'success');
       } else {
-        // 显示错误信息
-        showAlert(data.error || '保存失败，请稍后重试', 'danger');
+        // Show error message
+        showAlert(data.error || 'Save failed, please try again later', 'danger');
       }
     })
     .catch(error => {
-      console.error('保存隐私设置失败:', error);
+      console.error('Save privacy settings failed:', error);
       
-      // 恢复按钮状态
+      // Restore button state
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
       
-      // 显示错误消息
-      showAlert('保存失败，请检查网络连接后重试', 'danger');
+      // Show error message
+      showAlert('Save failed, please check network connection and try again', 'danger');
     });
   });
 }
 
-// 初始化账号关联
+// Initialize account connections
 function initAccountConnections() {
   const connectButtons = document.querySelectorAll('.connect-account-btn');
   const disconnectButtons = document.querySelectorAll('.disconnect-account-btn');
   
-  // 连接社交媒体账号
+  // Connect social media account
   connectButtons.forEach(button => {
     button.addEventListener('click', function() {
       const provider = this.getAttribute('data-provider');
       
-      // 显示加载状态
+      // Show loading status
       this.disabled = true;
       const originalText = this.textContent;
-      this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 连接中...';
+      this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Connecting...';
       
-      // 在5秒后恢复按钮状态（如果页面未被重定向）
+      // Restore button state after 5 seconds (if page is not redirected)
       setTimeout(() => {
         if (document.body.contains(this)) {
           this.disabled = false;
@@ -440,21 +440,21 @@ function initAccountConnections() {
     });
   });
   
-  // 断开社交媒体账号连接
+  // Disconnect social media account connection
   disconnectButtons.forEach(button => {
     button.addEventListener('click', function() {
-      if (!confirm('确定要解除账号关联吗？')) {
+      if (!confirm('Are you sure you want to disconnect this account?')) {
         return;
       }
       
       const provider = this.getAttribute('data-provider');
       
-      // 显示加载状态
+      // Show loading status
       this.disabled = true;
       const originalText = this.textContent;
-      this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 解除中...';
+      this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Disconnecting...';
       
-      // 发送AJAX请求
+      // Send AJAX request
       fetch(`/api/user/disconnect-account/${provider}/`, {
         method: 'POST',
         headers: {
@@ -464,27 +464,27 @@ function initAccountConnections() {
       })
       .then(response => {
         if (!response.ok) {
-          throw new Error('网络请求失败');
+          throw new Error('Network request failed');
         }
         return response.json();
       })
       .then(data => {
         if (data.success) {
-          // 显示成功消息
-          showAlert(`已成功解除${provider}账号关联`, 'success');
+          // Show success message
+          showAlert(`Successfully disconnected ${provider} account`, 'success');
           
-          // 更新UI
+          // Update UI
           const connectionItem = this.closest('.connection-item');
           if (connectionItem) {
-            // 将"已连接"改为"未连接"
+            // Change "Connected" to "Disconnected"
             const statusBadge = connectionItem.querySelector('.connection-status');
             if (statusBadge) {
-              statusBadge.textContent = '未连接';
+              statusBadge.textContent = 'Disconnected';
               statusBadge.classList.remove('bg-success');
               statusBadge.classList.add('bg-secondary');
             }
             
-            // 隐藏断开按钮，显示连接按钮
+            // Hide disconnect button, show connect button
             this.style.display = 'none';
             const connectBtn = connectionItem.querySelector('.connect-account-btn');
             if (connectBtn) {
@@ -492,78 +492,78 @@ function initAccountConnections() {
             }
           }
         } else {
-          // 显示错误消息
-          showAlert(data.error || '解除关联失败，请稍后重试', 'danger');
+          // Show error message
+          showAlert(data.error || 'Disconnect failed, please try again later', 'danger');
           
-          // 恢复按钮状态
+          // Restore button state
           this.disabled = false;
           this.textContent = originalText;
         }
       })
       .catch(error => {
-        console.error('解除账号关联失败:', error);
+        console.error('Disconnect account failed:', error);
         
-        // 恢复按钮状态
+        // Restore button state
         this.disabled = false;
         this.textContent = originalText;
         
-        // 显示错误消息
-        showAlert('解除关联失败，请稍后重试', 'danger');
+        // Show error message
+        showAlert('Disconnect failed, please try again later', 'danger');
       });
     });
   });
 }
 
-// 检查密码强度
+// Check password strength
 function checkPasswordStrength(password) {
   const passwordInput = document.getElementById('new_password');
   const strengthMeter = document.getElementById('password-strength-meter');
   if (!passwordInput || !strengthMeter) return;
   
-  // 如果密码为空
+  // If password is empty
   if (!password) {
     strengthMeter.style.width = '0%';
     strengthMeter.className = 'progress-bar';
     return;
   }
   
-  // 计算密码强度
+  // Calculate password strength
   let strength = 0;
   
-  // 长度检查
+  // Length check
   if (password.length >= 8) strength += 25;
   
-  // 包含大写字母
+  // Include uppercase letters
   if (/[A-Z]/.test(password)) strength += 25;
   
-  // 包含小写字母
+  // Include lowercase letters
   if (/[a-z]/.test(password)) strength += 25;
   
-  // 包含数字
+  // Include numbers
   if (/[0-9]/.test(password)) strength += 15;
   
-  // 包含特殊字符
+  // Include special characters
   if (/[^A-Za-z0-9]/.test(password)) strength += 10;
   
-  // 设置强度指示器
+  // Set strength indicator
   strengthMeter.style.width = `${Math.min(100, strength)}%`;
   
-  // 设置颜色和文本
+  // Set color and text
   const strengthText = document.getElementById('password-strength-text');
   
   if (strength < 30) {
     strengthMeter.className = 'progress-bar bg-danger';
-    if (strengthText) strengthText.textContent = '弱';
+    if (strengthText) strengthText.textContent = 'Weak';
   } else if (strength < 60) {
     strengthMeter.className = 'progress-bar bg-warning';
-    if (strengthText) strengthText.textContent = '中等';
+    if (strengthText) strengthText.textContent = 'Medium';
   } else {
     strengthMeter.className = 'progress-bar bg-success';
-    if (strengthText) strengthText.textContent = '强';
+    if (strengthText) strengthText.textContent = 'Strong';
   }
 }
 
-// 检查两次密码是否匹配
+// Check if two passwords match
 function checkPasswordMatch(password, confirmPassword) {
   const confirmInput = document.getElementById('confirm_password');
   const matchText = document.getElementById('password-match-text');
@@ -576,15 +576,15 @@ function checkPasswordMatch(password, confirmPassword) {
   }
   
   if (password === confirmPassword) {
-    matchText.textContent = '密码匹配';
+    matchText.textContent = 'Passwords match';
     matchText.className = 'text-success';
   } else {
-    matchText.textContent = '密码不匹配';
+    matchText.textContent = 'Passwords do not match';
     matchText.className = 'text-danger';
   }
 }
 
-// 显示输入错误
+// Show input error
 function showInputError(inputElement, message) {
   inputElement.classList.add('is-invalid');
   
@@ -598,7 +598,7 @@ function showInputError(inputElement, message) {
   feedbackElement.textContent = message;
 }
 
-// 清除输入错误
+// Clear input error
 function clearInputError(inputElement) {
   inputElement.classList.remove('is-invalid');
   
@@ -608,9 +608,9 @@ function clearInputError(inputElement) {
   }
 }
 
-// 显示消息提示
+// Show message prompt
 function showAlert(message, type = 'info', duration = 3000) {
-  // 创建警告元素
+  // Create alert element
   const alertDiv = document.createElement('div');
   alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
   alertDiv.innerHTML = `
@@ -618,12 +618,12 @@ function showAlert(message, type = 'info', duration = 3000) {
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   `;
   
-  // 添加到页面
+  // Add to page
   const alertContainer = document.getElementById('alert-container');
   if (alertContainer) {
     alertContainer.appendChild(alertDiv);
   } else {
-    // 如果容器不存在，创建一个
+    // If container does not exist, create one
     const container = document.createElement('div');
     container.id = 'alert-container';
     container.className = 'position-fixed top-0 end-0 p-3';
@@ -632,7 +632,7 @@ function showAlert(message, type = 'info', duration = 3000) {
     document.body.appendChild(container);
   }
   
-  // 设置自动消失
+  // Set auto disappear
   if (duration > 0) {
     setTimeout(() => {
       alertDiv.classList.remove('show');
@@ -645,13 +645,13 @@ function showAlert(message, type = 'info', duration = 3000) {
   return alertDiv;
 }
 
-// 验证邮箱格式
+// Verify email format
 function isValidEmail(email) {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(email.toLowerCase());
 }
 
-// 获取CSRF Cookie
+// Get CSRF Cookie
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') {

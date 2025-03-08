@@ -6,11 +6,11 @@ from django.http import JsonResponse
 from django.db.models import Sum, Avg
 from .models import (
     StepsRecord, SleepRecord, DietRecord, 
-    RunningRecord, TrainingRecord, MoodRecord
+    RunningRecord, TrainingRecord, MoodRecord, WeightRecord, HealthGoal
 )
 from .forms import (
     StepsRecordForm, SleepRecordForm, DietRecordForm,
-    RunningRecordForm, TrainingRecordForm, MoodRecordForm
+    RunningRecordForm, TrainingRecordForm, MoodRecordForm, WeightRecordForm, HealthGoalForm
 )
 import json
 from datetime import datetime, timedelta
@@ -51,6 +51,17 @@ def dashboard(request):
         mood_record = MoodRecord.objects.filter(user=request.user, date=today).latest('created_at')
     except MoodRecord.DoesNotExist:
         mood_record = None
+        
+    try:
+        weight_record = WeightRecord.objects.filter(user=request.user, date=today).latest('created_at')
+    except WeightRecord.DoesNotExist:
+        weight_record = None
+    
+    # Get user's health goals
+    try:
+        health_goal = HealthGoal.objects.get(user=request.user)
+    except HealthGoal.DoesNotExist:
+        health_goal = None
     
     context = {
         'steps_record': steps_record,
@@ -59,6 +70,8 @@ def dashboard(request):
         'running_record': running_record,
         'training_record': training_record,
         'mood_record': mood_record,
+        'weight_record': weight_record,
+        'health_goal': health_goal,
         'active_tab': 'overall'
     }
     
@@ -108,23 +121,23 @@ def steps_record_history(request):
     # Get data for chart - last 30 days
     last_30_days = timezone.now().date() - timedelta(days=30)
     
-    # 直接获取每天的步数，不使用Sum聚合
+    # Get daily steps directly, without using Sum aggregation
     chart_records = StepsRecord.objects.filter(
         user=request.user, 
         date__gte=last_30_days
     ).order_by('date')
     
-    # 确保有记录
+    # Ensure there are records
     if chart_records.exists():
-        # 简化数据处理逻辑
+        # Simplify data processing logic
         dates = [record.date.strftime('%Y-%m-%d') for record in chart_records]
         steps = [record.steps_count for record in chart_records]
     else:
-        # 无数据时设置为空列表
+        # Set empty lists when no data
         dates = []
         steps = []
     
-    # 添加调试信息
+    # Add debug information
     print(f"Steps chart data: {len(dates)} records found")
     for i, (date, step) in enumerate(zip(dates, steps)):
         print(f"  {i+1}: {date} - {step} steps")
@@ -489,8 +502,8 @@ def mood_record_delete(request, pk):
 
 @login_required
 def mood_record_history(request):
-    """渲染心情记录历史页面"""
-    mood_records = MoodRecord.objects.filter(user=request.user).order_by('-record_date')
+    """Render mood record history page"""
+    mood_records = MoodRecord.objects.filter(user=request.user).order_by('-date')
     
     paginator = Paginator(mood_records, 10)
     page = request.GET.get('page')
@@ -503,3 +516,156 @@ def mood_record_history(request):
         records = paginator.page(paginator.num_pages)
         
     return render(request, 'health/mood_record_history.html', {'records': records})
+
+# Weight Record Views
+@login_required
+def weight_record_add(request):
+    """Add a new weight record"""
+    if request.method == 'POST':
+        form = WeightRecordForm(request.POST)
+        if form.is_valid():
+            record = form.save(commit=False)
+            record.user = request.user
+            record.save()
+            return redirect('dashboard')
+    else:
+        form = WeightRecordForm()
+    
+    return render(request, 'health/record_form.html', {
+        'form': form,
+        'record_type': 'Weight',
+        'action': 'Add'
+    })
+
+@login_required
+def weight_record_edit(request, pk):
+    """Edit an existing weight record"""
+    record = get_object_or_404(WeightRecord, pk=pk, user=request.user)
+    
+    if request.method == 'POST':
+        form = WeightRecordForm(request.POST, instance=record)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = WeightRecordForm(instance=record)
+    
+    return render(request, 'health/record_form.html', {
+        'form': form,
+        'record_type': 'Weight',
+        'action': 'Edit'
+    })
+
+@login_required
+def weight_record_delete(request, pk):
+    """Delete a weight record"""
+    record = get_object_or_404(WeightRecord, pk=pk, user=request.user)
+    
+    if request.method == 'POST':
+        record.delete()
+        return redirect('weight_history')
+    
+    return render(request, 'health/record_confirm_delete.html', {
+        'record': record,
+        'record_type': 'Weight'
+    })
+
+@login_required
+def weight_record_history(request):
+    """View weight history"""
+    records = WeightRecord.objects.filter(user=request.user).order_by('-date')
+    
+    # Calculate averages
+    avg_weight = records.aggregate(Avg('weight'))['weight__avg']
+    if avg_weight:
+        avg_weight = round(avg_weight, 1)
+    
+    # Calculate average BMI
+    bmi_sum = 0
+    bmi_count = 0
+    for record in records:
+        bmi = record.bmi()
+        if bmi > 0:
+            bmi_sum += bmi
+            bmi_count += 1
+    
+    avg_bmi = round(bmi_sum / bmi_count, 1) if bmi_count > 0 else 0
+    
+    # Pagination
+    paginator = Paginator(records, 10)  # Show 10 records per page
+    page = request.GET.get('page')
+    try:
+        records = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        records = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, deliver last page of results.
+        records = paginator.page(paginator.num_pages)
+    
+    # Get data for chart
+    last_30_days = timezone.now().date() - timedelta(days=30)
+    chart_records = WeightRecord.objects.filter(
+        user=request.user, 
+        date__gte=last_30_days
+    ).order_by('date')
+    
+    dates = [record.date.strftime('%Y-%m-%d') for record in chart_records]
+    weights = [float(record.weight) for record in chart_records]
+    bmis = [float(record.bmi()) for record in chart_records]
+    
+    # Get any filter parameters
+    date_from = request.GET.get('date_from')
+    date_to = request.GET.get('date_to')
+    chart_type = request.GET.get('chart_type', 'line')
+    
+    # Apply date filters if provided
+    if date_from:
+        try:
+            date_from_obj = datetime.strptime(date_from, '%Y-%m-%d').date()
+            records = records.filter(date__gte=date_from_obj)
+        except ValueError:
+            pass
+            
+    if date_to:
+        try:
+            date_to_obj = datetime.strptime(date_to, '%Y-%m-%d').date()
+            records = records.filter(date__lte=date_to_obj)
+        except ValueError:
+            pass
+    
+    context = {
+        'records': records,
+        'record_type': 'Weight',
+        'chart_dates': json.dumps(dates),
+        'chart_data': json.dumps(weights),
+        'chart_bmi_data': json.dumps(bmis),
+        'active_tab': 'weight',
+        'avg_weight': avg_weight,
+        'avg_bmi': avg_bmi,
+        'date_from': date_from,
+        'date_to': date_to,
+        'chart_type': chart_type
+    }
+    
+    return render(request, 'health/record_history.html', context)
+
+# Health Goal Views
+@login_required
+def health_goal_edit(request):
+    """Create or edit health goals"""
+    # Get or create the user's health goal
+    goal, created = HealthGoal.objects.get_or_create(user=request.user)
+    
+    if request.method == 'POST':
+        form = HealthGoalForm(request.POST, instance=goal)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = HealthGoalForm(instance=goal)
+    
+    return render(request, 'health/health_goal_form.html', {
+        'form': form,
+        'action': 'Edit' if not created else 'Create'
+    })

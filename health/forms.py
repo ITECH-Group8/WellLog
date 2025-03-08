@@ -1,5 +1,5 @@
 from django import forms
-from .models import StepsRecord, SleepRecord, DietRecord, RunningRecord, TrainingRecord, MoodRecord
+from .models import StepsRecord, SleepRecord, DietRecord, RunningRecord, TrainingRecord, MoodRecord, WeightRecord, HealthGoal
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -75,4 +75,44 @@ class MoodRecordForm(forms.ModelForm):
         }
         labels = {
             'stress_level': 'Stress Level (1-10)',
+        }
+
+class WeightRecordForm(forms.ModelForm):
+    class Meta:
+        model = WeightRecord
+        fields = ['date', 'weight', 'height', 'notes']
+        widgets = {
+            'date': DateInput(),
+            'notes': forms.Textarea(attrs={'rows': 3}),
+        }
+        labels = {
+            'weight': 'Weight (kg)',
+            'height': 'Height (cm)',
+        }
+
+class HealthGoalForm(forms.ModelForm):
+    class Meta:
+        model = HealthGoal
+        fields = [
+            'target_weight', 'weight_goal_date', 
+            'daily_steps_goal', 
+            'daily_sleep_hours_goal', 'daily_sleep_minutes_goal', 
+            'weekly_running_distance_goal', 'weekly_running_sessions_goal',
+            'weekly_training_sessions_goal',
+            'daily_calories_goal', 'daily_protein_goal'
+        ]
+        widgets = {
+            'weight_goal_date': DateInput(),
+        }
+        labels = {
+            'target_weight': 'Target Weight (kg)',
+            'weight_goal_date': 'Target Date',
+            'daily_steps_goal': 'Daily Steps Goal',
+            'daily_sleep_hours_goal': 'Sleep Hours Goal',
+            'daily_sleep_minutes_goal': 'Sleep Minutes Goal',
+            'weekly_running_distance_goal': 'Weekly Running Distance (km)',
+            'weekly_running_sessions_goal': 'Weekly Running Sessions',
+            'weekly_training_sessions_goal': 'Weekly Training Sessions',
+            'daily_calories_goal': 'Daily Calories Goal',
+            'daily_protein_goal': 'Daily Protein Goal (g)',
         } 

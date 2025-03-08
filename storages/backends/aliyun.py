@@ -9,7 +9,7 @@ from django.utils.deconstruct import deconstructible
 @deconstructible
 class AliyunStorage(Storage):
     """
-    阿里云OSS存储后端
+    Aliyun OSS Storage Backend
     """
     def __init__(self, access_key_id=None, access_key_secret=None, 
                  bucket_name=None, endpoint=None, url_expire_seconds=None):
@@ -18,24 +18,24 @@ class AliyunStorage(Storage):
         self.bucket_name = bucket_name or settings.ALIYUN_BUCKET_NAME
         self.endpoint = endpoint or settings.ALIYUN_ENDPOINT
         self.url_expire_seconds = url_expire_seconds or getattr(
-            settings, 'ALIYUN_URL_EXPIRES_IN', 60 * 60 * 24 * 365)  # 默认链接有效期1年
+            settings, 'ALIYUN_URL_EXPIRES_IN', 60 * 60 * 24 * 365)  # Default link validity: 1 year
         
-        # 验证配置是否完整
+        # Verify if configuration is complete
         if not (self.access_key_id and self.access_key_secret and 
                 self.bucket_name and self.endpoint):
             raise ValueError(
-                '阿里云OSS配置不完整，请检查ALIYUN_ACCESS_KEY_ID, ALIYUN_ACCESS_KEY_SECRET, '
-                'ALIYUN_BUCKET_NAME, ALIYUN_ENDPOINT设置。'
+                'Aliyun OSS configuration is incomplete, please check ALIYUN_ACCESS_KEY_ID, ALIYUN_ACCESS_KEY_SECRET, '
+                'ALIYUN_BUCKET_NAME, ALIYUN_ENDPOINT settings.'
             )
         
-        # 初始化阿里云OSS
+        # Initialize Aliyun OSS
         self._auth = oss2.Auth(self.access_key_id, self.access_key_secret)
         self._bucket = oss2.Bucket(self._auth, self.endpoint, self.bucket_name)
         self._is_setup = True
     
     def _open(self, name, mode='rb'):
         """
-        从OSS下载文件并返回文件对象
+        Download file from OSS and return file object
         """
         from django.core.files.base import ContentFile
         name = self._normalize_name(name)
@@ -48,7 +48,7 @@ class AliyunStorage(Storage):
     
     def _save(self, name, content):
         """
-        将文件保存到OSS
+        Save file to OSS
         """
         name = self._normalize_name(name)
         content.open()
@@ -60,7 +60,7 @@ class AliyunStorage(Storage):
     
     def delete(self, name):
         """
-        从OSS删除文件
+        Delete file from OSS
         """
         name = self._normalize_name(name)
         try:
@@ -70,7 +70,7 @@ class AliyunStorage(Storage):
     
     def exists(self, name):
         """
-        检查文件是否存在于OSS
+        Check if file exists in OSS
         """
         name = self._normalize_name(name)
         try:
@@ -80,7 +80,7 @@ class AliyunStorage(Storage):
     
     def listdir(self, path):
         """
-        列出指定路径下的所有文件和目录
+        List all files and directories in the specified path
         """
         path = self._normalize_name(path)
         if path and not path.endswith('/'):
@@ -88,45 +88,45 @@ class AliyunStorage(Storage):
         
         directories, files = [], []
         for obj in oss2.ObjectIterator(self._bucket, prefix=path, delimiter='/'):
-            if obj.is_prefix():  # 文件夹
+            if obj.is_prefix():  # Directory
                 directories.append(obj.key.replace(path, '', 1).rstrip('/'))
-            else:  # 文件
+            else:  # File
                 files.append(obj.key.replace(path, '', 1))
         
         return directories, files
     
     def size(self, name):
         """
-        返回文件大小
+        Return file size
         """
         name = self._normalize_name(name)
         return self._bucket.get_object_meta(name).content_length
     
     def url(self, name):
         """
-        返回文件的URL
+        Return file URL
         """
         name = self._normalize_name(name)
-        # 生成带有过期时间的签名URL
+        # Generate signed URL with expiration time
         expiration_time = int(datetime.datetime.now().timestamp()) + self.url_expire_seconds
         return self._bucket.sign_url('GET', name, expiration_time)
     
     def get_modified_time(self, name):
         """
-        返回文件的最后修改时间
+        Return file's last modified time
         """
         name = self._normalize_name(name)
         return datetime.datetime.fromtimestamp(self._bucket.get_object_meta(name).last_modified)
     
     def get_created_time(self, name):
         """
-        返回文件的创建时间（OSS不提供创建时间，返回修改时间）
+        Return file's creation time (OSS does not provide creation time, returns modified time)
         """
         return self.get_modified_time(name)
     
     def _normalize_name(self, name):
         """
-        标准化文件名，确保它不以'/'开头
+        Normalize filename, ensure it does not start with '/'
         """
         if name and name.startswith('/'):
             name = name[1:]

@@ -36,7 +36,7 @@ function handleThumbnailError(img, postId) {
 
 // Document ready function
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('初始化社区页面功能');
+  console.log('Initializing community page functionality');
   
   // Mobile sidebar toggle
   const menuToggle = document.querySelector('.menu-toggle');
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  // 初始化卡片点赞按钮效果
+  // Initialize card like button effects
   initCardLikeButtons();
   
   // Post image loading check
@@ -157,20 +157,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
-  // 初始化点赞功能
+  // Initialize like functionality
   initLikeButtons();
   
-  // 初始化图片加载处理
+  // Initialize image loading
   initImageLoading();
   
-  // 初始化分享功能
+  // Initialize sharing functionality
   initShareButtons();
   
-  // 初始化评论功能
+  // Initialize comment functionality
   initCommentForms();
 });
 
-// 初始化点赞按钮功能
+// Initialize like button functionality
 function initLikeButtons() {
   const likeButtons = document.querySelectorAll('.like-button');
   
@@ -184,10 +184,10 @@ function initLikeButtons() {
       const likeIcon = this.querySelector('i');
       const likeText = this.querySelector('span');
       
-      // 显示加载状态
+      // Show loading state
       likeIcon.className = 'fas fa-spinner fa-spin';
       
-      // 发送请求到服务器
+      // Send request to server
       fetch(likeUrl, {
         method: 'POST',
         headers: {
@@ -198,32 +198,32 @@ function initLikeButtons() {
       })
       .then(response => {
         if (!response.ok) {
-          throw new Error('网络响应异常');
+          throw new Error('Network response abnormal');
         }
         return response.json();
       })
       .then(data => {
-        console.log('点赞响应:', data);
+        console.log('Like response:', data);
         
-        // 更新按钮状态
+        // Update button status
         if (data.liked) {
           button.classList.add('liked');
           likeIcon.className = 'fas fa-heart text-danger';
-          likeText.textContent = '已点赞';
+          likeText.textContent = 'Liked';
         } else {
           button.classList.remove('liked');
           likeIcon.className = 'far fa-heart';
-          likeText.textContent = '点赞';
+          likeText.textContent = 'Like';
         }
         
-        // 更新点赞数量
+        // Update like count
         if (likeCount) {
           likeCount.textContent = data.likes_count;
         }
       })
       .catch(error => {
-        console.error('点赞请求失败:', error);
-        // 恢复原始状态
+        console.error('Like request failed:', error);
+        // Restore original state
         if (button.classList.contains('liked')) {
           likeIcon.className = 'fas fa-heart text-danger';
         } else {
@@ -234,24 +234,24 @@ function initLikeButtons() {
   });
 }
 
-// 初始化图片加载处理
+// Initialize image loading
 function initImageLoading() {
-  // 处理详情页大图
+  // Handle detail page large image
   const postImage = document.getElementById('post-image');
   if (postImage) {
     const imageLoader = document.getElementById('image-loading');
     
-    // 图片加载成功处理
+    // Image load success handler
     postImage.addEventListener('load', function() {
       handleImageLoaded(this);
     });
     
-    // 图片加载失败处理
+    // Image load error handler
     postImage.addEventListener('error', function() {
       handleImageError(this);
     });
     
-    // 检查图片是否已从缓存加载
+    // Check if image is already loaded from cache
     if (postImage.complete) {
       if (postImage.naturalHeight === 0) {
         handleImageError(postImage);
@@ -261,20 +261,20 @@ function initImageLoading() {
     }
   }
   
-  // 处理列表页缩略图
+  // Handle list page thumbnails
   const thumbnails = document.querySelectorAll('.post-thumbnail');
   thumbnails.forEach(thumbnail => {
-    // 图片加载成功处理
+    // Image load success handler
     thumbnail.addEventListener('load', function() {
       handleThumbnailLoaded(this);
     });
     
-    // 图片加载失败处理
+    // Image load error handler
     thumbnail.addEventListener('error', function() {
       handleThumbnailError(this);
     });
     
-    // 检查图片是否已从缓存加载
+    // Check if image is already loaded from cache
     if (thumbnail.complete) {
       if (thumbnail.naturalHeight === 0) {
         handleThumbnailError(thumbnail);
@@ -285,7 +285,7 @@ function initImageLoading() {
   });
 }
 
-// 初始化分享按钮
+// Initialize sharing functionality
 function initShareButtons() {
   const shareButtons = document.querySelectorAll('.share-button');
   
@@ -296,16 +296,16 @@ function initShareButtons() {
       const postTitle = this.getAttribute('data-title');
       const postUrl = window.location.origin + this.getAttribute('data-url');
       
-      // 检查是否支持原生分享API
+      // Check if native sharing API is supported
       if (navigator.share) {
         navigator.share({
           title: postTitle,
           url: postUrl
         })
-        .then(() => console.log('分享成功'))
-        .catch((error) => console.log('分享失败:', error));
+        .then(() => console.log('Share successful'))
+        .catch((error) => console.log('Share failed:', error));
       } else {
-        // 创建一个临时输入框复制链接
+        // Create a temporary input to copy link
         const tempInput = document.createElement('input');
         document.body.appendChild(tempInput);
         tempInput.value = postUrl;
@@ -313,14 +313,14 @@ function initShareButtons() {
         document.execCommand('copy');
         document.body.removeChild(tempInput);
         
-        // 显示提示消息
-        alert('链接已复制到剪贴板，可以粘贴分享给好友！');
+        // Show notification message
+        alert('Link copied to clipboard, you can paste it to share with friends!');
       }
     });
   });
 }
 
-// 初始化评论表单
+// Initialize comment functionality
 function initCommentForms() {
   const commentForm = document.getElementById('comment-form');
   if (!commentForm) return;
@@ -330,7 +330,7 @@ function initCommentForms() {
     
     const commentText = document.getElementById('comment-text').value.trim();
     if (!commentText) {
-      alert('请输入评论内容！');
+      alert('Please enter a comment!');
       return;
     }
     
@@ -339,11 +339,11 @@ function initCommentForms() {
     const submitButton = this.querySelector('button[type="submit"]');
     const originalButtonText = submitButton.textContent;
     
-    // 显示加载状态
+    // Show loading state
     submitButton.disabled = true;
-    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 提交中...';
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
     
-    // 发送请求到服务器
+    // Send request to server
     fetch(commentUrl, {
       method: 'POST',
       headers: {
@@ -355,38 +355,38 @@ function initCommentForms() {
     })
     .then(response => {
       if (!response.ok) {
-        throw new Error('网络响应异常');
+        throw new Error('Network response abnormal');
       }
       return response.json();
     })
     .then(data => {
-      console.log('评论响应:', data);
+      console.log('Comment response:', data);
       
-      // 重置表单
+      // Reset form
       document.getElementById('comment-text').value = '';
       
-      // 添加新评论到评论列表
+      // Add new comment to comment list
       addCommentToList(data.comment);
       
-      // 更新评论计数
+      // Update comment count
       updateCommentCount(data.comments_count);
       
-      // 恢复按钮状态
+      // Restore button state
       submitButton.disabled = false;
       submitButton.textContent = originalButtonText;
     })
     .catch(error => {
-      console.error('评论请求失败:', error);
-      // 恢复按钮状态
+      console.error('Comment request failed:', error);
+      // Restore button state
       submitButton.disabled = false;
       submitButton.textContent = originalButtonText;
-      // 显示错误信息
-      alert('评论提交失败，请稍后重试');
+      // Show error message
+      alert('Comment submission failed, please try again later');
     });
   });
 }
 
-// 将新评论添加到评论列表
+// Add new comment to comment list
 function addCommentToList(comment) {
   const commentsList = document.getElementById('comments-list');
   if (!commentsList) return;
@@ -409,21 +409,21 @@ function addCommentToList(comment) {
     </div>
   `;
   
-  // 将新评论插入到列表顶部
+  // Insert new comment at the top of the list
   if (commentsList.firstChild) {
     commentsList.insertBefore(commentElement, commentsList.firstChild);
   } else {
     commentsList.appendChild(commentElement);
   }
   
-  // 如果之前显示"暂无评论"，现在移除它
+  // Remove "no comments" message if it exists
   const emptyComments = document.querySelector('.empty-comments');
   if (emptyComments) {
     emptyComments.remove();
   }
 }
 
-// 更新评论计数
+// Update comment count
 function updateCommentCount(count) {
   const commentCount = document.querySelector('.comments-count');
   if (commentCount) {
@@ -431,7 +431,7 @@ function updateCommentCount(count) {
   }
 }
 
-// 获取CSRF Cookie
+// Get CSRF Cookie
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') {
@@ -447,9 +447,9 @@ function getCookie(name) {
   return cookieValue;
 }
 
-// 初始化卡片点赞按钮效果
+// Initialize card like button effects
 function initCardLikeButtons() {
-  // 获取所有帖子卡片中的点赞显示元素
+  // Get all like display elements in post cards
   const likeDisplays = document.querySelectorAll('.like-display');
   
   likeDisplays.forEach(display => {
@@ -457,19 +457,19 @@ function initCardLikeButtons() {
     const likeIcon = display.querySelector('i');
     const likeCount = display.querySelector('.post-like-count');
     
-    // 为图标添加点击效果
+    // Add click effect to icon
     if (likeIcon && likeCount) {
       likeIcon.addEventListener('click', function(e) {
         e.preventDefault();
-        e.stopPropagation(); // 阻止事件冒泡，防止触发卡片点击
+        e.stopPropagation(); // Prevent event bubbling to avoid triggering card click
         
-        // 如果已经在提交中，则不处理
+        // Do not process if already submitting
         if (likeIcon.classList.contains('animate-pulse')) return;
         
-        // 添加动画效果
+        // Add animation effect
         likeIcon.classList.add('animate-pulse');
         
-        // 发送点赞请求
+        // Send like request
         fetch(`/community/like_toggle/${postId}/`, {
           method: 'POST',
           headers: {
@@ -479,19 +479,19 @@ function initCardLikeButtons() {
           credentials: 'same-origin'
         })
         .then(response => {
-          if (!response.ok) throw new Error('网络响应异常');
+          if (!response.ok) throw new Error('Network response abnormal');
           return response.json();
         })
         .then(data => {
-          // 移除动画效果
+          // Remove animation effect
           likeIcon.classList.remove('animate-pulse');
           
-          // 更新点赞状态和数量
+          // Update like status and count
           if (data.liked) {
             likeIcon.className = 'bi bi-heart-fill';
             likeIcon.classList.add('text-danger');
             
-            // 添加点赞动画
+            // Add like animation
             likeIcon.classList.add('scale-effect');
             setTimeout(() => likeIcon.classList.remove('scale-effect'), 300);
           } else {
@@ -499,11 +499,11 @@ function initCardLikeButtons() {
             likeIcon.classList.remove('text-danger');
           }
           
-          // 更新点赞数量
+          // Update like count
           likeCount.textContent = data.likes_count;
         })
         .catch(error => {
-          console.error('点赞请求失败:', error);
+          console.error('Like request failed:', error);
           likeIcon.classList.remove('animate-pulse');
         });
       });
@@ -511,7 +511,7 @@ function initCardLikeButtons() {
   });
 }
 
-// 添加CSS动画类
+// Add CSS animation classes
 document.head.insertAdjacentHTML('beforeend', `
   <style>
     .animate-pulse {

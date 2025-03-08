@@ -1,0 +1,240 @@
+{% extends 'base_with_sidebar.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Set Health Goals{% endblock %}
+
+{% block css %}
+{{ block.super }}
+<style>
+  /* Health Goals Form Styles */
+  .goal-form-container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .goal-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  
+  .goal-card-header {
+    background-color: #f8f9fa;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  
+  .goal-card-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #212529;
+  }
+  
+  .goal-card-header i {
+    font-size: 1.1rem;
+    margin-right: 0.5rem;
+    color: #6c757d;
+  }
+  
+  .goal-card-body {
+    padding: 1.5rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-text {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+  }
+  
+  .btn-goal-submit {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  
+  .btn-goal-submit:hover {
+    box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
+    transform: translateY(-2px);
+  }
+  
+  .goal-form-section {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .goal-form-section:last-child {
+    border-bottom: none;
+  }
+  
+  .goal-form-section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #495057;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Health Goals Content -->
+<div class="container-fluid py-4">
+  <div class="goal-form-container animate__animated animate__fadeIn">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>
+        <i class="bi bi-bullseye me-2"></i>Health & Fitness Goals
+      </h2>
+      <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+      </a>
+    </div>
+    
+    <p class="lead mb-5">Set your health and fitness goals to track your progress and stay motivated.</p>
+    
+    <div class="goal-card">
+      <div class="goal-card-header">
+        <h3><i class="bi bi-trophy-fill"></i> Your Health Goals</h3>
+      </div>
+      <div class="goal-card-body">
+        <form method="post">
+          {% csrf_token %}
+          
+          <!-- Weight Goals Section -->
+          <div class="goal-form-section">
+            <h4 class="goal-form-section-title">Weight Goals</h4>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.target_weight.id_for_label }}" class="form-label">{{ form.target_weight.label }}</label>
+                  {{ form.target_weight|add_class:"form-control" }}
+                  <div class="form-text">Set your target weight in kilograms</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.weight_goal_date.id_for_label }}" class="form-label">{{ form.weight_goal_date.label }}</label>
+                  {{ form.weight_goal_date|add_class:"form-control" }}
+                  <div class="form-text">When do you want to achieve this weight?</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Steps Goals Section -->
+          <div class="goal-form-section">
+            <h4 class="goal-form-section-title">Daily Activity Goals</h4>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.daily_steps_goal.id_for_label }}" class="form-label">{{ form.daily_steps_goal.label }}</label>
+                  {{ form.daily_steps_goal|add_class:"form-control" }}
+                  <div class="form-text">Recommended: 10,000 steps per day</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Sleep Goals Section -->
+          <div class="goal-form-section">
+            <h4 class="goal-form-section-title">Sleep Goals</h4>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.daily_sleep_hours_goal.id_for_label }}" class="form-label">{{ form.daily_sleep_hours_goal.label }}</label>
+                  {{ form.daily_sleep_hours_goal|add_class:"form-control" }}
+                  <div class="form-text">Hours of sleep per night</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.daily_sleep_minutes_goal.id_for_label }}" class="form-label">{{ form.daily_sleep_minutes_goal.label }}</label>
+                  {{ form.daily_sleep_minutes_goal|add_class:"form-control" }}
+                  <div class="form-text">Additional minutes (0-59)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Running Goals Section -->
+          <div class="goal-form-section">
+            <h4 class="goal-form-section-title">Running Goals</h4>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.weekly_running_distance_goal.id_for_label }}" class="form-label">{{ form.weekly_running_distance_goal.label }}</label>
+                  {{ form.weekly_running_distance_goal|add_class:"form-control" }}
+                  <div class="form-text">Total kilometers to run per week</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.weekly_running_sessions_goal.id_for_label }}" class="form-label">{{ form.weekly_running_sessions_goal.label }}</label>
+                  {{ form.weekly_running_sessions_goal|add_class:"form-control" }}
+                  <div class="form-text">Number of running sessions per week</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Training Goals Section -->
+          <div class="goal-form-section">
+            <h4 class="goal-form-section-title">Training Goals</h4>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.weekly_training_sessions_goal.id_for_label }}" class="form-label">{{ form.weekly_training_sessions_goal.label }}</label>
+                  {{ form.weekly_training_sessions_goal|add_class:"form-control" }}
+                  <div class="form-text">Number of training sessions per week</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Diet Goals Section -->
+          <div class="goal-form-section">
+            <h4 class="goal-form-section-title">Diet Goals</h4>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.daily_calories_goal.id_for_label }}" class="form-label">{{ form.daily_calories_goal.label }}</label>
+                  {{ form.daily_calories_goal|add_class:"form-control" }}
+                  <div class="form-text">Daily calorie target</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.daily_protein_goal.id_for_label }}" class="form-label">{{ form.daily_protein_goal.label }}</label>
+                  {{ form.daily_protein_goal|add_class:"form-control" }}
+                  <div class="form-text">Daily protein intake in grams</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a href="{% url 'dashboard' %}" class="btn btn-light me-md-2">Cancel</a>
+            <button type="submit" class="btn btn-goal-submit">Save Goals</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 
