@@ -1,0 +1,921 @@
+.keep-header {
+    display: none
+}
+
+.keep-footer {
+    display: none
+}
+
+.keep-main-content {
+    margin: 0 auto;
+    width: 100%
+}
+
+.intro-wrapper {
+    margin-top: 0;
+    padding: 0;
+    margin-bottom: 0
+}
+
+.banner {
+    position: relative;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+@media screen and (min-width: 1024px) {
+    .banner {
+        padding-bottom:50%
+    }
+}
+
+.banner .video-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding-bottom: 50%;
+}
+
+.banner .video-bg video {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    object-fit: cover
+}
+
+.banner .alpha-bg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    opacity: .4
+}
+
+.banner .title {
+    position: absolute;
+    top: 50%;
+    margin-top: -34px;
+    z-index: 1;
+    font-size: 56px;
+    line-height: 68px;
+    font-weight: 600
+}
+
+.banner p {
+    position: absolute;
+    top: 50%;
+    margin-top: 55px;
+    z-index: 1;
+    font-size: 2.2rem;
+    line-height: 3rem;
+    text-align: center
+}
+
+.banner .span-button {
+    position: absolute;
+    top: 50%;
+    margin-top: 110px;
+    z-index: 1;
+    font-size: 1.6rem;
+    line-height: 1.6rem;
+    text-align: center;
+    padding: 16px 44px;
+    border-radius: 44px;
+    background: #24c789;
+}
+
+.banner .span-button a {
+    color: #fff
+}
+
+.kts {
+    position: relative;
+}
+
+.kts .kts-banner-1-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 772px;
+    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-bg-bd8a9198ef.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center
+}
+
+.kts .kts-banner-1 {
+    position: relative;
+    width: 100%;
+    height: 772px;
+    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-1-bg-2b35db959e.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 0;
+}
+
+.kts .kts-banner-1 .kts-banner-1-title {
+    height: 235px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 2rem;
+    color: rgba(255,255,255,0.8);
+    font-weight: normal;
+    padding: 0 82px
+}
+
+.kts .kts-banner-1 .kts-banner-1-content {
+    position: relative;
+    text-align: center;
+    height: 537px;
+}
+
+.kts .kts-banner-1 .kts-banner-1-content .kts-item-img {
+    height: 537px;
+    width: 729px
+}
+
+.kts .kts-banner-2 {
+    position: relative;
+    width: 100%;
+    height: 652px;
+    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-bg-bd8a9198ef.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    overflow: hidden;
+}
+
+.kts .kts-banner-2 .kts-banner-2-bg {
+    position: absolute;
+    top: 0;
+    height: 652px;
+    left: 0;
+    width: 1440px;
+    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-2-bg-f4d743703f.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center
+}
+
+.kts .kts-banner-2 .kts-banner-2-right {
+    position: absolute;
+    top: 0;
+    height: 652px;
+    right: 0;
+    width: 760px;
+    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-2-1-bg-right-6f0402834c.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center
+}
+
+.kts .kts-banner-2 .kts-banner-2-left {
+    position: absolute;
+    top: 184px;
+    left: 82px;
+    width: calc(100% - 898px);
+    max-width: 902px;
+}
+
+.kts .kts-banner-2 .kts-banner-2-left .kts-banner-2-left-title {
+    font-size: 3.6rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 32px
+}
+
+.kts .kts-banner-2 .kts-banner-2-left .kts-banner-2-left-content {
+    font-size: 2rem;
+    font-weight: normal;
+    color: rgba(255,255,255,0.8)
+}
+
+.kts .kts-banner-3 {
+    position: relative;
+    width: 100%;
+    height: 652px;
+    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-bg-bd8a9198ef.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    overflow: hidden;
+}
+
+.kts .kts-banner-3 .kts-banner-3-bg {
+    position: absolute;
+    bottom: 0;
+    height: 152px;
+    right: 0;
+    width: 1440px;
+    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-3-bg-00ae019c4b.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center
+}
+
+.kts .kts-banner-3 .kts-banner-3-bg-left {
+    position: absolute;
+    top: 0;
+    height: 652px;
+    left: 0;
+    width: 760px;
+    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-3-1-bg-left-7f86e636a0.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center
+}
+
+.kts .kts-banner-3 .kts-banner-3-bg-right {
+    position: absolute;
+    top: 184px;
+    right: 82px;
+    width: calc(100% - 898px);
+    max-width: 902px;
+}
+
+.kts .kts-banner-3 .kts-banner-3-bg-right .kts-banner-3-right-title {
+    font-size: 3.6rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 32px
+}
+
+.kts .kts-banner-3 .kts-banner-3-bg-right .kts-banner-3-right-content {
+    font-size: 2rem;
+    font-weight: normal;
+    color: rgba(255,255,255,0.8)
+}
+
+.kts .kts-banner-4 {
+    position: relative;
+    width: 100%;
+    height: 652px;
+    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-bg-bd8a9198ef.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    overflow: hidden;
+}
+
+.kts .kts-banner-4 .kts-banner-4-bg {
+    position: absolute;
+    top: 0;
+    height: 652px;
+    left: 0;
+    width: 1440px;
+    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-4-bg-151387e8d2.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center
+}
+
+.kts .kts-banner-4 .kts-banner-4-right {
+    position: absolute;
+    top: 0;
+    height: 652px;
+    right: 0;
+    width: 760px;
+    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-4-1-bg-right-ca98b8ebe6.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center
+}
+
+.kts .kts-banner-4 .kts-banner-4-left {
+    position: absolute;
+    top: 184px;
+    left: 82px;
+    width: calc(100% - 898px);
+    max-width: 902px;
+}
+
+.kts .kts-banner-4 .kts-banner-4-left .kts-banner-4-left-title {
+    font-size: 3.6rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 32px
+}
+
+.kts .kts-banner-4 .kts-banner-4-left .kts-banner-4-left-content {
+    font-size: 2rem;
+    font-weight: normal;
+    color: rgba(255,255,255,0.8)
+}
+
+.kts .kts-banner-5 {
+    position: relative;
+    width: 100%;
+    height: 652px;
+    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-bg-bd8a9198ef.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    overflow: hidden;
+}
+
+.kts .kts-banner-5 .kts-banner-5-bg {
+    position: absolute;
+    bottom: 0;
+    height: 652px;
+    right: 0;
+    width: 1106px;
+    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-5-bg-8a40fa98b9.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center
+}
+
+.kts .kts-banner-5 .kts-banner-5-bg-left {
+    position: absolute;
+    top: 0;
+    height: 652px;
+    left: 0;
+    width: 760px;
+    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-5-bg-left-b46e8e49ca.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center
+}
+
+.kts .kts-banner-5 .kts-banner-5-bg-right {
+    position: absolute;
+    top: 184px;
+    right: 82px;
+    width: calc(100% - 898px);
+    max-width: 902px;
+}
+
+.kts .kts-banner-5 .kts-banner-5-bg-right .kts-banner-5-right-title {
+    font-size: 3.6rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 32px
+}
+
+.kts .kts-banner-5 .kts-banner-5-bg-right .kts-banner-5-right-content {
+    font-size: 2rem;
+    font-weight: normal;
+    color: rgba(255,255,255,0.8)
+}
+
+@media screen and (min-width: 768px) and (max-width:1023px) {
+    .banner {
+        height:480px;
+        background-image: url("https://staticweb.keepcdn.com/staticShow/images/shop/shop_banner02-c9c6c134ed.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .banner .video-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding-bottom: 50%;
+    }
+
+    .banner .video-bg video {
+        height: 480px;
+        visibility: hidden
+    }
+
+    .banner .alpha-bg {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+        opacity: .4
+    }
+
+    .banner .title {
+        font-size: 32px;
+        line-height: 38px
+    }
+
+    .banner p {
+        width: 195px;
+        margin-top: 20px;
+        font-size: 16px;
+        line-height: 22px
+    }
+
+    .banner .span-button {
+        padding: 13px 30px;
+        border-radius: 30px;
+        margin-top: 60px;
+        font-size: 16px
+    }
+
+    .kts .kts-banner-1 {
+        height: 440px;
+    }
+
+    .kts .kts-banner-1 .kts-banner-1-title {
+        height: 212px;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 0 24px
+    }
+
+    .kts .kts-banner-1 .kts-banner-1-content {
+        height: 228px;
+    }
+
+    .kts .kts-banner-1 .kts-banner-1-content .kts-item-img {
+        height: 228px;
+        width: 310px
+    }
+
+    .kts .kts-banner-2 {
+        height: 480px;
+        overflow: hidden;
+    }
+
+    .kts .kts-banner-2 .kts-banner-2-bg {
+        top: auto;
+        bottom: 0;
+        height: 480px;
+        width: 1060px
+    }
+
+    .kts .kts-banner-2 .kts-banner-2-right {
+        position: absolute;
+        top: 145px;
+        height: 335px;
+        right: 0;
+        width: 390px;
+        background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-2-1-bg-right-mobile-444b248aab.png")
+    }
+
+    .kts .kts-banner-2 .kts-banner-2-left {
+        position: absolute;
+        top: 58px;
+        left: 0;
+        width: 100%;
+    }
+
+    .kts .kts-banner-2 .kts-banner-2-left .kts-banner-2-left-title {
+        font-size: 18px;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 20px;
+        padding: 0 24px;
+        text-align: center
+    }
+
+    .kts .kts-banner-2 .kts-banner-2-left .kts-banner-2-left-content {
+        font-size: 13px;
+        font-weight: normal;
+        color: rgba(255,255,255,0.8);
+        padding: 0 24px;
+        text-align: center
+    }
+
+    .kts .kts-banner-3 {
+        position: relative;
+        width: 100%;
+        height: 480px;
+        background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-bg-bd8a9198ef.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+        overflow: hidden;
+    }
+
+    .kts .kts-banner-3 .kts-banner-3-bg {
+        height: 92px;
+        left: 0;
+        width: 100%
+    }
+
+    .kts .kts-banner-3 .kts-banner-3-bg-left {
+        position: absolute;
+        top: 145px;
+        height: 335px;
+        right: 0;
+        width: 100%;
+        background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-3-1-bg-left-7f86e636a0.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center
+    }
+
+    .kts .kts-banner-3 .kts-banner-3-bg-right {
+        position: absolute;
+        top: 58px;
+        left: 0;
+        width: 100%;
+    }
+
+    .kts .kts-banner-3 .kts-banner-3-bg-right .kts-banner-3-right-title {
+        font-size: 18px;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 20px;
+        padding: 0 24px;
+        text-align: center
+    }
+
+    .kts .kts-banner-3 .kts-banner-3-bg-right .kts-banner-3-right-content {
+        font-size: 13px;
+        font-weight: normal;
+        color: rgba(255,255,255,0.8);
+        padding: 0 24px;
+        text-align: center
+    }
+
+    .kts .kts-banner-4 {
+        height: 480px;
+    }
+
+    .kts .kts-banner-4 .kts-banner-4-bg {
+        position: absolute;
+        top: 0;
+        height: 480px;
+        left: 0;
+        width: 1060px;
+        background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-4-bg-151387e8d2.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center
+    }
+
+    .kts .kts-banner-4 .kts-banner-4-right {
+        position: absolute;
+        top: 145px;
+        height: 335px;
+        left: 0;
+        width: 100%;
+        background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-4-1-bg-right-ca98b8ebe6.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center
+    }
+
+    .kts .kts-banner-4 .kts-banner-4-left {
+        position: absolute;
+        top: 58px;
+        left: 0;
+        width: 100%;
+    }
+
+    .kts .kts-banner-4 .kts-banner-4-left .kts-banner-4-left-title {
+        font-size: 18px;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 20px;
+        padding: 0 24px;
+        text-align: center
+    }
+
+    .kts .kts-banner-4 .kts-banner-4-left .kts-banner-4-left-content {
+        font-size: 13px;
+        font-weight: normal;
+        color: rgba(255,255,255,0.8);
+        padding: 0 24px;
+        text-align: center
+    }
+
+    .kts .kts-banner-5 {
+        position: relative;
+        width: 100%;
+        height: 480px;
+        background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-bg-bd8a9198ef.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+        overflow: hidden;
+    }
+
+    .kts .kts-banner-5 .kts-banner-5-bg {
+        width: 100%;
+        height: 371px;
+        background-size: 100% 100%
+    }
+
+    .kts .kts-banner-5 .kts-banner-5-bg-left {
+        position: absolute;
+        top: 145px;
+        height: 335px;
+        right: 0;
+        width: 100%;
+        background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-5-bg-left-b46e8e49ca.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center
+    }
+
+    .kts .kts-banner-5 .kts-banner-5-bg-right {
+        position: absolute;
+        top: 58px;
+        left: 0;
+        width: 100%;
+    }
+
+    .kts .kts-banner-5 .kts-banner-5-bg-right .kts-banner-5-right-title {
+        font-size: 18px;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 20px;
+        padding: 0 24px;
+        text-align: center
+    }
+
+    .kts .kts-banner-5 .kts-banner-5-bg-right .kts-banner-5-right-content {
+        font-size: 13px;
+        font-weight: normal;
+        color: rgba(255,255,255,0.8);
+        padding: 0 24px;
+        text-align: center
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .banner {
+        height:480px;
+        background-image: url("https://staticweb.keepcdn.com/staticShow/images/shop/shop_banner02-c9c6c134ed.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .banner .video-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding-bottom: 50%;
+    }
+
+    .banner .video-bg video {
+        height: 480px;
+        visibility: hidden
+    }
+
+    .banner .alpha-bg {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+        opacity: .4
+    }
+
+    .banner .title {
+        font-size: 32px;
+        line-height: 38px
+    }
+
+    .banner p {
+        width: 195px;
+        margin-top: 20px;
+        font-size: 16px;
+        line-height: 22px
+    }
+
+    .banner .span-button {
+        padding: 13px 30px;
+        border-radius: 30px;
+        margin-top: 60px;
+        font-size: 16px
+    }
+
+    .kts .kts-banner-1 {
+        height: 440px;
+    }
+
+    .kts .kts-banner-1 .kts-banner-1-title {
+        height: 212px;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 0 24px
+    }
+
+    .kts .kts-banner-1 .kts-banner-1-content {
+        height: 228px;
+    }
+
+    .kts .kts-banner-1 .kts-banner-1-content .kts-item-img {
+        height: 228px;
+        width: 310px
+    }
+
+    .kts .kts-banner-2 {
+        height: 480px;
+        overflow: hidden;
+    }
+
+    .kts .kts-banner-2 .kts-banner-2-bg {
+        top: auto;
+        bottom: 0;
+        height: 480px;
+        width: 1060px
+    }
+
+    .kts .kts-banner-2 .kts-banner-2-right {
+        position: absolute;
+        top: 145px;
+        height: 335px;
+        right: 0;
+        width: 390px;
+        background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-2-1-bg-right-mobile-444b248aab.png")
+    }
+
+    .kts .kts-banner-2 .kts-banner-2-left {
+        position: absolute;
+        top: 58px;
+        left: 0;
+        width: 100%;
+    }
+
+    .kts .kts-banner-2 .kts-banner-2-left .kts-banner-2-left-title {
+        font-size: 18px;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 20px;
+        padding: 0 24px;
+        text-align: center
+    }
+
+    .kts .kts-banner-2 .kts-banner-2-left .kts-banner-2-left-content {
+        font-size: 13px;
+        font-weight: normal;
+        color: rgba(255,255,255,0.8);
+        padding: 0 24px;
+        text-align: center
+    }
+
+    .kts .kts-banner-3 {
+        position: relative;
+        width: 100%;
+        height: 480px;
+        background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-bg-bd8a9198ef.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+        overflow: hidden;
+    }
+
+    .kts .kts-banner-3 .kts-banner-3-bg {
+        height: 92px;
+        left: 0;
+        width: 100%
+    }
+
+    .kts .kts-banner-3 .kts-banner-3-bg-left {
+        position: absolute;
+        top: 145px;
+        height: 335px;
+        right: 0;
+        width: 100%;
+        background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-3-1-bg-left-7f86e636a0.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center
+    }
+
+    .kts .kts-banner-3 .kts-banner-3-bg-right {
+        position: absolute;
+        top: 58px;
+        left: 0;
+        width: 100%;
+    }
+
+    .kts .kts-banner-3 .kts-banner-3-bg-right .kts-banner-3-right-title {
+        font-size: 18px;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 20px;
+        padding: 0 24px;
+        text-align: center
+    }
+
+    .kts .kts-banner-3 .kts-banner-3-bg-right .kts-banner-3-right-content {
+        font-size: 13px;
+        font-weight: normal;
+        color: rgba(255,255,255,0.8);
+        padding: 0 24px;
+        text-align: center
+    }
+
+    .kts .kts-banner-4 {
+        height: 480px;
+    }
+
+    .kts .kts-banner-4 .kts-banner-4-bg {
+        position: absolute;
+        top: 0;
+        height: 480px;
+        left: 0;
+        width: 1060px;
+        background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-4-bg-151387e8d2.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center
+    }
+
+    .kts .kts-banner-4 .kts-banner-4-right {
+        position: absolute;
+        top: 145px;
+        height: 335px;
+        left: 0;
+        width: 100%;
+        background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-4-1-bg-right-ca98b8ebe6.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center
+    }
+
+    .kts .kts-banner-4 .kts-banner-4-left {
+        position: absolute;
+        top: 58px;
+        left: 0;
+        width: 100%;
+    }
+
+    .kts .kts-banner-4 .kts-banner-4-left .kts-banner-4-left-title {
+        font-size: 18px;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 20px;
+        padding: 0 24px;
+        text-align: center
+    }
+
+    .kts .kts-banner-4 .kts-banner-4-left .kts-banner-4-left-content {
+        font-size: 13px;
+        font-weight: normal;
+        color: rgba(255,255,255,0.8);
+        padding: 0 24px;
+        text-align: center
+    }
+
+    .kts .kts-banner-5 {
+        position: relative;
+        width: 100%;
+        height: 480px;
+        background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-bg-bd8a9198ef.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+        overflow: hidden;
+    }
+
+    .kts .kts-banner-5 .kts-banner-5-bg {
+        width: 100%;
+        height: 371px;
+        background-size: 100% 100%
+    }
+
+    .kts .kts-banner-5 .kts-banner-5-bg-left {
+        position: absolute;
+        top: 145px;
+        height: 335px;
+        right: 0;
+        width: 100%;
+        background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-5-bg-left-b46e8e49ca.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center
+    }
+
+    .kts .kts-banner-5 .kts-banner-5-bg-right {
+        position: absolute;
+        top: 58px;
+        left: 0;
+        width: 100%;
+    }
+
+    .kts .kts-banner-5 .kts-banner-5-bg-right .kts-banner-5-right-title {
+        font-size: 18px;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 20px;
+        padding: 0 24px;
+        text-align: center
+    }
+
+    .kts .kts-banner-5 .kts-banner-5-bg-right .kts-banner-5-right-content {
+        font-size: 13px;
+        font-weight: normal;
+        color: rgba(255,255,255,0.8);
+        padding: 0 24px;
+        text-align: center
+    }
+}

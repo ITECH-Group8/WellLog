@@ -1,10 +1,187 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}Home page{% endblock title %}
-
-{% block content %}
-<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-  <p class="lead">WellLog Home Page</p>
-</div>
-{% endblock content %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="Wellog is a platform for people to record their health and sports data and get professional AI adivce to help you promote your training. You also can share your moment and tips about sports. Hope you enjoy here.
+        ">
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+        <script>
+            !function() {
+                var designFontSize = 10 || 10;
+                document.documentElement.style.fontSize = designFontSize + "px";
+            }();
+        </script>
+        <link rel="stylesheet" href="/static/css/common.css">
+        <link rel="stylesheet" href="/static/css/home.css">
+        <title>Wellog</title>
+        <style>
+            .k-fixed-header {
+                transition: background-color 0.3s ease;
+                background-color: rgba(0, 0, 0, 0);
+            }
+            
+            .k-fixed-header.scrolled {
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+        </style>
+    </head>
+        <div class="keep-main-content">
+            <div class="k-fixed-header">
+                <a href="/">
+                    <img src="/static/images/logo-white.png" class="logo">
+                </a>
+                <div class="nav">
+                    <a href="/about">About Wellog</a>
+                    <a href="/accounts/login/">Log in</a>
+                    <a href="/accounts/signup/">Sign up</a>
+                </div>
+                <div id="header-tab-expand" class="keep-icon-menu"></div>
+            </div>
+            <div class="nav-wrapper-phone">
+                <div class="tabs-header">
+                    <div id="header-tab-close" class="keep-icon-close"></div>
+                </div>
+                <div class="nav">
+                    <a href="/about" class="link">About Wellog</a>
+                    <a href="/accounts/login/" class="link">Log in</a>
+                    <a href="/accounts/signup/" class="link">Sign up</a>
+                    <div class="i18">
+                    </div>
+                </div>
+            </div>
+            <script>
+                if (window) {
+                    function changeLang(languageName) {
+                        document.cookie = "lang=" + languageName;
+                        window.location.reload();
+                    }
+                    let isIos = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)
+                    let linkUrlNode = document.getElementById('menu-temp')
+                    if (!isIos) {
+                        let urlIr = linkUrlNode.getAttribute('data-link');
+                        linkUrlNode.setAttribute('href', urlIr);
+                    }
+                }
+            </script>
+            <div class="keep-wrapper intro-wrapper">
+                <div class="banner">
+                    <div class="video-bg">
+                        <video src="//v1.keepcdn.com/infra-cms/2021/05/27/15/06/991565233742_.mp4" muted autoplay loop width="100%"></video>
+                    </div>
+                    <div class="alpha-bg"></div>
+                    <div class="title">Record Your Moment</div>
+                    <p>Massive data, flexible analysis</p>
+                    <span class="span-button">
+                        <a href="/health/dashboard/" class="full-link">Experience Now</a>
+                    </span>
+                </div>
+                <div class="kts">
+                    <div class="kts-banner-1-bg"></div>
+                    <div class="kts-banner-1">
+                        <div class="kts-banner-1-title">
+                            <span style="max-width:1636px">Powered by Keep &apos;s extensive user training database and advanced performance metrics tracking, the &apos;Keep Athletic Profile &apos;offers a comprehensive dashboard with personalized analysis models. Track and analyze your athletic performance and health metrics with enhanced flexibility</span>
+                        </div>
+                        <div class="kts-banner-1-content">
+                            <img src="https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-1-img-170d5dfb8d.png" class="kts-item-img">
+                        </div>
+                    </div>
+                </div>
+                <div class="kts">
+                    <div class="kts-banner-2">
+                        <div class="kts-banner-2-bg"></div>
+                        <div class="kts-banner-2-right"></div>
+                        <div class="kts-banner-2-left">
+                            <div class="kts-banner-2-left-title">Scientific sports data system</div>
+                            <div class="kts-banner-2-left-content">The &apos;Keep Athletic Profile &apos;delivers a comprehensive dashboard specializing in running, cycling, and other activities. Through intuitive data visualization and performance metrics, it provides detailed insights into your training status, fitness level, and athletic performance</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="kts">
+                    <div class="kts-banner-3">
+                        <div class="kts-banner-3-bg"></div>
+                        <div class="kts-banner-3-bg-left"></div>
+                        <div class="kts-banner-3-bg-right">
+                            <div class="kts-banner-3-right-title">Intelligent Analytics </div>
+                            <div class="kts-banner-3-right-content">Build your personalized dashboard using simple drag-and-drop tools. Select your preferred timeframes and metrics to create custom views of your performance data. Our flexible analysis models adapt to your specific training needs, delivering insights that matter to you</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="kts">
+                    <div class="kts-banner-4">
+                        <div class="kts-banner-4-bg"></div>
+                        <div class="kts-banner-4-right"></div>
+                        <div class="kts-banner-4-left">
+                            <div class="kts-banner-4-left-title">Training History</div>
+                            <div class="kts-banner-4-left-content">Access detailed records of every training session, complete with performance metrics and workout conditions. Use insights to fine-tune your future workouts and track your progress over time</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="kts">
+                    <div class="kts-banner-5">
+                        <div class="kts-banner-5-bg"></div>
+                        <div class="kts-banner-5-bg-left"></div>
+                        <div class="kts-banner-5-bg-right">
+                            <div class="kts-banner-5-right-title">Best Record</div>
+                            <div class="kts-banner-5-right-content">Personal best record rankings motivate yourself to move towards higher goals, show your personal best results, witness your every improvement, support group comparison and competition</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="home-keep-footer">
+                <div class="wrap-inner">
+                    <div class="info-wrapper">
+                        <div class="footer-left">
+                            <img src="/static/images/logo-white.png" class="keep-logo">
+                            <div class="slogan">
+                                There is nothing born with but persistence you keep on with<br>Freedom as Autonomy
+                            </div>
+                            <div class="download">
+                            </div>
+                        </div>
+                        <div class="footer-right">
+                            <div class="footer-info-block">
+                                <div class="info-title">About</div>
+                                <a href="/">About Us</a>
+                                <a href="/">Contact</a>
+                                <a href="/">Terms of Use</a>
+                                <a href="/">Privacy Policy</a>
+                            </div>
+                            <div class="footer-info-block">
+                                <div class="info-title">Others</div>
+                                <a href="https://github.com/ITECH-Group8/WellLog">Github</a>
+                                <a href="/">News</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mobile-logo">
+                        <img src="/static/images/logo-white.png" class="keep-logo">
+                        <div class="slogan">
+                            There is nothing born with but persistence you keep on with<br>Freedom as Autonomy
+                        </div>
+                    </div>
+                    <div class="copyright" style="text-align: center;">
+                      <span>2024-2025 &copy;Wellog All Rights Reserved.</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        <script>
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('.k-fixed-header');
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                const header = document.querySelector('.k-fixed-header');
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                }
+            });
+            
+        </script>
+    </body>
+</html>
