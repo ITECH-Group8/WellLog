@@ -117,7 +117,7 @@
     position: relative;
     width: 100%;
     height: 772px;
-    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-1-bg-2b35db959e.png");
+    background-image: url("/static/images/kts-banner-1-bg.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: 0;
@@ -216,10 +216,10 @@
 .kts .kts-banner-3 .kts-banner-3-bg {
     position: absolute;
     bottom: 0;
-    height: 152px;
+    height: 652px;
     right: 0;
-    width: 1440px;
-    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-3-bg-00ae019c4b.png");
+    width: 1106px;
+    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-5-bg-8a40fa98b9.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center
@@ -327,11 +327,11 @@
 
 .kts .kts-banner-5 .kts-banner-5-bg {
     position: absolute;
-    bottom: 0;
+    top: 0;
     height: 652px;
-    right: 0;
-    width: 1106px;
-    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-5-bg-8a40fa98b9.png");
+    left: 0;
+    width: 1440px;
+    background-image: url("https://staticweb.keepcdn.com/staticShow/images/kts/kts-banner-2-bg-f4d743703f.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center
