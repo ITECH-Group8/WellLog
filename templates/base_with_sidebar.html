@@ -18,6 +18,92 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
   <style>
+    /* Global Variables - Monet Color System */
+    :root {
+      --monet-beige: #faf3e6;
+      --monet-light-beige: #fdf9f3;
+      --monet-blue: #70a9c7;
+      --monet-light-blue: #a3cbe0;
+      --monet-dark-blue: #3c7ea0;
+      --monet-green: #8cad92;
+      --monet-light-green: #b8d0bc;
+      --monet-purple: #9d8ca8;
+      --monet-light-purple: #d8c8e0;
+      --monet-text: #3a3a3a;
+      --monet-text-light: #666666;
+      --border-radius: 12px;
+      --card-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      --sidebar-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Global Styles */
+    body {
+      background-color: var(--monet-light-beige);
+      color: var(--monet-text);
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    
+    /* Card Style Unified */
+    .card {
+      border-radius: var(--border-radius);
+      border: none;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+      overflow: hidden;
+    }
+    
+    .card:hover {
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+      transform: translateY(-2px);
+    }
+    
+    .card-header {
+      background-color: rgba(255, 255, 255, 0.8);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      font-weight: 600;
+    }
+    
+    /* Button Style Unified */
+    .btn {
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background-color: var(--monet-blue);
+      border-color: var(--monet-blue);
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--monet-dark-blue);
+      border-color: var(--monet-dark-blue);
+    }
+    
+    .btn-outline-primary {
+      color: var(--monet-blue);
+      border-color: var(--monet-blue);
+    }
+    
+    .btn-outline-primary:hover {
+      background-color: var(--monet-blue);
+      border-color: var(--monet-blue);
+      color: white;
+    }
+    
+    .btn-success {
+      background-color: var(--monet-green);
+      border-color: var(--monet-green);
+    }
+    
+    .btn-success:hover {
+      background-color: #78977e;
+      border-color: #78977e;
+    }
+    
     /* Sidebar Styles */
     .sidebar {
       position: fixed;
@@ -26,34 +112,38 @@
       height: 100vh;
       z-index: 1000;
       padding-top: 60px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      background-color: #f8f9fa;
-      transition: all 0.3s;
+      box-shadow: 1px 0 6px rgba(0,0,0,0.03);
+      background-color: var(--monet-beige);
+      transition: var(--sidebar-transition);
       width: 260px;
+      border-right: 1px solid rgba(0,0,0,0.03);
     }
     
     .main-content {
       margin-left: 260px;
       transition: all 0.3s;
-      padding: 20px;
+      padding: 80px 30px 30px 30px;
+      background-color: var(--monet-light-beige);
+      min-height: 100vh;
     }
     
     .sidebar .nav-link {
-      border-radius: 5px;
-      margin-bottom: 5px;
-      color: #343a40;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      color: var(--monet-text);
       font-weight: 500;
       padding: 10px 15px;
       transition: all 0.2s;
+      visibility: hidden;
     }
     
     .sidebar .nav-link:hover {
-      background-color: #e9ecef;
-      color: #007bff;
+      background-color: rgba(255, 255, 255, 0.6);
+      color: var(--monet-blue);
     }
     
     .sidebar .nav-link.active {
-      background-color: #007bff;
+      background-color: var(--monet-blue);
       color: white;
     }
     
@@ -63,7 +153,7 @@
     }
     
     .sidebar-logo {
-      padding: 0 20px 20px;
+      padding: 0 20px 30px;
     }
     
     .sidebar-bottom {
@@ -75,36 +165,387 @@
     }
     
     .sidebar-bottom .nav-link {
-      border-radius: 5px;
+      border-radius: 10px;
       margin-bottom: 5px;
     }
     
     .sidebar-main-menu {
       margin-bottom: 150px;
+      margin-top: 20px;
     }
     
     .menu-toggle {
       position: fixed;
-      top: 10px;
-      left: 10px;
-      z-index: 1050;
-      background-color: #007bff;
+      top: 15px;
+      left: 15px;
+      z-index: 1060;
+      background-color: var(--monet-blue);
       color: white;
       border: none;
       width: 40px;
       height: 40px;
-      border-radius: 5px;
+      border-radius: 50%;
       display: none;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
     }
     
+    .menu-toggle:hover, .menu-toggle:focus {
+      background-color: var(--monet-dark-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 12px rgba(0,0,0,0.25);
+    }
+    
+    .menu-toggle i {
+      font-size: 1.4rem;
+    }
+    
+    /* Navbar Style */
+    .navbar {
+      background-color: var(--monet-beige) !important;
+      border-bottom: 1px solid rgba(0,0,0,0.03);
+      padding-left: 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      z-index: 1001;
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
+    
+    .navbar .nav-link {
+      color: var(--monet-text);
+      transition: all 0.2s;
+      border-radius: 8px;
+      padding: 6px 12px;
+    }
+    
+    .navbar .nav-link:hover, 
+    .navbar .nav-link.active {
+      color: var(--monet-blue);
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .navbar .nav-link.active {
+      font-weight: 600;
+    }
+    
+    .navbar .navbar-brand {
+      font-weight: 600;
+      color: var(--monet-text);
+      font-size: 1.4rem;
+      letter-spacing: -0.5px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+    }
+    
+    .navbar .navbar-brand img {
+      height: 18px;
+      width: auto;
+    }
+    
+    .navbar-nav .dropdown-menu {
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border: 1px solid rgba(0,0,0,0.05);
+      padding: 8px;
+    }
+    
+    .dropdown-item {
+      border-radius: 8px;
+      padding: 8px 12px;
+      transition: all 0.2s;
+    }
+    
+    .dropdown-item:hover {
+      background-color: rgba(0,0,0,0.03);
+    }
+    
+    /* Navigation Tab Style Unified */
+    .nav-tabs {
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+    
+    .nav-tabs .nav-link {
+      border: none;
+      border-radius: 8px 8px 0 0;
+      padding: 10px 20px;
+      color: var(--monet-text-light);
+      font-weight: 500;
+      transition: all 0.2s;
+      margin-right: 5px;
+    }
+    
+    .nav-tabs .nav-link:hover {
+      background-color: rgba(0,0,0,0.02);
+      color: var(--monet-blue);
+    }
+    
+    .nav-tabs .nav-link.active {
+      color: var(--monet-blue);
+      border-bottom: 2px solid var(--monet-blue);
+      background-color: transparent;
+      font-weight: 600;
+    }
+    
+    /* Health Main Navigation Tab Special Style */
+    .health-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 25px;
+      border: none;
+      background-color: rgba(255, 255, 255, 0.5);
+      padding: 8px;
+      border-radius: 12px;
+    }
+    
+    .health-tabs .nav-link {
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-weight: 500;
+      color: var(--monet-text);
+      transition: all 0.2s;
+      border: 1px solid rgba(0,0,0,0.03);
+      background-color: white;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.95rem;
+    }
+    
+    .health-tabs .nav-link:hover {
+      background-color: rgba(255,255,255,0.9);
+      border-color: rgba(0,0,0,0.08);
+      transform: translateY(-1px);
+    }
+    
+    .health-tabs .nav-link.active {
+      background-color: var(--monet-blue);
+      color: white;
+      border-color: var(--monet-blue);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .health-tabs .nav-link i,
+    .health-tabs .nav-link svg {
+      font-size: 1rem;
+    }
+    
+    /* Page Title Style */
+    .page-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--monet-text);
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .page-title-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    /* Button Group Optimization */
+    .btn-group {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+    }
+    
+    .btn-group .btn {
+      border-radius: 0;
+      border-right: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .btn-group .btn:last-child {
+      border-right: none;
+    }
+    
+    /* Top Function Button Group */
+    .actions-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+    
+    .actions-group {
+      display: flex;
+      gap: 10px;
+    }
+    
+    /* Unified Form Element Style */
+    .form-control {
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.1);
+      padding: 10px 12px;
+      transition: all 0.2s;
+    }
+    
+    .form-control:focus {
+      border-color: var(--monet-blue);
+      box-shadow: 0 0 0 3px rgba(108, 169, 199, 0.2);
+    }
+    
+    /* Data Card Layout and Style */
+    .data-card, .health-card {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      height: 100%;
+      margin-bottom: 20px;
+    }
+    
+    .data-card:hover, .health-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    }
+    
+    .data-card-header, .health-card .card-header {
+      padding: 12px 18px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      font-weight: 600;
+      font-size: 1.05rem;
+      color: var(--monet-text);
+      background-color: white;
+    }
+    
+    .data-card-body, .health-card .card-body {
+      padding: 15px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .data-card-footer, .health-card .card-footer {
+      padding: 12px 18px;
+      border-top: 1px solid rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      background-color: white;
+    }
+    
+    /* Health Data Card Style */
+    .health-card .card-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0;
+      color: var(--monet-text);
+      line-height: 1.2;
+      text-align: center;
+    }
+    
+    .health-card .card-subtitle {
+      color: var(--monet-text-light);
+      margin-top: 5px;
+      font-size: 0.95rem;
+      text-align: center;
+    }
+    
+    /* Progress Bar Style */
+    .progress {
+      height: 8px;
+      border-radius: 4px;
+      background-color: #f0f0f0;
+      margin: 10px 0;
+      overflow: hidden;
+      width: 100%;
+    }
+    
+    .progress-bar.bg-success {
+      background-color: var(--monet-green) !important;
+    }
+    
+    .progress-bar.bg-info {
+      background-color: var(--monet-blue) !important;
+    }
+    
+    .progress-bar.bg-warning {
+      background-color: #e0c080 !important;
+    }
+    
+    /* Button Style Optimization */
+    .btn-sm {
+      padding: 0.3rem 0.8rem;
+      font-size: 0.875rem;
+    }
+    
+    .btn-outline-secondary {
+      color: var(--monet-text-light);
+      border-color: rgba(0,0,0,0.1);
+    }
+    
+    .btn-outline-secondary:hover {
+      background-color: rgba(0,0,0,0.03);
+      color: var(--monet-text);
+      border-color: rgba(0,0,0,0.2);
+    }
+    
+    /* Export Import Button Style */
+    .btn-export, 
+    a[href*="export"] {
+      background-color: var(--monet-light-blue);
+      border-color: var(--monet-light-blue);
+      color: white;
+    }
+    
+    .btn-export:hover, 
+    a[href*="export"]:hover {
+      background-color: var(--monet-blue);
+      border-color: var(--monet-blue);
+    }
+    
+    .btn-import, 
+    a[href*="import"] {
+      background-color: var(--monet-light-green);
+      border-color: var(--monet-light-green);
+      color: white;
+    }
+    
+    .btn-import:hover, 
+    a[href*="import"]:hover {
+      background-color: var(--monet-green);
+      border-color: var(--monet-green);
+    }
+    
+    /* Unified Button Group Style */
+    .btn-actions-group .btn,
+    .data-actions .btn {
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      color: white;
+      border: none;
+    }
+    
+    /* Responsive Adjustment */
     @media (max-width: 768px) {
+      .navbar {
+        padding-left: 1rem;
+      }
+      
+      .navbar .navbar-brand img {
+        height: 18px; /* Keep consistent with desktop version */
+      }
+      
       .sidebar {
         transform: translateX(-100%);
-        width: 200px;
+        width: 240px;
+        padding-top: 60px; /* Reduce top space */
       }
       
       .main-content {
         margin-left: 0;
+        padding: 20px 15px;
       }
       
       .sidebar .nav-link span {
@@ -112,7 +553,22 @@
       }
       
       .menu-toggle {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        top: auto;
+        bottom: 20px;
+        left: 20px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+      }
+      
+      body.sidebar-expanded .menu-toggle {
+        background-color: var(--monet-dark-blue);
+        transform: rotate(90deg);
       }
       
       .sidebar-logo {
@@ -120,12 +576,8 @@
       }
       
       .sidebar-logo img {
-        width: 40px;
-        height: 40px;
-      }
-      
-      .sidebar-logo h5 {
-        font-size: 1rem;
+        width: 140px;
+        height: auto;
       }
       
       .sidebar .nav-link {
@@ -144,7 +596,8 @@
       }
       
       .sidebar-main-menu {
-        margin-bottom: 120px;
+        margin-top: 10px; /* Reduce top margin on mobile devices */
+        margin-bottom: 100px;
       }
     }
     
@@ -160,9 +613,13 @@
         bottom: 20px;
         width: calc(85% - 30px);
         max-width: 270px;
-        background-color: #f8f9fa;
+        background-color: var(--monet-beige);
         padding-top: 10px;
         border-top: 1px solid rgba(0,0,0,0.05);
+      }
+      
+      .main-content {
+        padding: 20px 15px;
       }
     }
     
@@ -178,14 +635,101 @@
     body.sidebar-expanded .sidebar-bottom {
       display: block;
     }
+    
+    /* Data Row Layout */
+    .data-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .data-row > div {
+      flex: 1;
+    }
+    
+    @media (max-width: 768px) {
+      .data-row {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+    
+    /* 侧边栏遮罩层 */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.4);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--sidebar-transition);
+    }
+    
+    body.sidebar-expanded .sidebar-overlay {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar {
+        z-index: 1070;
+        box-shadow: 0 0 20px rgba(0,0,0,0.15);
+      }
+    }
   </style>
   {% endblock %}
+  
+  <script>
+    (function() {
+      const currentPath = window.location.pathname;
+      
+      function setActiveNavItems() {
+        const sidebarLinks = document.querySelectorAll('.sidebar .nav-link');
+        if (sidebarLinks.length === 0) return;
+        
+        let foundMatch = false;
+        
+        sidebarLinks.forEach(link => {
+          const href = link.getAttribute('href');
+          if (href && href !== '/' && currentPath === href) {
+            link.classList.add('active');
+            foundMatch = true;
+          } else if (href && href !== '/' && currentPath.includes(href) && !foundMatch && href.length > 1) {
+            link.classList.add('active');
+            foundMatch = true;
+          }
+        });
+        
+        if (!foundMatch && (currentPath === '/' || currentPath === '/home/')) {
+          const dashboardLink = document.querySelector('.sidebar a[href*="dashboard"]');
+          if (dashboardLink) {
+            dashboardLink.classList.add('active');
+          }
+        }
+        
+        sidebarLinks.forEach(link => {
+          link.style.visibility = 'visible';
+        });
+      }
+      
+      setActiveNavItems();
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        setActiveNavItems();
+      });
+    })();
+  </script>
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'home' %}">WellLog</a>
+      <a class="navbar-brand" href="{% url 'home' %}">
+        <img src="{% static 'images/logo-black.png' %}" alt="WellLog Logo">
+      </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -193,7 +737,7 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+            <a class="nav-link" href="{% url 'home' %}">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'about' %}">About</a>
@@ -237,9 +781,6 @@
 
   <!-- Left Sidebar -->
   <div class="sidebar">
-    <div class="sidebar-logo text-center">
-      <img src="{% static 'images/logo-black.png' %}" alt="Logo" width="180" height="32">
-    </div>
     <ul class="nav flex-column px-3 sidebar-main-menu">
       <li class="nav-item">
         <a href="{% url 'dashboard' %}" class="nav-link d-flex align-items-center">
@@ -248,7 +789,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a href="{% url 'community_list' %}" class="nav-link d-flex align-items-center">
+        <a href="{% url 'post_list' %}" class="nav-link d-flex align-items-center">
           <i class="bi bi-people"></i>
           <span>Community</span>
         </a>
@@ -279,6 +820,9 @@
       </ul>
     </div>
   </div>
+  
+  <!-- Sidebar overlay for mobile -->
+  <div class="sidebar-overlay"></div>
 
   <!-- Main Content Area -->
   <div class="main-content">
@@ -300,6 +844,11 @@
     // Mobile sidebar toggle
     document.querySelector('.menu-toggle').addEventListener('click', function() {
       document.body.classList.toggle('sidebar-expanded');
+    });
+    
+    // Click overlay to close sidebar
+    document.querySelector('.sidebar-overlay').addEventListener('click', function() {
+      document.body.classList.remove('sidebar-expanded');
     });
   </script>
   {% endblock javascript %}

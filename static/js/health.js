@@ -15,11 +15,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Initialize tab functionality
-  const tabLinks = document.querySelectorAll('.nav-tabs .nav-link');
+  // Fix navigation link issues - remove Bootstrap tabs attributes to make links work normally
+  const navLinks = document.querySelectorAll('.nav-tabs .nav-link');
+  navLinks.forEach(link => {
+    // If the link points to other pages (not tab content), remove tab related attributes
+    if (link.getAttribute('href') && (link.getAttribute('href').includes('/') || link.getAttribute('href').startsWith('http'))) {
+      link.removeAttribute('data-bs-toggle');
+      link.removeAttribute('role');
+      link.removeAttribute('aria-controls');
+      link.removeAttribute('aria-selected');
+    }
+  });
+  
+  // For in-page tab functionality (not links navigating to other pages), keep tab event handling
+  const tabLinks = document.querySelectorAll('.nav-tabs .nav-link[data-target]');
   tabLinks.forEach(link => {
     link.addEventListener('click', function(e) {
-      if (!link.classList.contains('active') && !link.getAttribute('href').startsWith('http')) {
+      // Only process tabs with data-target attribute (in-page tabs, not navigation links)
+      if (!link.classList.contains('active') && link.getAttribute('data-target')) {
         e.preventDefault();
         
         // Remove active class from all tabs
@@ -28,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add active class to clicked tab
         link.classList.add('active');
         
-        // Show corresponding content (if using data attributes)
+        // Show corresponding content
         const targetId = link.getAttribute('data-target');
         if (targetId) {
           document.querySelectorAll('.tab-content .tab-pane').forEach(pane => {
@@ -328,8 +341,12 @@ function renderTrendChart(chartId, data, options) {
         backgroundColor: options.backgroundColor,
         borderColor: options.borderColor,
         borderWidth: 2,
-        tension: 0.3,
-        fill: true
+        tension: 0.2,
+        fill: true,
+        cubicInterpolationMode: 'monotone',
+        borderJoinStyle: 'round',
+        stepped: false,
+        pointRadius: 3
       }]
     },
     options: {
@@ -366,6 +383,17 @@ function renderTrendChart(chartId, data, options) {
               size: 10
             }
           }
+        }
+      },
+      elements: {
+        line: {
+          tension: 0.2,
+          borderJoinStyle: 'round',
+          capBezierPoints: true
+        },
+        point: {
+          radius: 3,
+          hoverRadius: 5
         }
       },
       animation: {
@@ -544,8 +572,12 @@ function renderRecordHistoryChart(chartData, recordType) {
         backgroundColor: backgroundColor,
         borderColor: borderColor,
         borderWidth: 2,
-        tension: 0.1,
-        fill: true
+        tension: 0.2,
+        fill: true,
+        cubicInterpolationMode: 'monotone',
+        borderJoinStyle: 'round',
+        stepped: false,
+        pointRadius: 3
       }]
     },
     options: {
@@ -574,6 +606,17 @@ function renderRecordHistoryChart(chartData, recordType) {
             display: true,
             text: 'Date'
           }
+        }
+      },
+      elements: {
+        line: {
+          tension: 0.2,
+          borderJoinStyle: 'round',
+          capBezierPoints: true
+        },
+        point: {
+          radius: 3,
+          hoverRadius: 5
         }
       },
       animation: {

@@ -41,7 +41,7 @@ def post_detail(request, post_id):
         # Check if current user has already liked
         user_liked = False
         if request.user.is_authenticated:
-            user_liked = Like.objects.filter(post=post, user=request.user).exists()
+            user_liked = post.likes_users.filter(id=request.user.id).exists()
         
         # Comment form
         comment_form = CommentForm()
@@ -65,11 +65,7 @@ def create_comment(request, post_id):
         post = get_object_or_404(Post, id=post_id)
         Comment.objects.create(post=post, user=request.user, content=content)
         return redirect('post_detail', post_id=post_id)
-    return redirect('community_list')
-
-@login_required
-def community_list(request):
-    return render(request, 'community_list.html')
+    return redirect('post_list')
 
 @login_required
 def post_list(request):

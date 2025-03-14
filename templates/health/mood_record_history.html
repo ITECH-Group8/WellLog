@@ -8,26 +8,27 @@
 {{ block.super }}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <style>
-  /* History record page styles */
+  /* History page optimized styles */
   .history-container {
-    padding: 1rem;
+    padding: 1.5rem;
   }
   
   .history-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.8rem;
   }
   
   .history-header h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: 2.0rem;
+    font-weight: 700;
     margin: 0;
+    color: var(--monet-dark-blue);
   }
   
   .history-header h2 i {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
   }
   
   .dashboard-header {
@@ -51,29 +52,16 @@
     border-radius: 0.25rem;
   }
   
-  .data-list {
-    margin-top: 1.5rem;
-  }
-  
-  .data-list .table {
-    background-color: white;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  }
-  
-  .data-list .table th {
+  .nav-tabs .nav-link.active {
     background-color: #f8f9fa;
-    font-weight: 600;
-    font-size: 0.85rem;
-    border-top: none;
+    border-bottom-color: #f8f9fa;
   }
   
-  .data-list .table td {
-    vertical-align: middle;
-    font-size: 0.9rem;
+  .dashboard-header {
+    margin-bottom: 1.5rem !important;
   }
   
+  /* Mood Colors */
   .mood-excellent {
     color: #28a745;
   }
@@ -99,46 +87,183 @@
     margin-right: 0.5rem;
   }
   
+  /* History card optimized */
+  .history-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease-in-out;
+    margin-bottom: 2rem;
+  }
+  
+  .history-card:hover {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+  
+  .history-card .card-header {
+    padding: 1.2rem 1.5rem;
+    background: linear-gradient(135deg, var(--monet-light-blue) 0%, var(--monet-blue) 100%);
+    border-bottom: none;
+    color: white;
+  }
+  
+  .history-card .card-header h5 {
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  
+  .history-card .card-body {
+    padding: 1.5rem;
+  }
+  
+  /* History table optimized */
+  .history-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  .history-table th,
+  .history-table td {
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid #edf2f7;
+    vertical-align: middle;
+  }
+  
+  .history-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: var(--monet-text-light);
+    text-align: left;
+    font-size: 0.9rem;
+  }
+  
+  .history-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .history-table tr:hover {
+    background-color: rgba(163, 203, 224, 0.05);
+  }
+  
+  /* Action buttons optimized */
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    margin-right: 0.5rem;
+    transition: all 0.2s ease;
+    border: none;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .action-btn.edit {
+    background-color: rgba(60, 126, 160, 0.1);
+    color: var(--monet-blue);
+  }
+  
+  .action-btn.edit:hover {
+    background-color: var(--monet-blue);
+    color: white;
+    transform: translateY(-2px);
+  }
+  
+  .action-btn.delete {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+  }
+  
+  .action-btn.delete:hover {
+    background-color: #dc3545;
+    color: white;
+    transform: translateY(-2px);
+  }
+  
+  /* Pagination optimized */
   .pagination {
     margin-top: 1.5rem;
     justify-content: center;
+    gap: 0.3rem;
   }
   
+  .pagination .page-item .page-link {
+    border-radius: 8px;
+    color: var(--monet-text);
+    border: 1px solid #e0e0e0;
+    padding: 0.6rem 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  .pagination .page-item .page-link:hover {
+    background-color: rgba(163, 203, 224, 0.1);
+    color: var(--monet-blue);
+    border-color: var(--monet-light-blue);
+  }
+  
+  .pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, var(--monet-blue) 0%, var(--monet-dark-blue) 100%);
+    border-color: var(--monet-blue);
+    color: white;
+    box-shadow: 0 4px 10px rgba(60, 126, 160, 0.2);
+  }
+  
+  /* Empty state optimized */
   .empty-state {
     text-align: center;
     padding: 3rem 1rem;
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    color: var(--monet-text-light);
   }
   
   .empty-state i {
-    font-size: 2.5rem;
-    color: #dee2e6;
-    margin-bottom: 1rem;
-    display: block;
+    font-size: 3rem;
+    color: var(--monet-light-blue);
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
   }
   
-  .empty-state h4 {
+  .empty-state h5 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: var(--monet-text);
     font-weight: 600;
-    color: #6c757d;
-    margin-bottom: 0.5rem;
   }
   
   .empty-state p {
-    color: #adb5bd;
+    font-size: 1rem;
     margin-bottom: 1.5rem;
   }
   
-  @media (max-width: 767.98px) {
+  /* Ripple effect */
+  .ripple {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple-animation 0.6s linear;
+    pointer-events: none;
+  }
+  
+  @keyframes ripple-animation {
+    to {
+      transform: scale(2.5);
+      opacity: 0;
+    }
+  }
+  
+  /* Responsive adjustment */
+  @media (max-width: 576px) {
     .history-header {
       flex-direction: column;
       align-items: flex-start;
-    }
-    
-    .history-header .btn-group {
-      margin-top: 1rem;
-      align-self: flex-end;
+      gap: 0.8rem;
     }
   }
   
@@ -165,10 +290,10 @@
 {% block content %}
 <!-- Mood record history content -->
 <div class="container-fluid py-4">
-  <div class="history-container">
-    <div class="dashboard-header">
+  <div class="history-container animate__animated animate__fadeIn">
+    <div class="history-header">
       <h2>
-        <i class="bi bi-emoji-smile me-2"></i>Mood Record History
+        Mood Record History
       </h2>
     </div>
     
@@ -176,153 +301,159 @@
     <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
       <ul class="nav nav-tabs" id="healthTabs">
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'dashboard' %}">
+          <a class="nav-link {% if active_tab == 'overall' %}active{% endif %}" href="{% url 'dashboard' %}">
             <i class="bi bi-grid-3x3-gap me-1"></i>Overview
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'running_history' %}">
+          <a class="nav-link {% if active_tab == 'running' %}active{% endif %}" href="{% url 'running_history' %}">
             <i class="bi bi-lightning me-1"></i>Running
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'steps_history' %}">
+          <a class="nav-link {% if active_tab == 'step' %}active{% endif %}" href="{% url 'steps_history' %}">
             <i class="bi bi-activity me-1"></i>Steps
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'training_history' %}">
+          <a class="nav-link {% if active_tab == 'training' %}active{% endif %}" href="{% url 'training_history' %}">
             <i class="bi bi-trophy me-1"></i>Training
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'sleep_history' %}">
+          <a class="nav-link {% if active_tab == 'sleep' %}active{% endif %}" href="{% url 'sleep_history' %}">
             <i class="bi bi-moon me-1"></i>Sleep
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'diet_history' %}">
+          <a class="nav-link {% if active_tab == 'diet' %}active{% endif %}" href="{% url 'diet_history' %}">
             <i class="bi bi-egg-fried me-1"></i>Diet
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" href="{% url 'mood_history' %}">
+          <a class="nav-link {% if active_tab == 'mood' %}active{% endif %}" href="{% url 'mood_history' %}">
             <i class="bi bi-emoji-smile me-1"></i>Mood
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'weight_history' %}">
+          <a class="nav-link {% if active_tab == 'weight' %}active{% endif %}" href="{% url 'weight_history' %}">
             <i class="bi bi-clipboard-data me-1"></i>Weight
           </a>
         </li>
       </ul>
       <div>
         <a href="{% url 'mood_add' %}" class="btn btn-primary btn-sm">
-          <i class="bi bi-plus-circle me-1"></i>Add record
+          <i class="bi bi-plus-circle me-1"></i>Add Mood Record
         </a>
       </div>
     </div>
     
     <!-- Data list -->
-    <div class="data-list">
-      {% if records %}
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Mood Status</th>
-              <th>Stress Level</th>
-              <th>Notes</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for record in records %}
-              {% with delay_index=forloop.counter0|floatformat:0 %}
-              <tr class="animate__animated animate__fadeIn delay-{{ delay_index }}">
-              {% endwith %}
-                <td>{{ record.date|date:"Y-m-d" }}</td>
-                <td>
-                  {% if record.mood == 'excellent' %}
-                    <span class="mood-emoji mood-excellent">😁</span><span class="mood-excellent">Excellent</span>
-                  {% elif record.mood == 'good' %}
-                    <span class="mood-emoji mood-good">😊</span><span class="mood-good">Good</span>
-                  {% elif record.mood == 'neutral' %}
-                    <span class="mood-emoji mood-neutral">😐</span><span class="mood-neutral">Neutral</span>
-                  {% elif record.mood == 'bad' %}
-                    <span class="mood-emoji mood-bad">😔</span><span class="mood-bad">Bad</span>
-                  {% elif record.mood == 'terrible' %}
-                    <span class="mood-emoji mood-terrible">😢</span><span class="mood-terrible">Terrible</span>
-                  {% endif %}
-                </td>
-                <td>{% if record.stress_level %}{{ record.stress_level }}/10{% else %}-{% endif %}</td>
-                <td>{% if record.notes %}{{ record.notes|truncatechars:50 }}{% else %}-{% endif %}</td>
-                <td>
-                  <a href="{% url 'mood_edit' record.id %}" class="btn btn-sm btn-outline-secondary">
-                    <i class="bi bi-pencil"></i>
-                  </a>
-                  <a href="{% url 'mood_delete' record.id %}" class="btn btn-sm btn-outline-danger ms-1" 
-                     onclick="return confirm('Do you want to delete this record?');">
-                    <i class="bi bi-trash"></i>
-                  </a>
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        
-        <!-- Pagination -->
-        {% if records.has_other_pages %}
-          <nav aria-label="Page navigation">
-            <ul class="pagination">
-              {% if records.has_previous %}
-                <li class="page-item">
-                  <a class="page-link" href="?page={{ records.previous_page_number }}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                  </a>
-                </li>
-              {% else %}
-                <li class="page-item disabled">
-                  <span class="page-link" aria-hidden="true">&laquo;</span>
-                </li>
-              {% endif %}
-              
-              {% for i in records.paginator.page_range %}
-                {% if records.number == i %}
-                  <li class="page-item active">
-                    <span class="page-link">{{ i }} <span class="sr-only">(current)</span></span>
+    <div class="history-card animate__animated animate__fadeInUp delay-2">
+      <div class="card-header">
+        <h5>Mood Records</h5>
+      </div>
+      <div class="card-body">
+        {% if records %}
+          <div class="table-responsive">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Mood Status</th>
+                  <th>Stress Level</th>
+                  <th>Notes</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for record in records %}
+                  {% with delay_index=forloop.counter0|floatformat:0 %}
+                  <tr class="animate__animated animate__fadeIn delay-{{ delay_index }}">
+                  {% endwith %}
+                    <td>{{ record.date|date:"Y-m-d" }}</td>
+                    <td>
+                      {% if record.mood == 'excellent' %}
+                        <span class="mood-emoji mood-excellent">😁</span><span class="mood-excellent">Excellent</span>
+                      {% elif record.mood == 'good' %}
+                        <span class="mood-emoji mood-good">😊</span><span class="mood-good">Good</span>
+                      {% elif record.mood == 'neutral' %}
+                        <span class="mood-emoji mood-neutral">😐</span><span class="mood-neutral">Neutral</span>
+                      {% elif record.mood == 'bad' %}
+                        <span class="mood-emoji mood-bad">😔</span><span class="mood-bad">Bad</span>
+                      {% elif record.mood == 'terrible' %}
+                        <span class="mood-emoji mood-terrible">😢</span><span class="mood-terrible">Terrible</span>
+                      {% endif %}
+                    </td>
+                    <td>{% if record.stress_level %}{{ record.stress_level }}/10{% else %}-{% endif %}</td>
+                    <td>{% if record.notes %}{{ record.notes|truncatechars:50 }}{% else %}-{% endif %}</td>
+                    <td>
+                      <a href="{% url 'mood_edit' record.id %}" class="action-btn edit">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <a href="{% url 'mood_delete' record.id %}" class="action-btn delete">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Pagination -->
+          {% if records.has_other_pages %}
+            <nav aria-label="Page navigation">
+              <ul class="pagination">
+                {% if records.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ records.previous_page_number }}" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
                   </li>
                 {% else %}
-                  <li class="page-item">
-                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                  <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&laquo;</span>
                   </li>
                 {% endif %}
-              {% endfor %}
-              
-              {% if records.has_next %}
-                <li class="page-item">
-                  <a class="page-link" href="?page={{ records.next_page_number }}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                  </a>
-                </li>
-              {% else %}
-                <li class="page-item disabled">
-                  <span class="page-link" aria-hidden="true">&raquo;</span>
-                </li>
-              {% endif %}
-            </ul>
-          </nav>
+                
+                {% for i in records.paginator.page_range %}
+                  {% if records.number == i %}
+                    <li class="page-item active">
+                      <span class="page-link">{{ i }} <span class="sr-only">(current)</span></span>
+                    </li>
+                  {% else %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                    </li>
+                  {% endif %}
+                {% endfor %}
+                
+                {% if records.has_next %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ records.next_page_number }}" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                {% else %}
+                  <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                  </li>
+                {% endif %}
+              </ul>
+            </nav>
+          {% endif %}
+        {% else %}
+          <div class="empty-state">
+            <i class="bi bi-emoji-neutral"></i>
+            <h5>No Mood Records</h5>
+            <p>Start recording your mood status to track your mood changes</p>
+            <a href="{% url 'mood_add' %}" class="btn btn-outline-success btn-sm mt-3">
+              <i class="bi bi-plus-circle me-1"></i>Add Mood Record
+            </a>
+          </div>
         {% endif %}
-      {% else %}
-        <div class="empty-state">
-          <i class="bi bi-emoji-neutral"></i>
-          <h4>No mood records yet</h4>
-          <p>Start recording your mood status to track your mood changes</p>
-          <a href="{% url 'mood_add' %}" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-1"></i>Add mood record
-          </a>
-        </div>
-      {% endif %}
+      </div>
     </div>
   </div>
 </div>
@@ -332,16 +463,41 @@
 {{ block.super }}
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Set active class for current active navigation tab
-    const currentPath = window.location.pathname;
     const navLinks = document.querySelectorAll('#healthTabs .nav-link');
-    
     navLinks.forEach(link => {
-      if (link.getAttribute('href') === currentPath) {
-        link.classList.add('active');
-      } else {
-        link.classList.remove('active');
+      const newLink = document.createElement('a');
+      
+      newLink.className = link.className;
+      newLink.href = link.href;
+      newLink.innerHTML = link.innerHTML;
+      
+      newLink.removeAttribute('data-bs-toggle');
+      newLink.removeAttribute('role');
+      newLink.removeAttribute('aria-controls');
+      newLink.removeAttribute('aria-selected');
+      
+      if (link.parentNode) {
+        link.parentNode.replaceChild(newLink, link);
       }
+    });
+    
+    document.querySelectorAll('.action-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple');
+        this.appendChild(ripple);
+        
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        
+        ripple.style.width = ripple.style.height = `${size}px`;
+        ripple.style.left = `${e.clientX - rect.left - size/2}px`;
+        ripple.style.top = `${e.clientY - rect.top - size/2}px`;
+        
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+      });
     });
   });
 </script>

@@ -81,7 +81,98 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
-  // Like button event handling
+  // Check thumbnails on list page
+  const thumbnailImages = document.querySelectorAll('.post-grid img.post-image');
+  thumbnailImages.forEach(img => {
+    if (img.complete) {
+      const postId = img.getAttribute('data-post-id');
+      if (postId) {
+        if (img.naturalWidth === 0) {
+          handleThumbnailError(img, postId);
+        } else {
+          handleThumbnailLoaded(img, postId);
+        }
+      }
+    }
+  });
+  
+  // Initialize like functionality
+  initLikeButtons();
+  
+  // Initialize image loading
+  initImageLoading();
+  
+  // Initialize sharing functionality
+  initShareButtons();
+  
+  // Initialize comment functionality
+  initCommentForms();
+});
+
+// Initialize like button functionality
+function initLikeButtons() {
+  // 处理帖子列表中的点赞按钮
+  const likeButtons = document.querySelectorAll('.like-button');
+  likeButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      const postId = this.getAttribute('data-post-id');
+      const likeUrl = `/community/like_toggle/${postId}/`;
+      const likeCount = document.querySelector(`.like-count[data-post-id="${postId}"]`);
+      const likeIcon = this.querySelector('i');
+      const likeText = this.querySelector('span');
+      
+      // Show loading state
+      likeIcon.className = 'fas fa-spinner fa-spin';
+      
+      // Send request to server
+      fetch(likeUrl, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin'
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response abnormal');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Like response:', data);
+        
+        // Update button status
+        if (data.liked) {
+          button.classList.add('liked');
+          likeIcon.className = 'fas fa-heart text-danger';
+          likeText.textContent = 'Liked';
+        } else {
+          button.classList.remove('liked');
+          likeIcon.className = 'far fa-heart';
+          likeText.textContent = 'Like';
+        }
+        
+        // Update like count
+        if (likeCount) {
+          likeCount.textContent = data.like_count;
+        }
+      })
+      .catch(error => {
+        console.error('Like request failed:', error);
+        // Restore original state
+        if (button.classList.contains('liked')) {
+          likeIcon.className = 'fas fa-heart text-danger';
+        } else {
+          likeIcon.className = 'far fa-heart';
+        }
+      });
+    });
+  });
+  
+  // 处理帖子详情页中的点赞按钮
   const likeBtn = document.querySelector('.like-btn');
   if (likeBtn) {
     likeBtn.addEventListener('click', function() {
@@ -141,97 +232,6 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
   }
-  
-  // Check thumbnails on list page
-  const thumbnailImages = document.querySelectorAll('.post-grid img.post-image');
-  thumbnailImages.forEach(img => {
-    if (img.complete) {
-      const postId = img.getAttribute('data-post-id');
-      if (postId) {
-        if (img.naturalWidth === 0) {
-          handleThumbnailError(img, postId);
-        } else {
-          handleThumbnailLoaded(img, postId);
-        }
-      }
-    }
-  });
-  
-  // Initialize like functionality
-  initLikeButtons();
-  
-  // Initialize image loading
-  initImageLoading();
-  
-  // Initialize sharing functionality
-  initShareButtons();
-  
-  // Initialize comment functionality
-  initCommentForms();
-});
-
-// Initialize like button functionality
-function initLikeButtons() {
-  const likeButtons = document.querySelectorAll('.like-button');
-  
-  likeButtons.forEach(button => {
-    button.addEventListener('click', function(e) {
-      e.preventDefault();
-      
-      const postId = this.getAttribute('data-post-id');
-      const likeUrl = `/community/like_toggle/${postId}/`;
-      const likeCount = document.querySelector(`.like-count[data-post-id="${postId}"]`);
-      const likeIcon = this.querySelector('i');
-      const likeText = this.querySelector('span');
-      
-      // Show loading state
-      likeIcon.className = 'fas fa-spinner fa-spin';
-      
-      // Send request to server
-      fetch(likeUrl, {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': getCookie('csrftoken'),
-          'Content-Type': 'application/json'
-        },
-        credentials: 'same-origin'
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response abnormal');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Like response:', data);
-        
-        // Update button status
-        if (data.liked) {
-          button.classList.add('liked');
-          likeIcon.className = 'fas fa-heart text-danger';
-          likeText.textContent = 'Liked';
-        } else {
-          button.classList.remove('liked');
-          likeIcon.className = 'far fa-heart';
-          likeText.textContent = 'Like';
-        }
-        
-        // Update like count
-        if (likeCount) {
-          likeCount.textContent = data.likes_count;
-        }
-      })
-      .catch(error => {
-        console.error('Like request failed:', error);
-        // Restore original state
-        if (button.classList.contains('liked')) {
-          likeIcon.className = 'fas fa-heart text-danger';
-        } else {
-          likeIcon.className = 'far fa-heart';
-        }
-      });
-    });
-  });
 }
 
 // Initialize image loading
