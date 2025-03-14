@@ -76,11 +76,17 @@ WSGI_APPLICATION = 'WellLog.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'test',
+        'NAME': 'wellog',
         'USER': 'myuser',
         'PASSWORD': 'mypassword',
-        'HOST': 'coder.yeayu.com',
+        'HOST': 'welllog.top',
         'PORT': '8888',
+        'TEST': {
+            'NAME': 'test',
+            'SERIALIZE': False,
+            'CREATE_DB': False,
+            'MIRROR': None,
+        },
     }
 }
 
@@ -111,7 +117,7 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOCALE_PATHS = [BASE_DIR / 'locale']
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 CRISPY_TEMPLATE_PACK = "bootstrap5"
