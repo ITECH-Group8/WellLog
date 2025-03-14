@@ -4,14 +4,11 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
-import json
-from . import models
 from django.contrib.auth.models import Permission
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Permission
 from django.contrib.auth.decorators import login_required
-from vehicles import models
-
+from django.views.generic import TemplateView
+from django.shortcuts import redirect
 
 User = get_user_model()
 
@@ -208,3 +205,15 @@ def get_payment_list(request):
         for payment in payments
     ]
     return JsonResponse(payments_list, safe=False)
+
+class HomePageView(TemplateView):
+    template_name = "pages/home.html"
+    
+    # def get(self, request, *args, **kwargs):
+    #     if request.user.is_authenticated:
+    #         return redirect('dashboard')
+    #     return super().get(request, *args, **kwargs)
+
+
+class AboutPageView(TemplateView):
+    template_name = "pages/about.html"
