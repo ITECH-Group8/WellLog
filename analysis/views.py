@@ -125,14 +125,22 @@ async def generate_advice_async(request):
         # Get the last 30 days of health records
         last_30_days = timezone.now().date() - timedelta(days=30)
         
-        # Wrap synchronous database queries with sync_to_async
-        running_data = await sync_to_async(get_running_data)(request.user, last_30_days)
-        sleep_data = await sync_to_async(get_sleep_data)(request.user, last_30_days)
-        steps_data = await sync_to_async(get_steps_data)(request.user, last_30_days)
-        diet_data = await sync_to_async(get_diet_data)(request.user, last_30_days)
-        mood_data = await sync_to_async(get_mood_data)(request.user, last_30_days)
-        training_data = await sync_to_async(get_training_data)(request.user, last_30_days)
-        weight_data = await sync_to_async(get_weight_data)(request.user, last_30_days)
+        try:
+            # Wrap synchronous database queries with sync_to_async
+            running_data = await sync_to_async(get_running_data)(request.user, last_30_days)
+            sleep_data = await sync_to_async(get_sleep_data)(request.user, last_30_days)
+            steps_data = await sync_to_async(get_steps_data)(request.user, last_30_days)
+            diet_data = await sync_to_async(get_diet_data)(request.user, last_30_days)
+            mood_data = await sync_to_async(get_mood_data)(request.user, last_30_days)
+            training_data = await sync_to_async(get_training_data)(request.user, last_30_days)
+            weight_data = await sync_to_async(get_weight_data)(request.user, last_30_days)
+        except Exception as db_error:
+            print(f"Database query error: {str(db_error)}")
+            return JsonResponse({
+                'error': 'Failed to retrieve your health data',
+                'advice': '<p>We encountered an error while retrieving your health data. Please try again later.</p>',
+                'generated_time': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+            }, status=200)
         
         # Convert date objects to strings
         for data_list in [running_data, sleep_data, steps_data, diet_data, mood_data, training_data, weight_data]:
@@ -324,72 +332,112 @@ async def generate_advice_async(request):
         Recent Progress: {achievements_text}
         """
         
-        # Use OpenAI client to call DeepSeek API
-        api_key = "sk-185da6fa5b874706b5254969e3531c75"  # Replace with actual API key
-        
-        # Initialize OpenAI client (using DeepSeek's API base URL)
-        client = AsyncOpenAI(api_key=api_key, base_url="https://api.deepseek.com")
-        
-        # Build request parameters
-        messages = [
-            {"role": "system", "content": "You are a health and fitness advisor with expertise in analyzing health data patterns and providing personalized recommendations."},
-            {"role": "user", "content": prompt}
-        ]
-        
         try:
-            # Send request to DeepSeek API
-            response = await client.chat.completions.create(
-                model="deepseek-chat",
-                messages=messages,
-                temperature=1.0,
-                max_tokens=2000
+            # Use OpenAI client to call DeepSeek API
+            api_key = "sk-185da6fa5b874706b5254969e3531c75"  # Replace with actual API key
+            
+            # Initialize OpenAI client (using DeepSeek's API base URL)
+            client = AsyncOpenAI(api_key=api_key, base_url="https://api.deepseek.com")
+            
+            # Build request parameters
+            messages = [
+                {"role": "system", "content": "You are a health and fitness advisor with expertise in analyzing health data patterns and providing personalized recommendations."},
+                {"role": "user", "content": prompt}
+            ]
+            
+            # Send request to DeepSeek API with timeout handling
+            response = await asyncio.wait_for(
+                client.chat.completions.create(
+                    model="deepseek-chat",
+                    messages=messages,
+                    temperature=1.0,
+                    max_tokens=2000
+                ),
+                timeout=30.0  # Set a reasonable timeout of 30 seconds
             )
             
             # Get reply content
             advice = response.choices[0].message.content
             generated_time = timezone.now()
             
-            # Format advice content as HTML, ensuring no title tags or special formatting
+            # Format advice content as HTML with identical structure to database content
             formatted_advice = ""
             paragraphs = advice.split('\n\n')
             for para in paragraphs:
                 if para.strip():
                     # Remove possible Markdown or HTML tags
                     clean_para = para.strip()
-                    # Wrap paragraph in p tags
+                    # Wrap paragraph in p tags with exact same styling as database-retrieved content
                     formatted_advice += f"<p>{clean_para}</p>"
             
             # Save advice to database
-            await sync_to_async(save_advice_to_db)(request.user, formatted_advice)
+            save_success = await sync_to_async(save_advice_to_db)(request.user, formatted_advice)
+            
+            # Even if save fails, still return the advice to the user with exact same format
+            if not save_success:
+                print("Warning: Failed to save advice to database, but returning it to user anyway")
             
             return JsonResponse({
                 'advice': formatted_advice,
                 'generated_time': generated_time.strftime('%Y-%m-%d %H:%M:%S')
             })
+        
+        except asyncio.TimeoutError:
+            print("API request timed out")
+            return JsonResponse({
+                'error': 'The request to our AI service timed out. Please try again later.',
+                'advice': '<p>Sorry, our AI service is taking longer than expected. Please try again later.</p>',
+                'generated_time': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+            }, status=200)
+            
         except Exception as api_error:
-            return JsonResponse({'error': f'API call error: {str(api_error)}'}, status=500)
+            print(f"API call error: {str(api_error)}")
+            return JsonResponse({
+                'error': f'AI service error: {str(api_error)}',
+                'advice': '<p>We encountered an issue generating your health advice. Our team has been notified. Please try again later.</p>',
+                'generated_time': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+            }, status=200)
                     
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        print(f"General error in generate_advice_async: {str(e)}")
+        return JsonResponse({
+            'error': str(e),
+            'advice': '<p>Sorry, we encountered an unexpected error. Please try again later.</p>',
+            'generated_time': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+        }, status=200)
 
 def save_advice_to_db(user, advice_content):
     """Save generated advice to database"""
-    # Content is already formatted as HTML during generation, no need to process again
-    HealthAdvice.objects.create(
-        user=user,
-        content=advice_content
-    )
-    # Keep latest 5 pieces of advice, delete older ones
-    old_advice = HealthAdvice.objects.filter(user=user)[5:]
-    if old_advice.exists():
-        for advice in old_advice:
-            advice.delete()
+    try:
+        # Content is already formatted as HTML during generation, no need to process again
+        HealthAdvice.objects.create(
+            user=user,
+            content=advice_content
+        )
+        # Keep latest 5 pieces of advice, delete older ones
+        old_advice = HealthAdvice.objects.filter(user=user).order_by('-created_at')[5:]
+        if old_advice.exists():
+            for advice in old_advice:
+                advice.delete()
+        return True
+    except Exception as e:
+        print(f"Error saving advice to database: {str(e)}")
+        return False
 
 # Convert sync view to async view
 def generate_advice(request):
     """Synchronous wrapper for the async generate_advice view"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Only POST requests allowed'}, status=405)
+    
     try:
         result = asyncio.run(generate_advice_async(request))
         return result
     except Exception as e:
-        return JsonResponse({'error': f'Processing request failed: {str(e)}'}, status=500)
+        error_msg = f'Processing request failed: {str(e)}'
+        print(error_msg)  # Add server-side logging
+        return JsonResponse({
+            'error': error_msg,
+            'advice': '<p>Sorry, we encountered an error while generating your health advice. Please try again later.</p>',
+            'generated_time': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+        }, status=200)  # Return 200 status with error message instead of 500
