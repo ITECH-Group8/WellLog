@@ -20,7 +20,7 @@
   }
   
   .history-header h2 {
-    font-size: 1.5rem;
+    font-size: 2.0rem;
     font-weight: 600;
     margin: 0;
   }
@@ -29,17 +29,25 @@
     font-size: 1.2rem;
   }
   
-  .dashboard-header {
-    margin-bottom: 1rem !important;
-  }
-  
+  /* Navigation tabs styles */
   .nav-tabs .nav-link {
     font-size: 0.9rem;
     padding: 0.5rem 0.8rem;
+    border-radius: 5px 5px 0 0;
+    font-weight: 500;
   }
   
   .nav-tabs .nav-link i {
     font-size: 0.9rem;
+  }
+  
+  .nav-tabs .nav-link.active {
+    background-color: #f8f9fa;
+    border-bottom-color: #f8f9fa;
+  }
+  
+  .dashboard-header {
+    margin-bottom: 1rem !important;
   }
   
   .export-btn {
@@ -300,28 +308,8 @@
   <div class="history-container animate__animated animate__fadeIn">
     <div class="history-header">
       <h2>
-        {% if record_type == 'Steps' %}
-          <i class="bi bi-activity me-2"></i>
-        {% elif record_type == 'Sleep' %}
-          <i class="bi bi-moon me-2"></i>
-        {% elif record_type == 'Diet' %}
-          <i class="bi bi-egg-fried me-2"></i>
-        {% elif record_type == 'Running' %}
-          <i class="bi bi-lightning me-2"></i>
-        {% elif record_type == 'Training' %}
-          <i class="bi bi-trophy me-2"></i>
-        {% elif record_type == 'Mood' %}
-          <i class="bi bi-emoji-smile me-2"></i>
-        {% elif record_type == 'Weight' %}
-          <i class="bi bi-person-fill me-2"></i>
-        {% endif %}
         {{ record_type }} Record History
       </h2>
-      <div>
-        <button class="export-btn">
-          <i class="bi bi-download"></i>Export Data
-        </button>
-      </div>
     </div>
     
     <!-- Add navigation tabs -->
@@ -329,7 +317,7 @@
       <ul class="nav nav-tabs" id="healthTabs">
         <li class="nav-item">
           <a class="nav-link {% if active_tab == 'overall' %}active{% endif %}" href="{% url 'dashboard' %}">
-            <i class="bi bi-grid-3x3-gap me-1"></i>Overview
+            <i class="bi bi-grid-3x3-gap me-1"></i>Overall
           </a>
         </li>
         <li class="nav-item">
@@ -364,7 +352,7 @@
         </li>
         <li class="nav-item">
           <a class="nav-link {% if active_tab == 'weight' %}active{% endif %}" href="{% url 'weight_history' %}">
-            <i class="bi bi-person-fill me-1"></i>Weight
+            <i class="bi bi-clipboard-data me-1"></i>Weight
           </a>
         </li>
       </ul>
@@ -749,10 +737,24 @@
       });
     });
     
-    // Ensure navigation links directly jump without being prevented by any event
-    document.querySelectorAll('#healthTabs .nav-link').forEach(link => {
-      // Use cloned nodes to remove all possible event listeners
-      const newLink = link.cloneNode(true);
+    // Fix navigation links requiring double-click issue
+    const navLinks = document.querySelectorAll('#healthTabs .nav-link');
+    navLinks.forEach(link => {
+      // Create a new link element
+      const newLink = document.createElement('a');
+      
+      // Copy all attributes of the original link
+      newLink.className = link.className;
+      newLink.href = link.href;
+      newLink.innerHTML = link.innerHTML;
+      
+      // Remove all Bootstrap tabs related attributes and events
+      newLink.removeAttribute('data-bs-toggle');
+      newLink.removeAttribute('role');
+      newLink.removeAttribute('aria-controls');
+      newLink.removeAttribute('aria-selected');
+      
+      // Replace the original link
       if (link.parentNode) {
         link.parentNode.replaceChild(newLink, link);
       }
@@ -864,6 +866,17 @@
       const [bmiMin, bmiMax] = calculateAxisRange(bmiValues);
       {% endif %}
       
+      // Basic dataset configuration options - applied to all charts to solve scratching issues
+      const commonDatasetConfig = {
+        borderWidth: 2,
+        tension: 0.2,
+        fill: type === 'line',
+        cubicInterpolationMode: 'monotone',
+        borderJoinStyle: 'round',
+        stepped: false,
+        pointRadius: 3
+      };
+      
       {% if record_type == 'Steps' %}
         chartData = {
           labels: chartDates,
@@ -872,9 +885,7 @@
             data: chartValues,
             backgroundColor: 'rgba(40, 167, 69, 0.7)',
             borderColor: 'rgba(40, 167, 69, 1)',
-            borderWidth: 1,
-            tension: 0.3,
-            fill: type === 'line'
+            ...commonDatasetConfig
           }]
         };
       {% elif record_type == 'Sleep' %}
@@ -885,9 +896,7 @@
             data: chartValues,
             backgroundColor: 'rgba(111, 66, 193, 0.7)',
             borderColor: 'rgba(111, 66, 193, 1)',
-            borderWidth: 1,
-            tension: 0.3,
-            fill: type === 'line'
+            ...commonDatasetConfig
           }]
         };
       {% elif record_type == 'Diet' %}
@@ -898,9 +907,7 @@
             data: chartValues,
             backgroundColor: 'rgba(220, 53, 69, 0.7)',
             borderColor: 'rgba(220, 53, 69, 1)',
-            borderWidth: 1,
-            tension: 0.3,
-            fill: type === 'line'
+            ...commonDatasetConfig
           }]
         };
       {% elif record_type == 'Running' %}
@@ -911,9 +918,7 @@
             data: chartValues,
             backgroundColor: 'rgba(13, 110, 253, 0.7)',
             borderColor: 'rgba(13, 110, 253, 1)',
-            borderWidth: 1,
-            tension: 0.3,
-            fill: type === 'line'
+            ...commonDatasetConfig
           }]
         };
       {% elif record_type == 'Mood' %}
@@ -924,9 +929,7 @@
             data: chartValues,
             backgroundColor: 'rgba(255, 193, 7, 0.7)',
             borderColor: 'rgba(255, 193, 7, 1)',
-            borderWidth: 1,
-            tension: 0.3,
-            fill: type === 'line'
+            ...commonDatasetConfig
           }]
         };
       {% elif record_type == 'Weight' %}
@@ -938,9 +941,7 @@
               data: chartValues,
               backgroundColor: 'rgba(54, 162, 235, 0.2)',
               borderColor: 'rgba(54, 162, 235, 1)',
-              borderWidth: 2,
-              tension: 0.3,
-              pointRadius: 4,
+              ...commonDatasetConfig,
               yAxisID: 'y'
             },
             {
@@ -948,9 +949,7 @@
               data: {{ chart_bmi_data|safe }},
               backgroundColor: 'rgba(255, 99, 132, 0.2)',
               borderColor: 'rgba(255, 99, 132, 1)',
-              borderWidth: 2,
-              tension: 0.3,
-              pointRadius: 4,
+              ...commonDatasetConfig,
               yAxisID: 'y1'
             }
           ]
@@ -1026,6 +1025,17 @@
         animation: {
           duration: 800,
           easing: 'easeOutQuart'
+        },
+        elements: {
+          line: {
+            tension: 0.2,
+            borderJoinStyle: 'round',
+            capBezierPoints: true
+          },
+          point: {
+            radius: 3,
+            hoverRadius: 5
+          }
         },
         plugins: {
           legend: {

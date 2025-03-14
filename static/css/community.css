@@ -51,10 +51,11 @@
 
 .post-image {
   width: 100%;
-  max-height: 500px;
+  aspect-ratio: 16/10;
   object-fit: cover;
   border-radius: 10px;
   margin-bottom: 5px;
+  transition: transform 0.3s;
 }
 
 .post-actions {
@@ -327,20 +328,13 @@
   color: #dc3545;
 }
 
-.post-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s;
-}
-
 .post-card:hover .post-image {
   transform: scale(1.03);
 }
 
 .image-placeholder {
   width: 100%;
-  height: 200px;
+  aspect-ratio: 16/10;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -396,7 +390,6 @@
   }
 }
 
-/* 用户名样式 */
 .post-author span {
   font-weight: 500;
   color: #495057;
@@ -405,4 +398,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 90px;
+}
+
+.bg-light.d-flex.align-items-center.justify-content-center {
+  width: 100%;
+  aspect-ratio: 16/10 !important;
+  height: auto !important;
 } 

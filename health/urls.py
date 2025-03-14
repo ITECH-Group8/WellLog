@@ -48,4 +48,8 @@ urlpatterns = [
     
     # Health Goals
     path('goals/', views.health_goal_edit, name='health_goals'),
+    
+    # Data Import/Export
+    path('export-data/', views.export_health_data, name='export_health_data'),
+    path('import-data/', views.import_health_data, name='import_health_data'),
 ] 

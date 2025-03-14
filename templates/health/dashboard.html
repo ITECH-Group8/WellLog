@@ -33,6 +33,45 @@
     margin: 10px 0;
   }
   
+  /* History container styles */
+  .history-container {
+    padding: 1rem;
+  }
+  
+  .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .history-header h2 {
+    font-size: 2.0rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .export-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .export-btn:hover {
+    background-color: #e9ecef;
+  }
+  
+  .export-btn i {
+    margin-right: 0.3rem;
+    font-size: 0.8rem;
+  }
+  
   /* Tab Styles */
   .nav-tabs .nav-link {
     font-size: 0.9rem;
@@ -72,11 +111,19 @@
 {% block content %}
 <!-- Health Dashboard Content -->
 <div class="container-fluid py-4">
-  <div class="dashboard-container">
-    <div class="dashboard-header">
+  <div class="history-container animate__animated animate__fadeIn">
+    <div class="history-header">
       <h2>
         Health Dashboard
       </h2>
+      <div>
+        <a href="{% url 'export_health_data' %}" class="export-btn">
+          <i class="bi bi-download"></i>Export Data
+        </a>
+        <a href="#" class="export-btn ms-2" data-bs-toggle="modal" data-bs-target="#importDataModal">
+          <i class="bi bi-upload me-1"></i>Import Data
+        </a>
+      </div>
     </div>
     
     <!-- Navigation Tabs -->
@@ -151,9 +198,7 @@
                 {% if health_goal and health_goal.daily_steps_goal %}
                   <div class="progress mb-2" style="height: 8px;">
                     {% with progress=steps_record.steps_count|div:health_goal.daily_steps_goal|mul:100|floatformat:0 %}
-                    {% with progress_class="progress-width-"|add:progress|slice:"0:17" %}
-                    <div class="progress-bar bg-success {{ progress_class }}" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
-                    {% endwith %}
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
                     {% endwith %}
                   </div>
                   <p class="text-muted small">Goal: {{ health_goal.daily_steps_goal }} steps</p>
@@ -198,9 +243,7 @@
                   {% with goal_minutes=health_goal.daily_sleep_hours_goal|mul:60|add:health_goal.daily_sleep_minutes_goal %}
                   {% with progress=sleep_minutes|div:goal_minutes|mul:100|floatformat:0 %}
                   <div class="progress mb-2" style="height: 8px;">
-                    {% with progress_class="progress-width-"|add:progress|slice:"0:17" %}
-                    <div class="progress-bar bg-info {{ progress_class }}" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
-                    {% endwith %}
+                    <div class="progress-bar bg-info" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
                   <p class="text-muted small">Goal: {{ health_goal.daily_sleep_hours_goal }}h {{ health_goal.daily_sleep_minutes_goal }}min</p>
                   {% endwith %}
@@ -245,9 +288,7 @@
                 {% if health_goal and health_goal.daily_calories_goal %}
                   {% with progress=diet_record.calories|div:health_goal.daily_calories_goal|mul:100|floatformat:0 %}
                   <div class="progress mb-2" style="height: 8px;">
-                    {% with progress_class="progress-width-"|add:progress|slice:"0:17" %}
-                    <div class="progress-bar bg-warning {{ progress_class }}" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
-                    {% endwith %}
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
                   <p class="text-muted small">Goal: {{ health_goal.daily_calories_goal }} calories</p>
                   {% endwith %}
@@ -520,6 +561,39 @@
     </div>
   </div>
 </div>
+
+<!-- Import Data Modal -->
+<div class="modal fade" id="importDataModal" tabindex="-1" aria-labelledby="importDataModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="importDataModalLabel">Import Health Data</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'import_health_data' %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="csv_file" class="form-label">Select CSV File</label>
+            <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv" required>
+            <div class="form-text text-muted">
+              Please select a CSV file exported from WellLog. Import will update or add data records.
+            </div>
+          </div>
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle me-1"></i>
+            Import will update existing records or add new records based on date. If records with the same date exist, they will be overwritten by new data.
+          </div>
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-upload me-1"></i>Start Import
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block javascript %}
@@ -535,13 +609,13 @@
       });
     }
     
-    // 确保内容正确显示
+    // Ensure content displays correctly
     const tabContent = document.getElementById('overallContent');
     if (tabContent) {
       tabContent.style.display = 'block';
     }
     
-    // 初始化图表
+    // Initialize charts
     if (document.getElementById('runningChart')) {
       const ctx = document.getElementById('runningChart').getContext('2d');
       new Chart(ctx, {
@@ -576,67 +650,6 @@
         }
       });
     }
-    
-    // 彻底解决导航链接需要点击两次的问题
-    // 1. 获取所有导航链接
-    const navLinks = document.querySelectorAll('#healthTabs .nav-link');
-    
-    // 2. 为每个链接创建一个克隆，并替换原来的链接
-    navLinks.forEach(link => {
-      // 创建一个新链接元素
-      const newLink = document.createElement('a');
-      
-      // 复制原链接的所有属性
-      newLink.className = link.className;
-      newLink.href = link.href;
-      newLink.innerHTML = link.innerHTML;
-      
-      // 确保链接可以正常工作，禁用Bootstrap的tab功能
-      newLink.setAttribute('data-bs-toggle', '');
-      
-      // 替换原来的链接
-      link.parentNode.replaceChild(newLink, link);
-    });
-    
-    // 3. 根据当前URL自动设置active类
-    function setActiveNavLink() {
-      // 获取当前页面URL路径
-      const currentPath = window.location.pathname;
-      
-      // 获取所有已替换的导航链接
-      const allNavLinks = document.querySelectorAll('#healthTabs a');
-      
-      // 移除所有链接的active类
-      allNavLinks.forEach(navLink => {
-        navLink.classList.remove('active');
-      });
-      
-      // 为匹配当前URL的链接添加active类
-      allNavLinks.forEach(navLink => {
-        const linkPath = navLink.getAttribute('href');
-        if (currentPath === linkPath || 
-           (currentPath === '/' && linkPath.includes('dashboard')) || 
-           (currentPath.includes(linkPath) && linkPath !== '/')) {
-          navLink.classList.add('active');
-        }
-      });
-    }
-    
-    // 页面加载时设置active类
-    setActiveNavLink();
-    
-    // 点击导航链接时处理active类
-    document.querySelectorAll('#healthTabs a').forEach(link => {
-      link.addEventListener('click', function() {
-        // 移除所有链接的active类
-        document.querySelectorAll('#healthTabs a').forEach(l => {
-          l.classList.remove('active');
-        });
-        
-        // 添加active类到当前点击的链接
-        this.classList.add('active');
-      });
-    });
   });
 </script>
 {% endblock %} 

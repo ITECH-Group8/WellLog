@@ -5,6 +5,7 @@
 
 {% block css %}
 {{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <style>
   /* Card styles */
   .training-card {
@@ -36,46 +37,125 @@
     font-weight: 600;
     background-color: #f8f9fa;
   }
+  
+  /* History container styles */
+  .history-container {
+    padding: 1rem;
+  }
+  
+  .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .history-header h2 {
+    font-size: 2.0rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .export-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .export-btn:hover {
+    background-color: #e9ecef;
+  }
+  
+  .export-btn i {
+    margin-right: 0.3rem;
+    font-size: 0.8rem;
+  }
+  
+  /* Navigation tabs styles */
+  .nav-tabs .nav-link {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 5px 5px 0 0;
+    font-weight: 500;
+  }
+  
+  .nav-tabs .nav-link i {
+    font-size: 0.9rem;
+  }
+  
+  .nav-tabs .nav-link.active {
+    background-color: #f8f9fa;
+    border-bottom-color: #f8f9fa;
+  }
+  
+  .dashboard-header {
+    margin-bottom: 1rem !important;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
 <!-- Training Record History Content -->
 <div class="container-fluid py-4">
-  <div class="row mb-4">
-    <div class="col-12">
-      <h2>Training Record History</h2>
-      <p class="text-muted">View all your past training data records</p>
+  <div class="history-container animate__animated animate__fadeIn">
+    <div class="history-header">
+      <h2>
+        Training Record History
+      </h2>
     </div>
-  </div>
 
   <!-- Navigation Tabs -->
   <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-tabs" id="healthTabs">
       <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'overall' %}active{% endif %}" href="{% url 'dashboard' %}">Overview</a>
+        <a class="nav-link {% if active_tab == 'overall' %}active{% endif %}" href="{% url 'dashboard' %}">
+          <i class="bi bi-grid-3x3-gap me-1"></i>Overall
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'running' %}active{% endif %}" href="{% url 'running_history' %}">Running</a>
+        <a class="nav-link {% if active_tab == 'running' %}active{% endif %}" href="{% url 'running_history' %}">
+          <i class="bi bi-lightning me-1"></i>Running
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'step' %}active{% endif %}" href="{% url 'steps_history' %}">Steps</a>
+        <a class="nav-link {% if active_tab == 'step' %}active{% endif %}" href="{% url 'steps_history' %}">
+          <i class="bi bi-activity me-1"></i>Steps
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'training' %}active{% endif %}" href="{% url 'training_history' %}">Training</a>
+        <a class="nav-link {% if active_tab == 'training' %}active{% endif %}" href="{% url 'training_history' %}">
+          <i class="bi bi-trophy me-1"></i>Training
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'sleep' %}active{% endif %}" href="{% url 'sleep_history' %}">Sleep</a>
+        <a class="nav-link {% if active_tab == 'sleep' %}active{% endif %}" href="{% url 'sleep_history' %}">
+          <i class="bi bi-moon me-1"></i>Sleep
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'diet' %}active{% endif %}" href="{% url 'diet_history' %}">Diet</a>
+        <a class="nav-link {% if active_tab == 'diet' %}active{% endif %}" href="{% url 'diet_history' %}">
+          <i class="bi bi-egg-fried me-1"></i>Diet
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {% if active_tab == 'mood' %}active{% endif %}" href="{% url 'mood_history' %}">Mood</a>
+        <a class="nav-link {% if active_tab == 'mood' %}active{% endif %}" href="{% url 'mood_history' %}">
+          <i class="bi bi-emoji-smile me-1"></i>Mood
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'weight' %}active{% endif %}" href="{% url 'weight_history' %}">
+          <i class="bi bi-clipboard-data me-1"></i>Weight
+        </a>
       </li>
     </ul>
     <div>
-      <a href="{% url 'training_add' %}" class="btn btn-primary">
+      <a href="{% url 'training_add' %}" class="btn btn-primary btn-sm">
         <i class="bi bi-plus-circle me-1"></i> Add Training Record
       </a>
     </div>
@@ -141,4 +221,30 @@
 
 {% block javascript %}
 {{ block.super }}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Fix navigation links requiring double-click issue
+    const navLinks = document.querySelectorAll('.nav-tabs .nav-link');
+    navLinks.forEach(link => {
+      // Create a new link element
+      const newLink = document.createElement('a');
+      
+      // Copy all attributes of the original link
+      newLink.className = link.className;
+      newLink.href = link.href;
+      newLink.innerHTML = link.innerHTML;
+      
+      // Remove all Bootstrap tabs related attributes and events
+      newLink.removeAttribute('data-bs-toggle');
+      newLink.removeAttribute('role');
+      newLink.removeAttribute('aria-controls');
+      newLink.removeAttribute('aria-selected');
+      
+      // Replace the original link
+      if (link.parentNode) {
+        link.parentNode.replaceChild(newLink, link);
+      }
+    });
+  });
+</script>
 {% endblock %} 
