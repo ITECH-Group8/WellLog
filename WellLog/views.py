@@ -1,5 +1,6 @@
 import json
 from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -209,11 +210,13 @@ def get_payment_list(request):
 class HomePageView(TemplateView):
     template_name = "pages/home.html"
     
+class AboutPageView(TemplateView):
+    template_name = "pages/about.html"
+
+def about_redirect(request):
+    return HttpResponseRedirect("https://github.com/ITECH-Group8/WellLog")
+    
     # def get(self, request, *args, **kwargs):
     #     if request.user.is_authenticated:
     #         return redirect('dashboard')
     #     return super().get(request, *args, **kwargs)
-
-
-class AboutPageView(TemplateView):
-    template_name = "pages/about.html"
