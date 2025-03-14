@@ -18,7 +18,7 @@
 }
 
 .advice-header {
-  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  background: linear-gradient(135deg, var(--monet-blue) 0%, var(--monet-dark-blue) 100%);
   color: white;
   padding: 20px 25px;
   border-radius: 12px 12px 0 0;
@@ -39,7 +39,7 @@
   margin-bottom: 20px;
   transition: all 0.3s ease;
   background-color: #f8f9fa;
-  border-left: 4px solid #6a11cb;
+  border-left: 4px solid var(--monet-blue);
 }
 
 .data-card:hover {
@@ -71,7 +71,7 @@
 
 /* Button Styles */
 .generate-btn {
-  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  background: linear-gradient(135deg, var(--monet-blue) 0%, var(--monet-dark-blue) 100%);
   color: white;
   border: none;
   padding: 12px 25px;
@@ -81,7 +81,7 @@
 }
 
 .generate-btn:hover {
-  box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
+  box-shadow: 0 5px 15px rgba(60, 126, 160, 0.3);
   transform: translateY(-2px);
 }
 
@@ -103,7 +103,7 @@
 .advice-placeholder i {
   font-size: 4rem;
   margin-bottom: 20px;
-  color: #dee2e6;
+  color: var(--monet-light-blue);
 }
 
 .advice-loading {
@@ -124,7 +124,7 @@
   border-radius: 8px;
   padding: 15px;
   margin-bottom: 15px;
-  border-left: 4px solid #2575fc;
+  border-left: 4px solid var(--monet-blue);
 }
 
 .correlation-item {
@@ -136,7 +136,7 @@
 .correlation-item i {
   font-size: 1.2rem;
   margin-right: 10px;
-  color: #6a11cb;
+  color: var(--monet-blue);
 }
 
 /* Error Display */
@@ -154,20 +154,20 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-  box-shadow: 0 0 0 rgba(106, 17, 203, 0.4);
+  background: linear-gradient(135deg, var(--monet-blue) 0%, var(--monet-dark-blue) 100%);
+  box-shadow: 0 0 0 rgba(60, 126, 160, 0.4);
   animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(106, 17, 203, 0.4);
+    box-shadow: 0 0 0 0 rgba(60, 126, 160, 0.4);
   }
   70% {
-    box-shadow: 0 0 0 20px rgba(106, 17, 203, 0);
+    box-shadow: 0 0 0 20px rgba(60, 126, 160, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(106, 17, 203, 0);
+    box-shadow: 0 0 0 0 rgba(60, 126, 160, 0);
   }
 }
 

@@ -33,6 +33,7 @@
       --monet-text-light: #666666;
       --border-radius: 12px;
       --card-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      --sidebar-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     /* Global Styles */
@@ -113,7 +114,7 @@
       padding-top: 60px;
       box-shadow: 1px 0 6px rgba(0,0,0,0.03);
       background-color: var(--monet-beige);
-      transition: all 0.3s;
+      transition: var(--sidebar-transition);
       width: 260px;
       border-right: 1px solid rgba(0,0,0,0.03);
     }
@@ -133,6 +134,7 @@
       font-weight: 500;
       padding: 10px 15px;
       transition: all 0.2s;
+      visibility: hidden;
     }
     
     .sidebar .nav-link:hover {
@@ -174,16 +176,28 @@
     
     .menu-toggle {
       position: fixed;
-      top: 10px;
-      left: 10px;
-      z-index: 1050;
+      top: 15px;
+      left: 15px;
+      z-index: 1060;
       background-color: var(--monet-blue);
       color: white;
       border: none;
       width: 40px;
       height: 40px;
-      border-radius: 8px;
+      border-radius: 50%;
       display: none;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .menu-toggle:hover, .menu-toggle:focus {
+      background-color: var(--monet-dark-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 12px rgba(0,0,0,0.25);
+    }
+    
+    .menu-toggle i {
+      font-size: 1.4rem;
     }
     
     /* Navbar Style */
@@ -539,10 +553,22 @@
       }
       
       .menu-toggle {
-        display: block;
-        top: 15px; /* Adjust position */
-        left: 15px;
-        z-index: 1060; /* Ensure above navbar */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        top: auto;
+        bottom: 20px;
+        left: 20px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+      }
+      
+      body.sidebar-expanded .menu-toggle {
+        background-color: var(--monet-dark-blue);
+        transform: rotate(90deg);
       }
       
       .sidebar-logo {
@@ -627,8 +653,75 @@
         gap: 15px;
       }
     }
+    
+    /* 侧边栏遮罩层 */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.4);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--sidebar-transition);
+    }
+    
+    body.sidebar-expanded .sidebar-overlay {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar {
+        z-index: 1070;
+        box-shadow: 0 0 20px rgba(0,0,0,0.15);
+      }
+    }
   </style>
   {% endblock %}
+  
+  <script>
+    (function() {
+      const currentPath = window.location.pathname;
+      
+      function setActiveNavItems() {
+        const sidebarLinks = document.querySelectorAll('.sidebar .nav-link');
+        if (sidebarLinks.length === 0) return;
+        
+        let foundMatch = false;
+        
+        sidebarLinks.forEach(link => {
+          const href = link.getAttribute('href');
+          if (href && href !== '/' && currentPath === href) {
+            link.classList.add('active');
+            foundMatch = true;
+          } else if (href && href !== '/' && currentPath.includes(href) && !foundMatch && href.length > 1) {
+            link.classList.add('active');
+            foundMatch = true;
+          }
+        });
+        
+        if (!foundMatch && (currentPath === '/' || currentPath === '/home/')) {
+          const dashboardLink = document.querySelector('.sidebar a[href*="dashboard"]');
+          if (dashboardLink) {
+            dashboardLink.classList.add('active');
+          }
+        }
+        
+        sidebarLinks.forEach(link => {
+          link.style.visibility = 'visible';
+        });
+      }
+      
+      setActiveNavItems();
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        setActiveNavItems();
+      });
+    })();
+  </script>
 </head>
 
 <body>
@@ -690,7 +783,7 @@
   <div class="sidebar">
     <ul class="nav flex-column px-3 sidebar-main-menu">
       <li class="nav-item">
-        <a href="{% url 'dashboard' %}" class="nav-link d-flex align-items-center active">
+        <a href="{% url 'dashboard' %}" class="nav-link d-flex align-items-center">
           <i class="bi bi-speedometer2"></i>
           <span>Dashboard</span>
         </a>
@@ -727,6 +820,9 @@
       </ul>
     </div>
   </div>
+  
+  <!-- Sidebar overlay for mobile -->
+  <div class="sidebar-overlay"></div>
 
   <!-- Main Content Area -->
   <div class="main-content">
@@ -750,49 +846,9 @@
       document.body.classList.toggle('sidebar-expanded');
     });
     
-    // Automatically set the current page's navigation link to active state
-    document.addEventListener('DOMContentLoaded', function() {
-      // Get current URL path
-      const currentPath = window.location.pathname;
-      
-      // Sidebar navigation links
-      const sidebarLinks = document.querySelectorAll('.sidebar .nav-link');
-      
-      // Traverse all sidebar links
-      sidebarLinks.forEach(link => {
-        const href = link.getAttribute('href');
-        // Check if the link is included in the current URL
-        if (href && currentPath.includes(href) && href !== '/') {
-          // Remove all other active classes
-          sidebarLinks.forEach(l => l.classList.remove('active'));
-          // Add active class to current link
-          link.classList.add('active');
-        }
-      });
-      
-      // Get all navbar links
-      const allNavbarLinks = document.querySelectorAll('.navbar .nav-link');
-      
-      // Filter out non-Home links (by checking href attribute)
-      let navbarLinks = [];
-      allNavbarLinks.forEach(link => {
-        const href = link.getAttribute('href');
-        if (href !== '/' && href !== '/home/') {
-          navbarLinks.push(link);
-        }
-      });
-      
-      // Traverse navbar links (excluding Home)
-      navbarLinks.forEach(link => {
-        const href = link.getAttribute('href');
-        // Check if the link equals current URL
-        if (href && currentPath === href) {
-          // Remove all other active classes (excluding Home)
-          navbarLinks.forEach(l => l.classList.remove('active'));
-          // Add active class to current link
-          link.classList.add('active');
-        }
-      });
+    // Click overlay to close sidebar
+    document.querySelector('.sidebar-overlay').addEventListener('click', function() {
+      document.body.classList.remove('sidebar-expanded');
     });
   </script>
   {% endblock javascript %}

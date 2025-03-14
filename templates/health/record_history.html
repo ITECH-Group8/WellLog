@@ -9,24 +9,25 @@
 <style>
   /* History page optimized styles */
   .history-container {
-    padding: 1rem;
+    padding: 1.5rem;
   }
   
   .history-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.8rem;
   }
   
   .history-header h2 {
     font-size: 2.0rem;
-    font-weight: 600;
+    font-weight: 700;
     margin: 0;
+    color: var(--monet-dark-blue);
   }
   
   .history-header h2 i {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
   }
   
   /* Navigation tabs styles */
@@ -47,73 +48,124 @@
   }
   
   .dashboard-header {
-    margin-bottom: 1rem !important;
+    margin-bottom: 1.5rem !important;
   }
   
   .export-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.85rem;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 0.25rem;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     display: inline-flex;
     align-items: center;
     cursor: pointer;
     transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
   }
   
   .export-btn:hover {
-    background-color: #e9ecef;
+    background-color: var(--monet-light-blue);
+    color: white;
+    border-color: var(--monet-light-blue);
   }
   
   .export-btn i {
-    margin-right: 0.3rem;
-    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
   }
   
   /* Statistics card optimized */
   .summary-stats {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: 1.2rem;
+    margin-bottom: 2rem;
   }
   
   .stat-card {
     background: white;
-    border-radius: 0.5rem;
-    padding: 0.8rem 1rem;
+    border-radius: 16px;
+    padding: 1.2rem 1.5rem;
     flex: 1;
-    min-width: 120px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    min-width: 180px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
     text-align: center;
-    transition: transform 0.2s;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+    border: none;
   }
   
   .stat-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-6px);
+    box-shadow: 0 15px 25px rgba(0,0,0,0.12);
+  }
+  
+  /* Card hover highlight effect */
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 0;
+    background: linear-gradient(to bottom, var(--monet-blue), var(--monet-light-blue));
+    transition: height 0.3s ease;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+    display: none; /* 隐藏左边的竖线 */
+  }
+  
+  .stat-card:hover::after {
+    height: 100%;
+  }
+  
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(to right, var(--monet-blue), var(--monet-light-blue));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+  }
+  
+  .stat-card:hover::before {
+    opacity: 1;
   }
   
   .stat-title {
-    font-size: 0.8rem;
-    color: #6c757d;
-    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+    color: var(--monet-text-light);
+    margin-bottom: 0.8rem;
+    font-weight: 500;
   }
   
   .stat-value {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #212529;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--monet-dark-blue);
+    margin-bottom: 0.5rem;
   }
   
   /* Chart area optimized - adaptive size */
   .chart-container {
     background: white;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
     width: 100%;
-    margin: 0 auto 1.5rem auto;
+    margin: 0 auto 2rem auto;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .chart-container:hover {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
   }
   
   /* Chart wrapper container */
@@ -121,126 +173,316 @@
     position: relative;
     width: 100%;
     height: auto;
-    min-height: 250px;
-    max-height: 450px;
+    min-height: 280px;
+    max-height: 500px;
   }
   
   .chart-types {
     display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
     flex-wrap: wrap;
   }
   
   .chart-type-btn {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.8rem;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  
+  .chart-type-btn:hover {
+    background-color: rgba(163, 203, 224, 0.1);
+    border-color: var(--monet-light-blue);
   }
   
   .chart-type-btn.active {
-    background-color: #0d6efd;
+    background: linear-gradient(135deg, var(--monet-blue) 0%, var(--monet-dark-blue) 100%);
     color: white;
-    border-color: #0d6efd;
+    border-color: var(--monet-blue);
+    box-shadow: 0 4px 10px rgba(60, 126, 160, 0.2);
   }
   
   /* Filter card */
   .filter-card {
     background: white;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .filter-card:hover {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
   }
   
   .filter-buttons {
     display: flex;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+    gap: 0.8rem;
+    margin-top: 1rem;
     flex-wrap: wrap;
+  }
+  
+  /* Custom buttons */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--monet-blue) 0%, var(--monet-dark-blue) 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(60, 126, 160, 0.2);
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(60, 126, 160, 0.3);
+  }
+  
+  .btn-success {
+    background: linear-gradient(135deg, var(--monet-light-green) 0%, var(--monet-green) 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(140, 173, 146, 0.2);
+  }
+  
+  .btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(140, 173, 146, 0.3);
+  }
+  
+  .btn-outline-primary {
+    border-color: var(--monet-blue);
+    color: var(--monet-blue);
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-outline-primary:hover {
+    background-color: var(--monet-blue);
+    color: white;
+  }
+  
+  .btn-outline-secondary {
+    border-color: #e0e0e0;
+    color: var(--monet-text-light);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-outline-secondary:hover {
+    background-color: var(--monet-light-blue);
+    color: white;
+    border-color: var(--monet-light-blue);
   }
   
   /* Data table optimized */
   .history-card {
     background: white;
-    border-radius: 0.5rem;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease-in-out;
+    margin-bottom: 2rem;
+  }
+  
+  .history-card:hover {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
   }
   
   .history-card .card-header {
-    padding: 0.75rem 1rem;
-    background-color: #f8f9fa;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding: 1.2rem 1.5rem;
+    background: linear-gradient(135deg, var(--monet-light-blue) 0%, var(--monet-blue) 100%);
+    border-bottom: none;
+    color: white;
   }
   
   .history-card .card-header h5 {
-    font-size: 1rem;
+    font-size: 1.2rem;
     margin: 0;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  
+  .history-card .card-body {
+    padding: 1.5rem;
   }
   
   .history-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
   }
   
   .history-table th,
   .history-table td {
-    padding: 0.6rem 0.8rem;
-    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid #edf2f7;
+    vertical-align: middle;
   }
   
   .history-table th {
     background-color: #f8f9fa;
-    font-weight: 500;
+    font-weight: 600;
+    color: var(--monet-text-light);
     text-align: left;
+    font-size: 0.9rem;
+  }
+  
+  .history-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .history-table tr:hover {
+    background-color: rgba(163, 203, 224, 0.05);
   }
   
   .action-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 0.25rem;
-    margin-right: 0.3rem;
-    transition: all 0.2s;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    margin-right: 0.5rem;
+    transition: all 0.2s ease;
+    border: none;
   }
   
   .action-btn.edit {
-    background-color: #e9ecef;
-    color: #495057;
+    background-color: rgba(60, 126, 160, 0.1);
+    color: var(--monet-blue);
+  }
+  
+  .action-btn.edit:hover {
+    background-color: var(--monet-blue);
+    color: white;
+    transform: translateY(-2px);
   }
   
   .action-btn.delete {
-    background-color: #f8d7da;
+    background-color: rgba(220, 53, 69, 0.1);
     color: #dc3545;
   }
   
-  .action-btn:hover {
-    opacity: 0.8;
+  .action-btn.delete:hover {
+    background-color: #dc3545;
+    color: white;
+    transform: translateY(-2px);
   }
   
   /* Empty state optimized */
   .empty-state {
     text-align: center;
-    padding: 2rem 1rem;
+    padding: 3rem 1rem;
+    color: var(--monet-text-light);
   }
   
   .empty-state i {
-    font-size: 2rem;
-    color: #adb5bd;
+    font-size: 3rem;
+    color: var(--monet-light-blue);
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
+  }
+  
+  .empty-state h5 {
+    font-size: 1.4rem;
     margin-bottom: 1rem;
+    color: var(--monet-text);
+    font-weight: 600;
+  }
+  
+  .empty-state p {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
   }
   
   /* Pagination optimized */
   .pagination {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
     justify-content: center;
+    gap: 0.3rem;
+  }
+  
+  .pagination .page-item .page-link {
+    border-radius: 8px;
+    color: var(--monet-text);
+    border: 1px solid #e0e0e0;
+    padding: 0.6rem 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  .pagination .page-item .page-link:hover {
+    background-color: rgba(163, 203, 224, 0.1);
+    color: var(--monet-blue);
+    border-color: var(--monet-light-blue);
+  }
+  
+  .pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, var(--monet-blue) 0%, var(--monet-dark-blue) 100%);
+    border-color: var(--monet-blue);
+    color: white;
+    box-shadow: 0 4px 10px rgba(60, 126, 160, 0.2);
+  }
+  
+  /* Filter Form Styles */
+  .form-control {
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 0.7rem 1rem;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    box-shadow: none;
+  }
+  
+  .form-control:focus {
+    border-color: var(--monet-light-blue);
+    box-shadow: 0 0 0 3px rgba(163, 203, 224, 0.25);
+  }
+  
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--monet-text);
+    font-size: 0.95rem;
+  }
+  
+  .text-muted {
+    color: var(--monet-text-light) !important;
+  }
+  
+  /* Form help text */
+  .form-text {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+  }
+  
+  /* Alert styling */
+  .alert {
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    border: none;
+    margin-bottom: 1.5rem;
+  }
+  
+  .alert-info {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: var(--monet-dark-blue);
+  }
+  
+  .alert-info i {
+    color: var(--monet-blue);
+    margin-right: 0.5rem;
   }
   
   /* Responsive adjustment */
@@ -252,27 +494,37 @@
     .history-header {
       flex-direction: column;
       align-items: flex-start;
-      gap: 0.5rem;
+      gap: 0.8rem;
     }
     
     .chart-type-btn {
-      padding: 0.25rem 0.5rem;
-      font-size: 0.75rem;
+      padding: 0.4rem 0.7rem;
+      font-size: 0.85rem;
     }
     
     .stat-card {
-      min-width: 100px;
-      padding: 0.6rem 0.8rem;
+      min-width: 100%;
+      padding: 1rem;
     }
     
     .stat-value {
-      font-size: 1.25rem;
+      font-size: 1.8rem;
+    }
+    
+    .history-table th,
+    .history-table td {
+      padding: 0.8rem;
+      font-size: 0.9rem;
     }
   }
   
   @media (min-width: 577px) and (max-width: 991px) {
     .chart-wrapper {
       min-height: 300px;
+    }
+    
+    .stat-card {
+      min-width: 160px;
     }
   }
   
@@ -299,6 +551,32 @@
   .delay-13 { animation-delay: 1.3s; }
   .delay-14 { animation-delay: 1.4s; }
   .delay-15 { animation-delay: 1.5s; }
+  
+  .action-btn {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .ripple {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple-animation 0.6s linear;
+    pointer-events: none;
+  }
+  
+  @keyframes ripple-animation {
+    to {
+      transform: scale(2.5);
+      opacity: 0;
+    }
+  }
+  
+  /* 表格行悬停效果 */
+  .history-table tr {
+    transition: all 0.2s ease;
+  }
 </style>
 {% endblock %}
 
@@ -717,50 +995,89 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Get the chart_type parameter from the current URL, if not set default to 'line'
+    // 自定义图表颜色
+    const chartColors = {
+      running: {
+        fill: 'rgba(13, 110, 253, 0.2)',
+        stroke: 'rgba(13, 110, 253, 1)',
+        point: 'rgba(13, 110, 253, 1)'
+      },
+      steps: {
+        fill: 'rgba(40, 167, 69, 0.2)',
+        stroke: 'rgba(40, 167, 69, 1)',
+        point: 'rgba(40, 167, 69, 1)'
+      },
+      sleep: {
+        fill: 'rgba(111, 66, 193, 0.2)',
+        stroke: 'rgba(111, 66, 193, 1)',
+        point: 'rgba(111, 66, 193, 1)'
+      },
+      diet: {
+        fill: 'rgba(220, 53, 69, 0.2)',
+        stroke: 'rgba(220, 53, 69, 1)',
+        point: 'rgba(220, 53, 69, 1)'
+      },
+      mood: {
+        fill: 'rgba(255, 193, 7, 0.2)',
+        stroke: 'rgba(255, 193, 7, 1)',
+        point: 'rgba(255, 193, 7, 1)'
+      },
+      weight: {
+        fill: 'rgba(23, 162, 184, 0.2)',
+        stroke: 'rgba(23, 162, 184, 1)',
+        point: 'rgba(23, 162, 184, 1)'
+      }
+    };
+    
+    // 获取当前记录类型的颜色
+    const recordType = '{{ record_type|lower }}';
+    const colors = chartColors[recordType] || chartColors.running;
+    
+    // 获取图表类型参数
     const params = new URLSearchParams(window.location.search);
     const chartType = params.get('chart_type') || 'line';
     
-    // Initialize charts
-    initCharts(chartType);
+    // 初始化图表
+    initCharts(chartType, colors);
     
-    // Chart type switch
+    // 图表类型切换
     document.querySelectorAll('.chart-type-btn').forEach(btn => {
       btn.addEventListener('click', function() {
         document.querySelectorAll('.chart-type-btn').forEach(b => b.classList.remove('active'));
         this.classList.add('active');
         
-        // Update the hidden input field value to ensure the form submission includes the current chart type
+        // 更新隐藏字段值
         document.getElementById('chartTypeInput').value = this.dataset.chartType;
         
-        initCharts(this.dataset.chartType);
+        // 重新初始化图表
+        initCharts(this.dataset.chartType, colors);
       });
     });
     
-    // Fix navigation links requiring double-click issue
+    // 修复导航链接问题
     const navLinks = document.querySelectorAll('#healthTabs .nav-link');
     navLinks.forEach(link => {
-      // Create a new link element
+      // 创建新链接元素
       const newLink = document.createElement('a');
       
-      // Copy all attributes of the original link
+      // 复制原链接属性
       newLink.className = link.className;
       newLink.href = link.href;
       newLink.innerHTML = link.innerHTML;
       
-      // Remove all Bootstrap tabs related attributes and events
+      // 移除所有Bootstrap tabs相关属性和事件
       newLink.removeAttribute('data-bs-toggle');
       newLink.removeAttribute('role');
       newLink.removeAttribute('aria-controls');
       newLink.removeAttribute('aria-selected');
       
-      // Replace the original link
+      // 替换原链接
       if (link.parentNode) {
         link.parentNode.replaceChild(newLink, link);
       }
     });
     
-    // Ensure reset buttons are not prevented by events
+    // 确保重置按钮不受事件阻止
     const resetButton = document.getElementById('resetButton');
     if (resetButton) {
       const newResetButton = resetButton.cloneNode(true);
@@ -808,9 +1125,39 @@
       // Use form native submission without manually building URL
       return true;
     });
+    
+    document.querySelectorAll('.stat-card, .chart-container, .filter-card, .history-card').forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-6px)';
+        this.style.boxShadow = '0 15px 25px rgba(0,0,0,0.12)';
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = '';
+        this.style.boxShadow = '';
+      });
+    });
+    
+    document.querySelectorAll('.action-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple');
+        this.appendChild(ripple);
+        
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        
+        ripple.style.width = ripple.style.height = `${size}px`;
+        ripple.style.left = `${e.clientX - rect.left - size/2}px`;
+        ripple.style.top = `${e.clientY - rect.top - size/2}px`;
+        
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+      });
+    });
   });
   
-  // Initialize date filters
   function initDateFilters() {
     {% if chart_dates %}
       const chartDates = {{ chart_dates|safe }};
@@ -818,15 +1165,12 @@
         const dateFrom = document.getElementById('date_from');
         const dateTo = document.getElementById('date_to');
         
-        // Ensure always set valid default date range
         if (!dateFrom.value && chartDates.length > 0) {
           dateFrom.value = chartDates[0];
-          console.log('Set start date:', dateFrom.value);
         }
         
         if (!dateTo.value && chartDates.length > 0) {
           dateTo.value = chartDates[chartDates.length - 1];
-          console.log('Set end date:', dateTo.value);
         }
       }
     {% else %}
@@ -840,17 +1184,14 @@
     
     if (fromParam) {
       document.getElementById('date_from').value = fromParam;
-      console.log('Set start date from URL:', fromParam);
     }
     
     if (toParam) {
       document.getElementById('date_to').value = toParam;
-      console.log('Set end date from URL:', toParam);
     }
   }
   
-  // Initialize charts
-  function initCharts(type) {
+  function initCharts(type, colors) {
     const ctx = document.getElementById('recordChart').getContext('2d');
     let chartData = {};
     let chartOptions = {};
@@ -859,32 +1200,33 @@
       const chartDates = {{ chart_dates|safe }};
       const chartValues = {{ chart_data|safe }};
       
-      // Calculate suitable axis range for weight chart
       {% if record_type == 'Weight' %}
       const bmiValues = {{ chart_bmi_data|safe }};
       const [weightMin, weightMax] = calculateAxisRange(chartValues);
       const [bmiMin, bmiMax] = calculateAxisRange(bmiValues);
       {% endif %}
       
-      // Basic dataset configuration options - applied to all charts to solve scratching issues
       const commonDatasetConfig = {
         borderWidth: 2,
-        tension: 0.2,
+        tension: 0.3,
         fill: type === 'line',
         cubicInterpolationMode: 'monotone',
         borderJoinStyle: 'round',
-        stepped: false,
-        pointRadius: 3
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: colors.point,
+        pointBorderColor: 'white',
+        pointBorderWidth: 2
       };
       
       {% if record_type == 'Steps' %}
         chartData = {
           labels: chartDates,
           datasets: [{
-            label: 'Steps',
+            label: '步数',
             data: chartValues,
-            backgroundColor: 'rgba(40, 167, 69, 0.7)',
-            borderColor: 'rgba(40, 167, 69, 1)',
+            backgroundColor: colors.fill,
+            borderColor: colors.stroke,
             ...commonDatasetConfig
           }]
         };
@@ -892,10 +1234,10 @@
         chartData = {
           labels: chartDates,
           datasets: [{
-            label: 'Sleep Duration (hours)',
+            label: '睡眠时长 (小时)',
             data: chartValues,
-            backgroundColor: 'rgba(111, 66, 193, 0.7)',
-            borderColor: 'rgba(111, 66, 193, 1)',
+            backgroundColor: colors.fill,
+            borderColor: colors.stroke,
             ...commonDatasetConfig
           }]
         };
@@ -905,8 +1247,8 @@
           datasets: [{
             label: 'Calories',
             data: chartValues,
-            backgroundColor: 'rgba(220, 53, 69, 0.7)',
-            borderColor: 'rgba(220, 53, 69, 1)',
+            backgroundColor: colors.fill,
+            borderColor: colors.stroke,
             ...commonDatasetConfig
           }]
         };
@@ -916,8 +1258,8 @@
           datasets: [{
             label: 'Distance (km)',
             data: chartValues,
-            backgroundColor: 'rgba(13, 110, 253, 0.7)',
-            borderColor: 'rgba(13, 110, 253, 1)',
+            backgroundColor: colors.fill,
+            borderColor: colors.stroke,
             ...commonDatasetConfig
           }]
         };
@@ -927,8 +1269,8 @@
           datasets: [{
             label: 'Mood Level',
             data: chartValues,
-            backgroundColor: 'rgba(255, 193, 7, 0.7)',
-            borderColor: 'rgba(255, 193, 7, 1)',
+            backgroundColor: colors.fill,
+            borderColor: colors.stroke,
             ...commonDatasetConfig
           }]
         };
@@ -1023,18 +1365,18 @@
         responsive: true,
         maintainAspectRatio: false,
         animation: {
-          duration: 800,
+          duration: 1200,
           easing: 'easeOutQuart'
         },
         elements: {
           line: {
-            tension: 0.2,
+            tension: 0.3,
             borderJoinStyle: 'round',
             capBezierPoints: true
           },
           point: {
-            radius: 3,
-            hoverRadius: 5
+            radius: 4,
+            hoverRadius: 6
           }
         },
         plugins: {
@@ -1042,9 +1384,10 @@
             position: 'top',
             labels: {
               boxWidth: 12,
-              padding: 8,
+              padding: 15,
               font: {
-                size: 12
+                size: 13,
+                weight: '500'
               }
             }
           },
@@ -1052,21 +1395,27 @@
             display: true,
             text: '{{ record_type }} History Trend',
             font: {
-              size: 14
+              size: 16,
+              weight: '600'
             },
             padding: {
               top: 10,
-              bottom: 10
-            }
+              bottom: 20
+            },
+            color: 'var(--monet-dark-blue)'
           },
           tooltip: {
             titleFont: {
-              size: 13
+              size: 14,
+              weight: '600'
             },
             bodyFont: {
-              size: 12
+              size: 13
             },
-            padding: 10
+            padding: 12,
+            caretSize: 6,
+            cornerRadius: 8,
+            backgroundColor: 'rgba(0,0,0,0.75)'
           }
         },
         scales: {
@@ -1076,8 +1425,9 @@
             {% endif %}
             ticks: {
               font: {
-                size: 11
-              }
+                size: 12
+              },
+              padding: 8
             },
             grid: {
               display: true,
@@ -1087,10 +1437,11 @@
           x: {
             ticks: {
               font: {
-                size: 11
+                size: 12
               },
               maxRotation: 45,
-              minRotation: 0
+              minRotation: 0,
+              padding: 10
             },
             grid: {
               display: false
@@ -1099,10 +1450,10 @@
         },
         layout: {
           padding: {
-            left: 10,
-            right: 10,
-            top: 10,
-            bottom: 10
+            left: 15,
+            right: 15,
+            top: 15,
+            bottom: 15
           }
         }
       }, chartOptions)
