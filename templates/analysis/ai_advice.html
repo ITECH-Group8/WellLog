@@ -154,6 +154,21 @@
       padding: 0.8rem 1.5rem;
     }
   }
+  
+  #adviceContent.advice-body {
+    line-height: 1.7;
+    color: #495057;
+    font-size: 0.95rem;
+    font-weight: normal;
+    text-align: justify;
+    padding: 2rem;
+  }
+  
+  #adviceContent.advice-body p {
+    margin-bottom: 1.5rem;
+    text-align: justify;
+    font-weight: normal;
+  }
 </style>
 {% endblock css %}
 
@@ -212,8 +227,19 @@
         
         <!-- Error message (hidden initially) -->
         <div class="advice-error d-none" id="adviceError">
-          <h4><i class="bi bi-exclamation-triangle me-2"></i>Sorry, something went wrong</h4>
-          <p id="errorMessage">We couldn't generate advice at this time. Please try again later.</p>
+          <div class="alert alert-warning">
+            <h4 class="d-flex align-items-center">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              <span>Sorry, something went wrong</span>
+            </h4>
+            <p id="errorMessage">We couldn't generate advice at this time. Please try again later.</p>
+            <div class="d-none" id="errorDetails">
+              <hr>
+              <div class="small text-muted">
+                <strong>Error details:</strong> <span id="errorCode"></span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -265,28 +291,63 @@
           body: JSON.stringify({})
         });
         
-        const data = await response.json();
-        
         // Hide loading state
         adviceLoading.classList.add('d-none');
         
-        if (response.ok) {
-          // Show advice content - directly use backend formatted content
+        // Check if response is not ok (non-200 status)
+        if (!response.ok) {
+          const errorDetails = document.getElementById('errorDetails');
+          const errorCode = document.getElementById('errorCode');
+          errorMessage.textContent = `Server error (HTTP ${response.status}). Please try again later.`;
+          errorCode.textContent = `HTTP ${response.status}: ${response.statusText}`;
+          errorDetails.classList.remove('d-none');
+          adviceError.classList.remove('d-none');
+          console.error(`HTTP error: ${response.status}`);
+          return;
+        }
+        
+        // Check if we received a valid JSON response
+        let data;
+        try {
+          data = await response.json();
+        } catch (jsonError) {
+          errorMessage.textContent = 'Failed to parse server response';
+          adviceError.classList.remove('d-none');
+          console.error('JSON parse error:', jsonError);
+          return;
+        }
+        
+        // Check if we have advice content to display
+        if (data.advice) {
+          // Format the advice with the same styling as server-rendered content
+          adviceContent.classList.add('advice-body'); 
+          
+          // Display the advice content
           adviceContent.innerHTML = data.advice;
           adviceContent.classList.remove('d-none');
           
-          // Show generated time
-          adviceTimestamp.textContent = `Generated on: ${data.generated_time}`;
+          // Show generated time with same format as server-side rendering
+          const formattedTime = data.generated_time || 'Unknown';
+          adviceTimestamp.textContent = `Generated on: ${formattedTime}`;
           adviceTimestamp.classList.remove('d-none');
-        } else {
-          // Show error message
+          
+          // If there was an error but we still have advice to show, log it
+          if (data.error) {
+            console.warn(`Warning: ${data.error}`);
+          }
+        } else if (data.error) {
+          // No advice, but we have an error message
           errorMessage.textContent = data.error || 'An unknown error occurred';
+          adviceError.classList.remove('d-none');
+        } else {
+          // No advice and no specific error
+          errorMessage.textContent = 'Failed to generate advice. Please try again later.';
           adviceError.classList.remove('d-none');
         }
       } catch (error) {
         // Hide loading state, show error message
         adviceLoading.classList.add('d-none');
-        errorMessage.textContent = 'Failed to generate advice. Please try again later.';
+        errorMessage.textContent = 'Network or server error. Please try again later.';
         adviceError.classList.remove('d-none');
         console.error('Error generating advice:', error);
       }
