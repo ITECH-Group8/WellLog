@@ -10,7 +10,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-^&pv6!rhwvdk(jg6!tr$3
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "welllog.top"]
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "welllog.top", "www.welllog.top"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -32,7 +32,6 @@ INSTALLED_APPS = [
     "mathfilters",
     # "debug_toolbar",
     # Local
-    "pages",
     'accounts',
     'health',
     'community',
@@ -71,6 +70,10 @@ TEMPLATES = [
     },
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://welllog.top",
+    "https://www.welllog.top",
+]
 
 WSGI_APPLICATION = 'WellLog.wsgi.application'
 
