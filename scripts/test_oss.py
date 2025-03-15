@@ -5,7 +5,7 @@ import os
 import sys
 import oss2
 from pathlib import Path
-from dotenv import load_dotenv
+from dotenv_vault import load_dotenv
 
 script_dir = Path(__file__).parent
 project_root = script_dir.parent
