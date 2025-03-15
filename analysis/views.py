@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -333,8 +334,7 @@ async def generate_advice_async(request):
         """
         
         try:
-            # Use OpenAI client to call DeepSeek API
-            api_key = "sk-185da6fa5b874706b5254969e3531c75"  # Replace with actual API key
+            api_key = os.environ.get('AI_API_KEY')
             
             # Initialize OpenAI client (using DeepSeek's API base URL)
             client = AsyncOpenAI(api_key=api_key, base_url="https://api.deepseek.com")
