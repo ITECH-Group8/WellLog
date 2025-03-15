@@ -13,6 +13,26 @@ We are Group-08 of ITECH course in University of Glasgow. This a project of this
 $ git clone https://github.com/axdyer/WellLog.git
 $ cd WellLog
 ```
+Add your secret key to `.env`. Here is a template for your reference.
+```.env
+SECRET_KEY=
+
+# PostgreSQL Setting
+DATABASE_NAME=
+DATABASE_USER=
+DATABASE_PASSWORD=
+DATABASE_HOST=
+DATABASE_PORT=
+
+# DeepSeek API
+AI_API_KEY=
+
+# Aliyun OSS Setting
+ALIYUN_ACCESS_KEY_ID=
+ALIYUN_ACCESS_KEY_SECRET=
+ALIYUN_BUCKET_NAME=
+ALIYUN_ENDPOINT=
+```
 
 You can use conda to create a fresh virtual environment on either Windows or macOS.
 
