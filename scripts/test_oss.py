@@ -7,12 +7,10 @@ import oss2
 from pathlib import Path
 from dotenv import load_dotenv
 
-# 确保脚本可以在任何目录下运行
 script_dir = Path(__file__).parent
 project_root = script_dir.parent
 os.chdir(project_root)
 
-# 加载环境变量
 load_dotenv()
 
 def test_oss_connection():

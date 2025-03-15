@@ -2,11 +2,10 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-# 加载环境变量
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-^&pv6!rhwvdk(jg6!tr$3#4h!_@i#9mx!@)8n70$oxa^ec%!ju')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = True
 
@@ -80,11 +79,11 @@ WSGI_APPLICATION = 'WellLog.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'wellog',
-        'USER': 'myuser',
-        'PASSWORD': 'mypassword',
-        'HOST': 'welllog.top',
-        'PORT': '8888',
+        'NAME': os.environ.get('DATABASE_NAME', ''),
+        'USER': os.environ.get('DATABASE_USER', ''),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
+        'HOST': os.environ.get('DATABASE_HOST', ''),
+        'PORT': os.environ.get('DATABASE_PORT', ''),
         'TEST': {
             'NAME': 'test',
             'SERIALIZE': False,
@@ -148,28 +147,12 @@ ACCOUNT_UNIQUE_EMAIL = True
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Object Storage Settings - 保持简单配置
-# 使用本地文件系统存储作为默认值
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
-# 存储自定义配置
 ALIYUN_OSS = {
     'ACCESS_KEY_ID': os.environ.get('ALIYUN_ACCESS_KEY_ID', ''),
     'ACCESS_KEY_SECRET': os.environ.get('ALIYUN_ACCESS_KEY_SECRET', ''),
     'BUCKET_NAME': os.environ.get('ALIYUN_BUCKET_NAME', ''),
     'ENDPOINT': os.environ.get('ALIYUN_ENDPOINT', ''),
-    'URL_EXPIRES_IN': 60 * 60 * 24 * 365,  # 链接有效期(秒)
+    'URL_EXPIRES_IN': 60 * 60 * 24 * 365,
 }
-
-# 腾讯云COS设置（已禁用）
-# DEFAULT_FILE_STORAGE = 'storages.backends.tencent.TencentStorage'
-# TENCENT_SECRET_ID = os.environ.get('TENCENT_SECRET_ID', '')
-# TENCENT_SECRET_KEY = os.environ.get('TENCENT_SECRET_KEY', '')
-# TENCENT_BUCKET_NAME = os.environ.get('TENCENT_BUCKET_NAME', '')
-# TENCENT_REGION = os.environ.get('TENCENT_REGION', '')  # 例如：ap-beijing
-
-# AWS S3设置（取消注释并配置您的AWS S3信息）
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', '')
-# AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '')
-# AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', '')

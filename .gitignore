@@ -13,7 +13,7 @@ media
 
 # Virtual environment
 .venv
-# .env
+.env
 .vscode
 # log
 .coverage
