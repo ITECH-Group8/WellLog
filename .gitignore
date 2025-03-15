@@ -17,3 +17,7 @@ media
 .vscode
 # log
 .coverage
+.env*
+.flaskenv*
+!.env.project
+!.env.vault

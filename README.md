@@ -1,6 +1,6 @@
 # Wellog -- A Web Site to Record Your Health Data.
 ## About
-Welcome to our website: [welllog.top](url)  
+Welcome to our website: [WellLog.top](url)  
 This Web provide a platform for people to record their health and sports data and get professional AI adivce to help you promote your training. You also can share your moment and tips about sports. Hope you enjoy here.
 ## Who I am 
 Yu Ye  
