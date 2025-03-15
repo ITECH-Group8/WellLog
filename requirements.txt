@@ -3,7 +3,7 @@ certifi==2022.12.7
 cffi==1.15.1
 charset-normalizer==3.0.1
 crispy-bootstrap5==2024.10
-cryptography==39.0.1
+cryptography>=41.0.3,<42.0.0
 defusedxml==0.7.1
 Django==5.1.2
 django-crispy-forms==2.3
@@ -33,5 +33,4 @@ aiohttp>=3.8.6,<3.9.0
 openai>=1.5.0,<2.0.0
 django-mathfilters==1.0.0
 django-allauth==65.0.2
-python-dotenv
 python-dotenv-vault==0.6.4
