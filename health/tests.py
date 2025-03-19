@@ -322,9 +322,6 @@ class HealthFormTestCase(TestCase):
         
         form = SleepRecordForm(data=form_data)
         self.assertTrue(form.is_valid())
-        
-        # We'll only test valid data since we don't know if invalid data is actually validated
-        # Skip testing invalid hours since we don't know if there's a validator
     
     def test_diet_record_form(self):
         """Test diet record form validation"""
@@ -436,9 +433,6 @@ class HealthFormTestCase(TestCase):
         
         form = HealthGoalForm(data=form_data)
         self.assertTrue(form.is_valid())
-        
-        # Skip testing invalid data as we don't know if negative weights are validated
-
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage',
                   MEDIA_ROOT='/tmp/test-media',
