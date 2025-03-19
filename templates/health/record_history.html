@@ -573,7 +573,6 @@
     }
   }
   
-  /* 表格行悬停效果 */
   .history-table tr {
     transition: all 0.2s ease;
   }
@@ -995,7 +994,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // 自定义图表颜色
     const chartColors = {
       running: {
         fill: 'rgba(13, 110, 253, 0.2)',
@@ -1029,55 +1027,43 @@
       }
     };
     
-    // 获取当前记录类型的颜色
     const recordType = '{{ record_type|lower }}';
     const colors = chartColors[recordType] || chartColors.running;
     
-    // 获取图表类型参数
     const params = new URLSearchParams(window.location.search);
     const chartType = params.get('chart_type') || 'line';
     
-    // 初始化图表
     initCharts(chartType, colors);
     
-    // 图表类型切换
     document.querySelectorAll('.chart-type-btn').forEach(btn => {
       btn.addEventListener('click', function() {
         document.querySelectorAll('.chart-type-btn').forEach(b => b.classList.remove('active'));
         this.classList.add('active');
         
-        // 更新隐藏字段值
         document.getElementById('chartTypeInput').value = this.dataset.chartType;
         
-        // 重新初始化图表
         initCharts(this.dataset.chartType, colors);
       });
     });
     
-    // 修复导航链接问题
     const navLinks = document.querySelectorAll('#healthTabs .nav-link');
     navLinks.forEach(link => {
-      // 创建新链接元素
       const newLink = document.createElement('a');
       
-      // 复制原链接属性
       newLink.className = link.className;
       newLink.href = link.href;
       newLink.innerHTML = link.innerHTML;
       
-      // 移除所有Bootstrap tabs相关属性和事件
       newLink.removeAttribute('data-bs-toggle');
       newLink.removeAttribute('role');
       newLink.removeAttribute('aria-controls');
       newLink.removeAttribute('aria-selected');
       
-      // 替换原链接
       if (link.parentNode) {
         link.parentNode.replaceChild(newLink, link);
       }
     });
     
-    // 确保重置按钮不受事件阻止
     const resetButton = document.getElementById('resetButton');
     if (resetButton) {
       const newResetButton = resetButton.cloneNode(true);

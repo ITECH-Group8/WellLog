@@ -271,11 +271,7 @@ class CommunityFormTestCase(TestCase):
                   DEFAULT_FILE_STORAGE='django.core.files.storage.FileSystemStorage',
                   DEBUG=True)
 class CommunityViewTestCase(TestCase):
-    """Test cases for community views
-    
-    NOTE: These tests may need to be adjusted based on your view implementation.
-    Some views might require login for all operations or have different permission models.
-    """
+    """Test cases for community views"""
     
     def setUp(self):
         """Set up test client and data"""

@@ -510,15 +510,13 @@ def running_record_delete(request, pk):
 @login_required
 def running_record_history(request):
     """View running history"""
-    # 获取所有跑步记录，按日期倒序排列
+    # get all running records, ordered by date in descending order
     all_records = RunningRecord.objects.filter(user=request.user).order_by('-date')
     
-    # 获取过滤参数
     date_from = request.GET.get('date_from')
     date_to = request.GET.get('date_to')
     chart_type = request.GET.get('chart_type', 'line')
     
-    # 应用日期过滤（如有）
     records = all_records
     if date_from:
         try:
@@ -534,7 +532,7 @@ def running_record_history(request):
         except ValueError:
             pass
     
-    # 计算总距离和平均配速
+    # calculate total distance, total duration, and average pace
     total_distance = 0
     total_duration = 0
     avg_pace = 0
@@ -545,20 +543,15 @@ def running_record_history(request):
         if record.duration_minutes:
             total_duration += record.duration_minutes
     
-    # 计算平均配速（每公里分钟数）
+    # calculate average pace
     if total_distance > 0:
         avg_pace = round(total_duration / total_distance, 1)
     
-    # 格式化总距离
     total_distance = round(total_distance, 1)
     
-    # 获取图表数据
-    # 默认显示最近30天，但如果有过滤条件则使用过滤后的数据
     if date_from or date_to:
-        # 使用已过滤的记录
         chart_records = records.order_by('date')
     else:
-        # 默认显示最近30天数据
         last_30_days = timezone.now().date() - timedelta(days=30)
         chart_records = all_records.filter(date__gte=last_30_days).order_by('date')
     
@@ -636,15 +629,12 @@ def training_record_delete(request, pk):
 @login_required
 def training_record_history(request):
     """View training history"""
-    # 获取所有训练记录，按日期倒序排列
     all_records = TrainingRecord.objects.filter(user=request.user).order_by('-date')
     
-    # 获取过滤参数
     date_from = request.GET.get('date_from')
     date_to = request.GET.get('date_to')
     chart_type = request.GET.get('chart_type', 'line')
     
-    # 应用日期过滤（如有）
     records = all_records
     if date_from:
         try:
@@ -660,7 +650,6 @@ def training_record_history(request):
         except ValueError:
             pass
     
-    # 计算训练统计信息
     total_duration = 0
     exercise_types = {}
     
@@ -793,14 +782,11 @@ def mood_record_delete(request, pk):
 @login_required
 def mood_record_history(request):
     """Render mood record history page"""
-    # 获取所有心情记录，按日期倒序排列
     all_records = MoodRecord.objects.filter(user=request.user).order_by('-date')
     
-    # 获取过滤参数
     date_from = request.GET.get('date_from')
     date_to = request.GET.get('date_to')
     
-    # 应用日期过滤（如有）
     records = all_records
     if date_from:
         try:
@@ -816,7 +802,6 @@ def mood_record_history(request):
         except ValueError:
             pass
     
-    # 计算情绪统计
     mood_stats = {
         'terrible': 0,
         'bad': 0,
@@ -910,15 +895,12 @@ def weight_record_delete(request, pk):
 @login_required
 def weight_record_history(request):
     """View weight history"""
-    # 获取所有体重记录，按日期倒序排列
     all_records = WeightRecord.objects.filter(user=request.user).order_by('-date')
     
-    # 获取过滤参数
     date_from = request.GET.get('date_from')
     date_to = request.GET.get('date_to')
     chart_type = request.GET.get('chart_type', 'line')
     
-    # 应用日期过滤（如有）
     records = all_records
     if date_from:
         try:
@@ -934,12 +916,10 @@ def weight_record_history(request):
         except ValueError:
             pass
     
-    # 计算平均体重和BMI
     avg_weight = records.aggregate(Avg('weight'))['weight__avg']
     if avg_weight:
         avg_weight = round(avg_weight, 1)
     
-    # 计算平均BMI
     bmi_sum = 0
     bmi_count = 0
     for record in records:
@@ -962,7 +942,6 @@ def weight_record_history(request):
         # If page is out of range, deliver last page of results
         paginated_records = paginator.page(paginator.num_pages)
     
-    # Get chart data
     # Default to show last 30 days, but use filtered data if filters are applied
     if date_from or date_to:
         # Use complete filtered record set, not paginated records

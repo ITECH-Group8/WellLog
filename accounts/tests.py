@@ -34,11 +34,10 @@ class CustomUserModelTest(TestCase):
         """Test that email prefix is used as username when username is not provided"""
         # Test auto-username setting functionality
         user = get_user_model().objects.create_user(
-            username='auto_username',  # Provide a temporary username
+            username='auto_username',
             email='another@example.com',
             password='testpass123'
         )
-        # Manually set username to empty and save, triggering auto-setting logic
         user.username = ''
         user.save()
         # Refresh user from database
@@ -97,11 +96,9 @@ class ProfileModelTest(TestCase):
     
     def test_profile_signal_update(self):
         """Test that profile is updated when user is updated"""
-        # Update user field
         self.user.first_name = 'Updated'
         self.user.save()
         
-        # Refresh profile from database
         self.profile.refresh_from_db()
         
         # Verify profile is still connected to the user
@@ -259,7 +256,7 @@ class ProfileViewTest(TestCase):
     def test_profile_view_unauthenticated(self):
         """Test unauthenticated user accessing profile page is redirected"""
         response = self.client.get(self.profile_url)
-        self.assertEqual(response.status_code, 302)  # Redirect to login page
+        self.assertEqual(response.status_code, 302)
     
     @patch('accounts.views.render')
     def test_profile_update_authenticated(self, mock_render):
@@ -347,5 +344,4 @@ class AllAuthTest(TestCase):
     
     def test_logout_view(self):
         """Test logout view"""
-        # Directly test URL existence, not actual content
         self.assertTrue(self.logout_url)

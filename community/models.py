@@ -6,8 +6,6 @@ import os
 from pathlib import Path
 from django.utils.functional import cached_property
 from django.utils import timezone
-# Fix import error
-# from users.models import User
 
 def post_image_path(instance, filename):
     """Define the upload path for post images"""
