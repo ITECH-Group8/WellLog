@@ -114,7 +114,7 @@
     transition: height 0.3s ease;
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
-    display: none; /* 隐藏左边的竖线 */
+    display: none;
   }
   
   .stat-card:hover::after {
@@ -1209,7 +1209,7 @@
         chartData = {
           labels: chartDates,
           datasets: [{
-            label: '步数',
+            label: 'Steps',
             data: chartValues,
             backgroundColor: colors.fill,
             borderColor: colors.stroke,
@@ -1220,7 +1220,7 @@
         chartData = {
           labels: chartDates,
           datasets: [{
-            label: '睡眠时长 (小时)',
+            label: 'Sleep Duration (hours)',
             data: chartValues,
             backgroundColor: colors.fill,
             borderColor: colors.stroke,
