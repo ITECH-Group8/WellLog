@@ -111,7 +111,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize like button functionality
 function initLikeButtons() {
-  // 处理帖子列表中的点赞按钮
   const likeButtons = document.querySelectorAll('.like-button');
   likeButtons.forEach(button => {
     button.addEventListener('click', function(e) {
@@ -172,7 +171,6 @@ function initLikeButtons() {
     });
   });
   
-  // 处理帖子详情页中的点赞按钮
   const likeBtn = document.querySelector('.like-btn');
   if (likeBtn) {
     likeBtn.addEventListener('click', function() {
